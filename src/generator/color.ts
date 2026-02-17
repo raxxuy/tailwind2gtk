@@ -15,30 +15,22 @@ const DEFAULT_PROPS: ColorProps = {
   outline: "outline-color",
 };
 
-const DEFAULT_VARIANTS: ColorVariants = {
-  "": "",
-  dark: "dark",
-  darker: "darker",
-  light: "light",
-  lighter: "lighter",
-};
-
 let config: ColorConfig = {
   colors: {},
   props: DEFAULT_PROPS,
-  variants: DEFAULT_VARIANTS,
+  variants: {},
 };
 
 export const configureColors = (userConfig: ColorConfig) => {
   config = {
     colors: userConfig.colors,
     props: { ...DEFAULT_PROPS, ...userConfig.props },
-    variants: { ...DEFAULT_VARIANTS, ...userConfig.variants },
+    variants: userConfig.variants,
   };
 };
 
 export const generateColor = (cls: string): string[] | null => {
-  const { colors, props = DEFAULT_PROPS, variants = DEFAULT_VARIANTS } = config;
+  const { colors, props = DEFAULT_PROPS, variants = {} } = config;
 
   // Arbitrary values: bg-[#fff], text-[rgb(255,0,0)]
   const arbitraryMatch = cls.match(
