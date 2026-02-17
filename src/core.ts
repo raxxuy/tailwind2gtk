@@ -43,10 +43,10 @@ export const createCore = (options: CoreOptions) => {
 
   const loadCache = () => {
     if (!fileExists(utilitiesJsonFile)) return;
+    
     try {
       const cached: string[] = JSON.parse(readFile(utilitiesJsonFile));
       cached.forEach(addUtilityClass);
-      writeUtilities();
     } catch (error) {
       console.error("[tailwind2gtk] Failed to load cache:", error);
     }
@@ -54,9 +54,11 @@ export const createCore = (options: CoreOptions) => {
 
   const setClasses = (classes: string[]): boolean => {
     let hasNew = false;
+    
     for (const cls of classes) {
       if (addUtilityClass(cls)) hasNew = true;
     }
+    
     if (hasNew) writeUtilities();
     return hasNew;
   };
