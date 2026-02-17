@@ -1,0 +1,32 @@
+{
+  "name": "tailwind2gtk",
+  "version": "0.1.0",
+  "description": "A Tailwind-inspired utility class generator for GTK/AGS applications",
+  "main": "src/index.ts",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome lint ./src",
+    "format": "biome format ./src"
+  },
+  "keywords": [
+    "tailwind",
+    "gtk",
+    "ags",
+    "scss",
+    "utility-classes"
+  ],
+  "author": "raxxuy",
+  "license": "MIT",
+  "peerDependencies": {
+    "ags": "*",
+    "es-toolkit": "*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2",
+    "es-toolkit": "^1.44.0",
+    "ags": "github:Aylur/ags"
+  }
+}
