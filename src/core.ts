@@ -26,7 +26,11 @@ export const createCore = (options: CoreOptions) => {
   const state = {
     mappedWidgets: new Set<string>(),
     usedClasses: new Set<string>(),
+    paused: false,
   };
+
+  const freeze = () => (state.paused = true);
+  const thaw = () => (state.paused = false);
 
   const addUtilityClass = (cls: string): boolean => {
     if (state.usedClasses.has(cls) || !getUtility(cls)) return false;
@@ -35,6 +39,8 @@ export const createCore = (options: CoreOptions) => {
   };
 
   const writeUtilities = () => {
+    if (state.paused) return;
+
     const scss = generateScss(state.usedClasses, scssOptions);
     writeFile(utilitiesFile, scss);
     writeFile(utilitiesJsonFile, JSON.stringify([...state.usedClasses].sort()));
@@ -43,7 +49,7 @@ export const createCore = (options: CoreOptions) => {
 
   const loadCache = () => {
     if (!fileExists(utilitiesJsonFile)) return;
-    
+
     try {
       const cached: string[] = JSON.parse(readFile(utilitiesJsonFile));
       cached.forEach(addUtilityClass);
@@ -54,11 +60,11 @@ export const createCore = (options: CoreOptions) => {
 
   const setClasses = (classes: string[]): boolean => {
     let hasNew = false;
-    
+
     for (const cls of classes) {
       if (addUtilityClass(cls)) hasNew = true;
     }
-    
+
     if (hasNew) writeUtilities();
     return hasNew;
   };
@@ -71,6 +77,8 @@ export const createCore = (options: CoreOptions) => {
   };
 
   return {
+    freeze,
+    thaw,
     loadCache,
     setClasses,
     isNewComponent,
