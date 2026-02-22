@@ -1,9 +1,13 @@
 import { getUtility } from "./generator";
 import { STATES, type State } from "./states";
 
+const mediaStates = new Set(["dark", "light"]);
+
 const escapeClassName = (cls: string) => {
   const escaped = cls.replace(/[:.#/[\]]/g, "\\$&");
-  return escaped + (cls.includes(":") ? `:${cls.split(":")[0]}` : "");
+  const state = cls.includes(":") ? cls.split(":")[0] : null;
+  if (!state || mediaStates.has(state)) return escaped;
+  return `${escaped}:${state}`;
 };
 
 const getStatePriority = (className: string): number => {
