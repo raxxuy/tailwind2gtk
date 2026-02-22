@@ -35,16 +35,42 @@ const parseStates = (className: string): [string[], string] => {
 
 const wrapWithStates = (properties: string[], states: string[]): string[] => {
   if (states.length === 0) return properties;
-  const selector = `&:${states.join(":")}`;
-  return [`${selector} {`, ...properties.map((p) => `  ${p}`), `}`];
+
+  const mediaStates = states.filter((s) => s === "dark" || s === "light");
+  const pseudoStates = states.filter((s) => s !== "dark" && s !== "light");
+
+  let result = properties;
+
+  if (pseudoStates.length > 0) {
+    const selector = `&:${pseudoStates.join(":")}`;
+    result = [`${selector} {`, ...result.map((p) => `  ${p}`), `}`];
+  }
+
+  for (const media of mediaStates) {
+    result = [
+      `@media (prefers-color-scheme: ${media}) {`,
+      ...result.map((p) => `  ${p}`),
+      `}`,
+    ];
+  }
+
+  return result;
 };
 
 const generate = (className: string): string[] | null => {
   const [states, cls] = parseStates(className);
 
+  const important = cls.endsWith("!");
+  const baseCls = important ? cls.slice(0, -1) : cls;
+
   for (const generator of generators) {
-    const result = generator(cls);
-    if (result) return wrapWithStates(result, states);
+    const result = generator(baseCls);
+    if (result) {
+      const declarations = important
+        ? result.map((p) => p.replace(/;?\s*$/, " !important"))
+        : result;
+      return wrapWithStates(declarations, states);
+    }
   }
 
   return null;

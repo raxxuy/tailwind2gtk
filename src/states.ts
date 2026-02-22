@@ -1,5 +1,7 @@
 export const STATES = [
   "",
+  "dark",
+  "light",
   "hover",
   "focus",
   "active",
