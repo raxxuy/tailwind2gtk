@@ -1,4 +1,4 @@
-import { kebabCase } from "es-toolkit";
+import { debounce, kebabCase } from "es-toolkit";
 import { getUtility } from "./generator";
 import { generateScss, type ScssOptions } from "./scss";
 
@@ -32,6 +32,15 @@ export const createCore = (options: CoreOptions) => {
   const freeze = () => (state.paused = true);
   const thaw = () => (state.paused = false);
 
+  const withFreeze = (fn: () => void) => {
+    freeze();
+    try {
+      fn();
+    } finally {
+      thaw();
+    }
+  };
+
   const addUtilityClass = (cls: string): boolean => {
     if (state.usedClasses.has(cls) || !getUtility(cls)) return false;
     state.usedClasses.add(cls);
@@ -47,12 +56,15 @@ export const createCore = (options: CoreOptions) => {
     onNewClasses?.(scss, [...state.usedClasses]);
   };
 
+  const debouncedWriteUtilities = debounce(writeUtilities, 0);
+
   const loadCache = () => {
     if (!fileExists(utilitiesJsonFile)) return;
 
     try {
       const cached: string[] = JSON.parse(readFile(utilitiesJsonFile));
       cached.forEach(addUtilityClass);
+      writeUtilities();
     } catch (error) {
       console.error("[tailwind2gtk] Failed to load cache:", error);
     }
@@ -65,7 +77,7 @@ export const createCore = (options: CoreOptions) => {
       if (addUtilityClass(cls)) hasNew = true;
     }
 
-    if (hasNew) writeUtilities();
+    if (hasNew) debouncedWriteUtilities();
     return hasNew;
   };
 
@@ -76,12 +88,17 @@ export const createCore = (options: CoreOptions) => {
     return true;
   };
 
+  // Always load cache on creation so classes are never lost across restarts.
+  loadCache();
+
   return {
     freeze,
     thaw,
+    withFreeze,
     loadCache,
     setClasses,
     isNewComponent,
     getUsedClasses: () => [...state.usedClasses],
+    flushWrite: () => debouncedWriteUtilities.flush(),
   };
 };

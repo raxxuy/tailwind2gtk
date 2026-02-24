@@ -26,15 +26,23 @@ export const generateScss = (
 ): string => {
   const { header = "/* Auto-generated utility classes */" } = options;
 
-  const sections: string[] = [];
+  const base: string[] = [];
+  const dark: string[] = [];
+  const light: string[] = [];
 
   for (const cls of usedClasses) {
     const utility = getUtility(cls);
-    if (!utility) continue;
-    sections.push(`.${escapeClassName(cls)} { ${utility.join("; ")}; }`);
+    if (!utility || utility.length === 0) continue;
+
+    const rule = `.${escapeClassName(cls)} { ${utility.join("; ")}; }`;
+    const state = cls.includes(":") ? cls.split(":")[0] : null;
+
+    if (state === "dark") dark.push(rule);
+    else if (state === "light") light.push(rule);
+    else base.push(rule);
   }
 
-  const sorted = sections.sort((a, b) => {
+  const comparePriority = (a: string, b: string) => {
     const getClassName = (s: string) => {
       const match = s.match(/^\.([^\s{]+)/);
       return match ? match[1].replace(/\\/g, "") : s;
@@ -43,9 +51,26 @@ export const generateScss = (
     const classA = getClassName(a);
     const classB = getClassName(b);
     const priorityDiff = getStatePriority(classA) - getStatePriority(classB);
-
     return priorityDiff !== 0 ? priorityDiff : classA.localeCompare(classB);
-  });
+  };
 
-  return `${header}\n${sorted.join("\n")}`;
+  base.sort(comparePriority);
+  dark.sort(comparePriority);
+  light.sort(comparePriority);
+
+  const sections: string[] = [header, ...base];
+
+  if (dark.length > 0) {
+    sections.push(
+      `@media (prefers-color-scheme: dark) {\n${dark.map((r) => `  ${r}`).join("\n")}\n}`,
+    );
+  }
+
+  if (light.length > 0) {
+    sections.push(
+      `@media (prefers-color-scheme: light) {\n${light.map((r) => `  ${r}`).join("\n")}\n}`,
+    );
+  }
+
+  return sections.join("\n");
 };
