@@ -16,7 +16,7 @@ const defaultGetUsedClasses = (widget: Gtk.Widget | Gtk.Widget[]): string[] => {
     });
 
     const children = w.observe_children();
-    
+
     range(children.get_n_items()).forEach((i) => {
       traverse(children.get_item(i) as Gtk.Widget);
     });
@@ -56,6 +56,9 @@ export const createAgsPlugin = (options: AgsOptions) => {
 
   return {
     ...core,
+    getCachedClasses: core.getUsedClasses,
     loadClasses,
+    getUsedClasses: (widget?: Gtk.Widget | Gtk.Widget[]) =>
+      getUsedClasses(widget),
   };
 };
