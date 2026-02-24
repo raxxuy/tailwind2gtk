@@ -1,4 +1,4 @@
-import GLib from "@girs/glib-2.0";
+import GLib from "gi://GLib";
 import { type AgsOptions, createAgsPlugin } from "./ags";
 
 type SimpleAgsOptions = Omit<
