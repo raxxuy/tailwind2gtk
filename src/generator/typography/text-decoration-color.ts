@@ -2,7 +2,7 @@ import { resolveColorValue } from "../utils";
 
 export const generateTextDecorationColor = (cls: string): string[] | null => {
   const match = cls.match(
-    /^decoration-(\[.+\]|\(.+\)|[a-z0-9-]+(?:\/[\d.]+)?)$/,
+    /^decoration-((?:\[.+\]|\(.+\)|[a-z0-9-]+)(?:\/[\d.[\]]+)?)$/,
   );
   if (!match) return null;
 

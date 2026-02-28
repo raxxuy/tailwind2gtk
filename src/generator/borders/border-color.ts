@@ -2,7 +2,7 @@ import { DIRECTIONS } from "../constants";
 import { resolveColorValue } from "../utils";
 
 export const generateBorderColor = (cls: string): string[] | null => {
-  const match = cls.match(/^border(-[xytbrl])?-(\[.+\]|\(.+\)|[a-z0-9-]+(?:\/[\d.]+)?)$/);
+  const match = cls.match(/^border(-[xytbrl])?-((?:\[.+\]|\(.+\)|[a-z0-9-]+)(?:\/[\d.[\]]+)?)$/);
   if (!match) return null;
 
   const [, dirRaw = "", raw] = match;

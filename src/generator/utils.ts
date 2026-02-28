@@ -11,7 +11,7 @@ export const resolveArbitrary = (raw: string): string => {
 export const resolveColorValue = (raw: string): string | null => {
   const [colorRaw, opacityRaw] = raw.split("/");
   const opacity = opacityRaw?.startsWith("[")
-    ? opacityRaw.slice(1, -1)
+    ? String(parseFloat(opacityRaw.slice(1, -1)) * 100)
     : opacityRaw;
 
   if (colorRaw in COLOR_KEYWORDS) {
