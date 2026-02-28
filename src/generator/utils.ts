@@ -10,6 +10,9 @@ export const resolveArbitrary = (raw: string): string => {
 
 export const resolveColorValue = (raw: string): string | null => {
   const [colorRaw, opacityRaw] = raw.split("/");
+  const opacity = opacityRaw?.startsWith("[")
+    ? opacityRaw.slice(1, -1)
+    : opacityRaw;
 
   if (colorRaw in COLOR_KEYWORDS) {
     return COLOR_KEYWORDS[colorRaw as keyof typeof COLOR_KEYWORDS];
@@ -17,15 +20,15 @@ export const resolveColorValue = (raw: string): string | null => {
 
   const isKnownColor = colorRaw in COLORS || colorRaw in getCustomColors();
   if (isKnownColor)
-    return opacityRaw
-      ? `color-mix(in oklch, var(--color-${colorRaw}) ${opacityRaw}%, transparent)`
+    return opacity
+      ? `color-mix(in oklch, var(--color-${colorRaw}) ${opacity}%, transparent)`
       : `var(--color-${colorRaw})`;
 
   const value = resolveDynamic(colorRaw);
   if (!value) return null;
 
-  return opacityRaw
-    ? `color-mix(in oklch, ${value} ${opacityRaw}%, transparent)`
+  return opacity
+    ? `color-mix(in oklch, ${value} ${opacity}%, transparent)`
     : value;
 };
 
