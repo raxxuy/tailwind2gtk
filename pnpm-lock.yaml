@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@types/node':
-        specifier: ^25.3.0
-        version: 25.3.0
+        specifier: ^25.3.2
+        version: 25.3.2
     devDependencies:
       '@biomejs/biome':
         specifier: 2.4.2
@@ -77,8 +77,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@types/node@25.3.0':
-    resolution: {integrity: sha512-4K3bqJpXpqfg2XKGK9bpDTc6xO/xoUP/RBWS7AtRMug6zZFaRekiLzjVtAoZMquxoAbzBvy5nxQ7veS5eYzf8A==}
+  '@types/node@25.3.2':
+    resolution: {integrity: sha512-RpV6r/ij22zRRdyBPcxDeKAzH43phWVKEjL2iksqo1Vz3CuBUrgmPpPhALKiRfU7OMCmeeO9vECBMsV0hMTG8Q==}
 
   ags@https://codeload.github.com/Aylur/ags/tar.gz/e169694390548dfd38ff40f1ef2163d6c3ffe3ea:
     resolution: {tarball: https://codeload.github.com/Aylur/ags/tar.gz/e169694390548dfd38ff40f1ef2163d6c3ffe3ea}
@@ -135,7 +135,7 @@ snapshots:
   '@biomejs/cli-win32-x64@2.4.2':
     optional: true
 
-  '@types/node@25.3.0':
+  '@types/node@25.3.2':
     dependencies:
       undici-types: 7.18.2
 

@@ -1,6 +1,12 @@
 import { debounce, kebabCase } from "es-toolkit";
-import { getUtility } from "./generator";
+import { getUtility, initConfig } from "./generator";
 import { generateScss, type ScssOptions } from "./scss";
+
+export interface TailwindConfig {
+  theme?: {
+    colors?: Record<string, string>;
+  };
+}
 
 export interface CoreOptions {
   utilitiesFile: string;
@@ -10,6 +16,7 @@ export interface CoreOptions {
   writeFile: (path: string, content: string) => void;
   readFile: (path: string) => string;
   fileExists: (path: string) => boolean;
+  tailwindConfig?: TailwindConfig;
 }
 
 export const createCore = (options: CoreOptions) => {
@@ -21,6 +28,7 @@ export const createCore = (options: CoreOptions) => {
     writeFile,
     readFile,
     fileExists,
+    tailwindConfig,
   } = options;
 
   const state = {
@@ -89,6 +97,7 @@ export const createCore = (options: CoreOptions) => {
   };
 
   // Always load cache on creation so classes are never lost across restarts.
+  if (tailwindConfig) initConfig(tailwindConfig);
   loadCache();
 
   return {

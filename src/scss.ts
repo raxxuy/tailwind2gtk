@@ -1,13 +1,18 @@
-import { getUtility } from "./generator";
+import { generateRoot, getUtility } from "./generator";
 import { STATES, type State } from "./states";
 
-const mediaStates = new Set(["dark", "light"]);
-
 const escapeClassName = (cls: string) => {
-  const escaped = cls.replace(/[:.#/[\]]/g, "\\$&");
-  const state = cls.includes(":") ? cls.split(":")[0] : null;
-  if (!state || mediaStates.has(state)) return escaped;
-  return `${escaped}:${state}`;
+  return cls.replace(/[!:.#/[\]]/g, "\\$&");
+};
+
+const getStates = (
+  cls: string,
+): { pseudos: string[]; media: string | null } => {
+  const parts = cls.split(":");
+  const states = parts.slice(0, -1);
+  const media = states.find((s) => s === "dark" || s === "light") ?? null;
+  const pseudos = states.filter((s) => s !== "dark" && s !== "light");
+  return { pseudos, media };
 };
 
 const getStatePriority = (className: string): number => {
@@ -34,11 +39,17 @@ export const generateScss = (
     const utility = getUtility(cls);
     if (!utility || utility.length === 0) continue;
 
-    const rule = `.${escapeClassName(cls)} { ${utility.join("; ")}; }`;
-    const state = cls.includes(":") ? cls.split(":")[0] : null;
+    const { pseudos, media } = getStates(cls);
 
-    if (state === "dark") dark.push(rule);
-    else if (state === "light") light.push(rule);
+    const selector =
+      pseudos.length > 0
+        ? `.${escapeClassName(cls)}:${pseudos.join(":")}`
+        : `.${escapeClassName(cls)}`;
+
+    const rule = `${selector} { ${utility.join("; ")}; }`;
+
+    if (media === "dark") dark.push(rule);
+    else if (media === "light") light.push(rule);
     else base.push(rule);
   }
 
@@ -58,7 +69,7 @@ export const generateScss = (
   dark.sort(comparePriority);
   light.sort(comparePriority);
 
-  const sections: string[] = [header, ...base];
+  const sections: string[] = [header, generateRoot(), ...base];
 
   if (dark.length > 0) {
     sections.push(
