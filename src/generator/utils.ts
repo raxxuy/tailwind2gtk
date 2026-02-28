@@ -10,6 +10,9 @@ export const resolveArbitrary = (raw: string): string => {
 
 export const resolveColorValue = (raw: string): string | null => {
   const [colorRaw, opacityRaw] = raw.split("/");
+
+  if (/\d+(px|rem|em|%|vw|vh)/.test(colorRaw)) return null;
+
   const opacity = opacityRaw?.startsWith("[")
     ? String(parseFloat(opacityRaw.slice(1, -1)) * 100)
     : opacityRaw;
