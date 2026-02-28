@@ -4,7 +4,9 @@ import { COLOR_KEYWORDS, NUMERIC_VARIABLES } from "./constants";
 
 export const isArbitrary = (raw: string): boolean => raw.startsWith("[");
 
-export const resolveArbitrary = (raw: string): string => raw.slice(1, -1);
+export const resolveArbitrary = (raw: string): string => {
+  return raw.slice(1, -1).replace(/_/g, " ");
+};
 
 export const resolveColorValue = (raw: string): string | null => {
   const [colorRaw, opacityRaw] = raw.split("/");
