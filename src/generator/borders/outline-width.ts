@@ -14,5 +14,5 @@ export const generateOutlineWidth = (cls: string): string[] | null => {
   const value = resolveOutlineWidth(match[1] ?? "");
   if (!value) return null;
 
-  return [`outline-width: ${value}`];
+  return [`outline-width: ${value}`, `outline-style: solid`];
 };

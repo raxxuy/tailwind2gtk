@@ -19,5 +19,8 @@ export const generateBorderWidth = (cls: string): string[] | null => {
   if (!value) return null;
 
   const parts = DIRECTIONS[dirRaw.slice(1) as keyof typeof DIRECTIONS];
-  return parts.map((p) => `border${p ? `-${p}` : ""}-width: ${value}`);
+  return parts.flatMap((p) => [
+    `border${p ? `-${p}` : ""}-width: ${value}`,
+    `border${p ? `-${p}` : ""}-style: solid`,
+  ]);
 };
