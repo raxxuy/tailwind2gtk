@@ -89,9 +89,7 @@ export const CSS_VARIABLES = {
   "animate-spin": "spin 1s linear infinite",
   "animate-ping": "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
   "animate-pulse": "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-  "animate-bounce": "bounce 1s infinite",
 } as const;
-
 
 export const CONTAINER_SIZES = new Set(
   Object.keys(NUMERIC_VARIABLES).filter((k) => k.startsWith("container-")),
