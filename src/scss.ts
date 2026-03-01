@@ -32,6 +32,7 @@ export const generateScss = (
   const { header = "/* Auto-generated utility classes */" } = options;
 
   const base: string[] = [];
+  const important: string[] = [];
   const dark: string[] = [];
   const light: string[] = [];
 
@@ -48,7 +49,9 @@ export const generateScss = (
 
     const rule = `${selector} { ${utility.join("; ")}; }`;
 
-    if (media === "dark") dark.push(rule);
+    const baseCls = cls.split(":").at(-1) ?? cls;
+    if (baseCls.endsWith("!")) important.push(rule);
+    else if (media === "dark") dark.push(rule);
     else if (media === "light") light.push(rule);
     else base.push(rule);
   }
@@ -69,7 +72,7 @@ export const generateScss = (
   dark.sort(comparePriority);
   light.sort(comparePriority);
 
-  const sections: string[] = [header, generateRoot(), ...base];
+  const sections: string[] = [header, generateRoot(), ...base, ...important];
 
   if (dark.length > 0) {
     sections.push(

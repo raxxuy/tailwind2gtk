@@ -38,11 +38,7 @@ const generate = (className: string): string[] | null => {
 
   for (const generator of generators) {
     const result = generator(baseCls);
-    if (result) {
-      return important
-        ? result.map((p) => p.replace(/;?\s*$/, " !important"))
-        : result;
-    }
+    if (result) return result;
   }
 
   return null;
