@@ -5,6 +5,7 @@ import { generateScss, type ScssOptions } from "./scss";
 export interface TailwindConfig {
   theme?: {
     colors?: Record<string, string>;
+    variables?: Record<string, string>;
   };
 }
 

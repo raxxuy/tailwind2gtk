@@ -13,6 +13,7 @@ import * as typography from "./typography";
 
 const cache: Record<string, string[]> = {};
 let customColors: Record<string, string> = {};
+let customVariables: Record<string, string> = {};
 
 const generators = [
   ...Object.values(spacing),
@@ -27,6 +28,7 @@ const generators = [
 
 export const initConfig = (config: TailwindConfig) => {
   customColors = config.theme?.colors ?? {};
+  customVariables = config.theme?.variables ?? {};
 };
 
 const generate = (className: string): string[] | null => {
@@ -69,6 +71,10 @@ export const generateRoot = (): string => {
 
   for (const [k, v] of Object.entries(customColors)) {
     lines.push(`  --color-${k}: ${v};`);
+  }
+
+  for (const [k, v] of Object.entries(customVariables)) {
+    lines.push(`  --${k}: ${v};`);
   }
 
   lines.push("}");
