@@ -39,13 +39,13 @@ export const generateSpace = (cls: string): UtilityResult | null => {
     axis === "x"
       ? [
           "--tw-space-x-reverse: 0",
-          `margin-inline-start: calc(${resolved} * var(--tw-space-x-reverse))`,
-          `margin-inline-end: calc(${resolved} * calc(1 - var(--tw-space-x-reverse)))`,
+          `margin-left: calc(${resolved} * var(--tw-space-x-reverse))`,
+          `margin-right: calc(${resolved} * calc(1 - var(--tw-space-x-reverse)))`,
         ]
       : [
           "--tw-space-y-reverse: 0",
-          `margin-block-start: calc(${resolved} * var(--tw-space-y-reverse))`,
-          `margin-block-end: calc(${resolved} * calc(1 - var(--tw-space-y-reverse)))`,
+          `margin-top: calc(${resolved} * var(--tw-space-y-reverse))`,
+          `margin-bottom: calc(${resolved} * calc(1 - var(--tw-space-y-reverse)))`,
         ],
   );
 };

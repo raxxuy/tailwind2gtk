@@ -11,8 +11,8 @@ const resolveBorderWidth = (raw: string): string | null => {
 
 const divideX = (value: string): UtilityResult =>
   propWithSelector(CHILD_SELECTOR, [
-    "border-inline-start-width: 0px",
-    `border-inline-end-width: ${value}`,
+    "border-left-width: 0px",
+    `border-right-width: ${value}`,
   ]);
 
 const divideY = (value: string): UtilityResult =>
