@@ -1,6 +1,9 @@
-import { resolveDynamic } from "../utils";
+import type { UtilityResult } from "../../core";
+import { prop, resolveDynamic } from "../utils";
 
-export const generateFontFeatureSettings = (cls: string): string[] | null => {
+export const generateFontFeatureSettings = (
+  cls: string,
+): UtilityResult | null => {
   const match = cls.match(/^font-features-(\[.+\]|\(.+\))$/);
   if (!match) return null;
 
@@ -9,5 +12,5 @@ export const generateFontFeatureSettings = (cls: string): string[] | null => {
   const value = resolveDynamic(raw);
   if (!value) return null;
 
-  return [`font-feature-settings: ${value}`];
+  return prop([`font-feature-settings: ${value}`]);
 };

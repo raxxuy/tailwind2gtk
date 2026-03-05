@@ -1,4 +1,4 @@
-import type { TailwindConfig } from "../core";
+import type { TailwindConfig, UtilityResult } from "../core";
 import * as backgrounds from "./backgrounds";
 import * as borders from "./borders";
 import { COLORS } from "./colors";
@@ -11,7 +11,7 @@ import * as spacing from "./spacing";
 import * as transitions from "./transitions";
 import * as typography from "./typography";
 
-const cache: Record<string, string[]> = {};
+const cache: Record<string, UtilityResult> = {};
 let customColors: Record<string, string> = {};
 let customVariables: Record<string, string> = {};
 
@@ -31,7 +31,7 @@ export const initConfig = (config: TailwindConfig) => {
   customVariables = config.theme?.variables ?? {};
 };
 
-const generate = (className: string): string[] | null => {
+const generate = (className: string): UtilityResult | null => {
   const cls = className.split(":").at(-1) ?? className;
   const important = cls.endsWith("!");
   const baseCls = important ? cls.slice(0, -1) : cls;
@@ -57,7 +57,6 @@ export const generateRoot = (): string => {
   }
 
   for (const [k, v] of Object.entries(CSS_VARIABLES)) {
-    if (v === "") continue;
     lines.push(`  --${k}: ${v};`);
   }
 
@@ -84,7 +83,7 @@ export const generateRoot = (): string => {
 
 export const getCustomColors = (): Record<string, string> => customColors;
 
-export const getUtility = (className: string): string[] | null => {
+export const getUtility = (className: string): UtilityResult | null => {
   if (cache[className]) return cache[className];
   const generated = generate(className);
   if (generated) cache[className] = generated;

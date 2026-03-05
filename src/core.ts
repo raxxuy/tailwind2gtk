@@ -2,6 +2,11 @@ import { debounce, kebabCase } from "es-toolkit";
 import { getUtility, initConfig } from "./generator";
 import { generateScss, type ScssOptions } from "./scss";
 
+export type UtilityResult = {
+  selector?: string; // if present, wraps properties in this selector
+  properties: string[];
+};
+
 export interface TailwindConfig {
   theme?: {
     colors?: Record<string, string>;

@@ -1,4 +1,5 @@
-import { resolveDynamic } from "../utils";
+import type { UtilityResult } from "../../core";
+import { prop, resolveDynamic } from "../utils";
 
 const resolveOutlineWidth = (raw: string): string | null => {
   if (raw === "") return "1px";
@@ -7,12 +8,12 @@ const resolveOutlineWidth = (raw: string): string | null => {
   return resolveDynamic(raw);
 };
 
-export const generateOutlineWidth = (cls: string): string[] | null => {
+export const generateOutlineWidth = (cls: string): UtilityResult | null => {
   const match = cls.match(/^outline(?:-(\[.+\]|\(length:.+\)|[\d.]+))?$/);
   if (!match) return null;
 
   const value = resolveOutlineWidth(match[1] ?? "");
   if (!value) return null;
 
-  return [`outline-width: ${value}`, `outline-style: solid`];
+  return prop([`outline-width: ${value}`, `outline-style: solid`]);
 };

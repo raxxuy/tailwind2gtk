@@ -1,15 +1,16 @@
-import { resolveDynamic } from "../utils";
+import type { UtilityResult } from "../../core";
+import { prop, resolveDynamic } from "../utils";
 
-export const generateOpacity = (cls: string): string[] | null => {
+export const generateOpacity = (cls: string): UtilityResult | null => {
   const match = cls.match(/^opacity-(\[.+\]|\(.+\)|[\d.]+)$/);
   if (!match) return null;
 
   const [, raw] = match;
 
-  if (raw.match(/^[\d.]+$/)) return [`opacity: ${raw}%`];
+  if (raw.match(/^[\d.]+$/)) return prop([`opacity: ${raw}%`]);
 
   const value = resolveDynamic(raw);
   if (!value) return null;
 
-  return [`opacity: ${value}`];
+  return prop([`opacity: ${value}`]);
 };

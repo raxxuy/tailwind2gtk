@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@types/node':
-        specifier: ^25.3.2
-        version: 25.3.2
+        specifier: ^25.3.3
+        version: 25.3.3
     devDependencies:
       '@biomejs/biome':
         specifier: 2.4.2
@@ -19,8 +19,8 @@ importers:
         specifier: github:Aylur/ags
         version: https://codeload.github.com/Aylur/ags/tar.gz/e169694390548dfd38ff40f1ef2163d6c3ffe3ea(gnim@1.9.0)
       es-toolkit:
-        specifier: ^1.44.0
-        version: 1.44.0
+        specifier: ^1.45.1
+        version: 1.45.1
 
 packages:
 
@@ -77,8 +77,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@types/node@25.3.2':
-    resolution: {integrity: sha512-RpV6r/ij22zRRdyBPcxDeKAzH43phWVKEjL2iksqo1Vz3CuBUrgmPpPhALKiRfU7OMCmeeO9vECBMsV0hMTG8Q==}
+  '@types/node@25.3.3':
+    resolution: {integrity: sha512-DpzbrH7wIcBaJibpKo9nnSQL0MTRdnWttGyE5haGwK86xgMOkFLp7vEyfQPGLOJh5wNYiJ3V9PmUMDhV9u8kkQ==}
 
   ags@https://codeload.github.com/Aylur/ags/tar.gz/e169694390548dfd38ff40f1ef2163d6c3ffe3ea:
     resolution: {tarball: https://codeload.github.com/Aylur/ags/tar.gz/e169694390548dfd38ff40f1ef2163d6c3ffe3ea}
@@ -88,8 +88,8 @@ packages:
     peerDependencies:
       gnim: ^1.9.0
 
-  es-toolkit@1.44.0:
-    resolution: {integrity: sha512-6penXeZalaV88MM3cGkFZZfOoLGWshWWfdy0tWw/RlVVyhvMaWSBTOvXNeiW3e5FwdS5ePW0LGEu17zT139ktg==}
+  es-toolkit@1.45.1:
+    resolution: {integrity: sha512-/jhoOj/Fx+A+IIyDNOvO3TItGmlMKhtX8ISAHKE90c4b/k1tqaqEZ+uUqfpU8DMnW5cgNJv606zS55jGvza0Xw==}
 
   gnim@1.9.0:
     resolution: {integrity: sha512-ubtl+BkcHFYImLQN/dg7XtM6VpOMZy1KlXOF+W/QlBVFG+c07lf+hC+bAkPqkyLwL1YUEIoLtk7iXlIuhbOYPA==}
@@ -135,7 +135,7 @@ snapshots:
   '@biomejs/cli-win32-x64@2.4.2':
     optional: true
 
-  '@types/node@25.3.2':
+  '@types/node@25.3.3':
     dependencies:
       undici-types: 7.18.2
 
@@ -143,7 +143,7 @@ snapshots:
     dependencies:
       gnim: 1.9.0
 
-  es-toolkit@1.44.0: {}
+  es-toolkit@1.45.1: {}
 
   gnim@1.9.0: {}
 

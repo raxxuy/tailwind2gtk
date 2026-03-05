@@ -1,7 +1,9 @@
+import type { UtilityResult } from "../../core";
 import { DIRECTIONS } from "../constants";
+import { prop } from "../utils";
 import { resolveValue } from "./utils";
 
-export const generatePadding = (cls: string): string[] | null => {
+export const generatePadding = (cls: string): UtilityResult | null => {
   const match = cls.match(/^p([xytrbl])?-(\[.+\]|\(.+\)|px|[\d.]+)$/);
   if (!match) return null;
 
@@ -10,5 +12,5 @@ export const generatePadding = (cls: string): string[] | null => {
   if (!value) return null;
 
   const parts = DIRECTIONS[dir as keyof typeof DIRECTIONS];
-  return parts.map((p) => `padding${p ? `-${p}` : ""}: ${value}`);
+  return prop(parts.map((p) => `padding${p ? `-${p}` : ""}: ${value}`));
 };

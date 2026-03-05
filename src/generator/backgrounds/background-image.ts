@@ -1,80 +1,140 @@
+import type { UtilityResult } from "../../core";
 import { LINEAR_DIRECTIONS } from "../constants";
-import { resolveDynamic } from "../utils";
+import { prop, resolveColorValue, resolveDynamic } from "../utils";
 
-export const generateBackgroundImage = (cls: string): string[] | null => {
-  // bg-none
-  if (cls === "bg-none") return [`background-image: none`];
+const linearGradient = (angle: string) =>
+  prop([
+    `background-image: linear-gradient(${angle}, var(--tw-gradient-stops))`,
+  ]);
 
-  // bg-[<value>]
-  const sliced = cls.slice(3);
-  const arbitrary = resolveDynamic(sliced);
-  if (arbitrary) return [`background-image: ${arbitrary}`];
+const radialGradient = (value: string) =>
+  prop([
+    `background-image: radial-gradient(var(--tw-gradient-stops, ${value}))`,
+  ]);
 
-  // bg-(image:<custom-property>)
-  const imageVarMatch = cls.match(/^bg-\(image:(.+)\)$/);
-  if (imageVarMatch) return [`background-image: var(${imageVarMatch[1]})`];
+const conicGradient = (angle: string) =>
+  prop([
+    `background-image: conic-gradient(from ${angle} in oklab, var(--tw-gradient-stops))`,
+  ]);
 
-  // bg-linear-to-* directions
-  if (cls.startsWith("bg-linear-")) {
-    const linearDir = cls.slice(10);
-
-    if (linearDir in LINEAR_DIRECTIONS) {
-      return [
-        `background-image: linear-gradient(${LINEAR_DIRECTIONS[linearDir as keyof typeof LINEAR_DIRECTIONS]}, var(--tw-gradient-stops))`,
-      ];
-    }
-
-    // bg-linear-<angle> and -bg-linear-<angle>
-    const angleMatch = cls.match(/^(-?)bg-linear-([\d.]+)$/);
-    if (angleMatch) {
-      return [
-        `background-image: linear-gradient(${angleMatch[1] ? "-" : ""}${angleMatch[2]}deg in oklab, var(--tw-gradient-stops))`,
-      ];
-    }
-
-    // bg-linear-(<custom-property>) and bg-linear-[<value>]
-    const dynamicMatch = cls.match(/^bg-linear-(\[.+\]|\(.+\))$/);
-    if (dynamicMatch) {
-      const value = resolveDynamic(dynamicMatch[1]);
-      if (!value) return null;
-      return [
-        `background-image: linear-gradient(var(--tw-gradient-stops, ${value}))`,
-      ];
-    }
-  }
-
-  // bg-radial
+export const generateBackgroundImage = (cls: string): UtilityResult | null => {
+  if (cls === "bg-none") return prop([`background-image: none`]);
   if (cls === "bg-radial") {
-    return [
+    return prop([
       `background-image: radial-gradient(in oklab, var(--tw-gradient-stops))`,
-    ];
+    ]);
   }
 
-  // bg-radial-(<custom-property>) and bg-radial-[<value>]
-  const radialMatch = cls.match(/^bg-radial-(\[.+\]|\(.+\))$/);
-  if (radialMatch) {
-    const value = resolveDynamic(radialMatch[1]);
-    if (!value) return null;
-    return [
-      `background-image: radial-gradient(var(--tw-gradient-stops, ${value}))`,
-    ];
+  const imageVarMatch = cls.match(/^bg-\(image:(.+)\)$/);
+  if (imageVarMatch) {
+    return prop([`background-image: var(${imageVarMatch[1]})`]);
   }
 
-  // bg-conic-<angle> and -bg-conic-<angle>
-  const conicAngleMatch = cls.match(/^(-?)bg-conic-([\d.]+)$/);
-  if (conicAngleMatch) {
-    return [
-      `background-image: conic-gradient(from ${conicAngleMatch[1] ? "-" : ""}${conicAngleMatch[2]}deg in oklab, var(--tw-gradient-stops))`,
-    ];
+  const arbitrary = resolveDynamic(cls.slice(3));
+  if (arbitrary) return prop([`background-image: ${arbitrary}`]);
+
+  if (cls.startsWith("bg-linear-")) {
+    const rest = cls.slice(10);
+
+    if (rest in LINEAR_DIRECTIONS) {
+      return linearGradient(
+        LINEAR_DIRECTIONS[rest as keyof typeof LINEAR_DIRECTIONS],
+      );
+    }
+
+    const angleMatch = rest.match(/^(-?)([\d.]+)$/);
+    if (angleMatch) {
+      return linearGradient(`${angleMatch[1]}${angleMatch[2]}deg in oklab`);
+    }
+
+    const dynamic = resolveDynamic(rest);
+    if (dynamic) {
+      return prop([
+        `background-image: linear-gradient(var(--tw-gradient-stops, ${dynamic}))`,
+      ]);
+    }
   }
 
-  // bg-conic-(<custom-property>) and bg-conic-[<value>]
-  const conicDynamicMatch = cls.match(/^bg-conic-(\[.+\]|\(.+\))$/);
-  if (conicDynamicMatch) {
-    const value = resolveDynamic(conicDynamicMatch[1]);
-    if (!value) return null;
-    return [`background-image: ${value}`];
+  if (cls.startsWith("bg-radial-")) {
+    const rest = cls.slice(10);
+    const dynamic = resolveDynamic(rest);
+    if (dynamic) return radialGradient(dynamic);
   }
+
+  if (cls.startsWith("bg-conic-")) {
+    const rest = cls.slice(9);
+
+    const angleMatch = rest.match(/^(-?)([\d.]+)$/);
+    if (angleMatch) return conicGradient(`${angleMatch[1]}${angleMatch[2]}deg`);
+
+    const varMatch = rest.match(/^\((.+)\)$/);
+    if (varMatch) return prop([`background-image: var(${varMatch[1]})`]);
+
+    const arbitrary = resolveDynamic(rest);
+    if (arbitrary) return prop([`background-image: ${arbitrary}`]);
+  }
+
+  return null;
+};
+
+export const generateGradientFrom = (cls: string): UtilityResult | null => {
+  if (!cls.startsWith("from-")) return null;
+  const rest = cls.slice(5);
+
+  const percentMatch = rest.match(/^([\d.]+)%$/);
+  if (percentMatch) {
+    return prop([`--tw-gradient-from-position: ${percentMatch[1]}%`]);
+  }
+
+  const varMatch = rest.match(/^\((.+)\)$/);
+  if (varMatch) return prop([`--tw-gradient-from: var(${varMatch[1]})`]);
+
+  const arbitrary = resolveDynamic(rest);
+  if (arbitrary) return prop([`--tw-gradient-from: ${arbitrary}`]);
+
+  const color = resolveColorValue(rest);
+  if (color) return prop([`--tw-gradient-from: ${color}`]);
+
+  return null;
+};
+
+export const generateGradientVia = (cls: string): UtilityResult | null => {
+  if (!cls.startsWith("via-")) return null;
+  const rest = cls.slice(4);
+
+  const percentMatch = rest.match(/^([\d.]+)%$/);
+  if (percentMatch) {
+    return prop([`--tw-gradient-via-position: ${percentMatch[1]}%`]);
+  }
+
+  const varMatch = rest.match(/^\((.+)\)$/);
+  if (varMatch) return prop([`--tw-gradient-via: var(${varMatch[1]})`]);
+
+  const arbitrary = resolveDynamic(rest);
+  if (arbitrary) return prop([`--tw-gradient-via: ${arbitrary}`]);
+
+  const color = resolveColorValue(rest);
+  if (color) return prop([`--tw-gradient-via: ${color}`]);
+
+  return null;
+};
+
+export const generateGradientTo = (cls: string): UtilityResult | null => {
+  if (!cls.startsWith("to-")) return null;
+  const rest = cls.slice(3);
+  const percentMatch = rest.match(/^([\d.]+)%$/);
+  if (percentMatch) {
+    return prop([`--tw-gradient-to-position: ${percentMatch[1]}%`]);
+  }
+
+  const varMatch = rest.match(/^\((.+)\)$/);
+  if (varMatch) return prop([`--tw-gradient-to: var(${varMatch[1]})`]);
+
+  const arbitrary = resolveDynamic(rest);
+  if (arbitrary) return prop([`--tw-gradient-to: ${arbitrary}`]);
+
+  const color = resolveColorValue(rest);
+  if (color) return prop([`--tw-gradient-to: ${color}`]);
 
   return null;
 };

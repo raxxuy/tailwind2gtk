@@ -1,9 +1,7 @@
 import { generateRoot, getUtility } from "./generator";
 import { STATES, type State } from "./states";
 
-const escapeClassName = (cls: string) => {
-  return cls.replace(/[!:.()#/[\]]/g, "\\$&");
-};
+const escapeClassName = (cls: string) => cls.replace(/[!:.()#/[\]]/g, "\\$&");
 
 const getStates = (
   cls: string,
@@ -20,6 +18,21 @@ const getStatePriority = (className: string): number => {
   const priority = STATES.indexOf(state as State);
   return priority === -1 ? 999 : priority;
 };
+
+const comparePriority = (a: string, b: string): number => {
+  const getClassName = (s: string) => {
+    const match = s.match(/^\.([^\s{]+)/);
+    return match ? match[1].replace(/\\/g, "") : s;
+  };
+
+  const classA = getClassName(a);
+  const classB = getClassName(b);
+  const priorityDiff = getStatePriority(classA) - getStatePriority(classB);
+  return priorityDiff !== 0 ? priorityDiff : classA.localeCompare(classB);
+};
+
+const buildRule = (selector: string, properties: string[]): string =>
+  `${selector} { ${properties.join("; ")}; }`;
 
 export interface ScssOptions {
   header?: string;
@@ -38,35 +51,25 @@ export const generateScss = (
 
   for (const cls of usedClasses) {
     const utility = getUtility(cls);
-    if (!utility || utility.length === 0) continue;
+    if (!utility) continue;
 
     const { pseudos, media } = getStates(cls);
+    const escapedCls = `.${escapeClassName(cls)}`;
+    const pseudoSuffix = pseudos.length > 0 ? `:${pseudos.join(":")}` : "";
+    const outerSelector = `${escapedCls}${pseudoSuffix}`;
 
-    const selector =
-      pseudos.length > 0
-        ? `.${escapeClassName(cls)}:${pseudos.join(":")}`
-        : `.${escapeClassName(cls)}`;
-
-    const rule = `${selector} { ${utility.join("; ")}; }`;
+    const css = utility.selector
+      ? buildRule(outerSelector, [
+          `${utility.selector} { ${utility.properties.join("; ")}; }`,
+        ])
+      : buildRule(outerSelector, utility.properties);
 
     const baseCls = cls.split(":").at(-1) ?? cls;
-    if (baseCls.endsWith("!")) important.push(rule);
-    else if (media === "dark") dark.push(rule);
-    else if (media === "light") light.push(rule);
-    else base.push(rule);
+    if (baseCls.endsWith("!")) important.push(css);
+    else if (media === "dark") dark.push(css);
+    else if (media === "light") light.push(css);
+    else base.push(css);
   }
-
-  const comparePriority = (a: string, b: string) => {
-    const getClassName = (s: string) => {
-      const match = s.match(/^\.([^\s{]+)/);
-      return match ? match[1].replace(/\\/g, "") : s;
-    };
-
-    const classA = getClassName(a);
-    const classB = getClassName(b);
-    const priorityDiff = getStatePriority(classA) - getStatePriority(classB);
-    return priorityDiff !== 0 ? priorityDiff : classA.localeCompare(classB);
-  };
 
   base.sort(comparePriority);
   dark.sort(comparePriority);

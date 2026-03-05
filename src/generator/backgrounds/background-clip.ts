@@ -1,6 +1,8 @@
+import type { UtilityResult } from "../../core";
 import { BACKGROUND_BOX_KEYWORDS } from "../constants";
+import { prop } from "../utils";
 
-export const generateBackgroundClip = (cls: string): string[] | null => {
+export const generateBackgroundClip = (cls: string): UtilityResult | null => {
   const match = cls.match(/^bg-clip-(.+)$/);
   if (!match) return null;
 
@@ -9,5 +11,5 @@ export const generateBackgroundClip = (cls: string): string[] | null => {
     BACKGROUND_BOX_KEYWORDS[raw as keyof typeof BACKGROUND_BOX_KEYWORDS];
   if (!value) return null;
 
-  return [`background-clip: ${value}`];
+  return prop([`background-clip: ${value}`]);
 };

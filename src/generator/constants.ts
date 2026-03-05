@@ -1,3 +1,5 @@
+export const CHILD_SELECTOR = "& > :not(:last-child)";
+
 export const NUMERIC_VARIABLES = {
   spacing: 0.25,
   "text-xs": 0.75,
@@ -43,13 +45,6 @@ export const NUMERIC_VARIABLES = {
 } as const;
 
 export const CSS_VARIABLES = {
-  "tw-gradient-stops": "var(--tw-gradient-from), var(--tw-gradient-to)",
-  "tw-gradient-from": "",
-  "tw-gradient-via": "",
-  "tw-gradient-to": "",
-  "tw-gradient-from-position": "",
-  "tw-gradient-via-position": "",
-  "tw-gradient-to-position": "",
   "shadow-2xs": "0 1px rgb(0 0 0 / 0.05)",
   "shadow-xs": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
   "shadow-sm": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
@@ -314,5 +309,4 @@ export const TRANSITION_PROPERTIES = {
   opacity: "opacity",
   shadow: "box-shadow",
   transform: "transform, translate, scale, rotate",
-  none: "none",
 } as const;

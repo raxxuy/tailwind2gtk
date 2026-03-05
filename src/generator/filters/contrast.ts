@@ -1,15 +1,16 @@
-import { resolveDynamic } from "../utils";
+import type { UtilityResult } from "../../core";
+import { prop, resolveDynamic } from "../utils";
 
-export const generateContrast = (cls: string): string[] | null => {
+export const generateContrast = (cls: string): UtilityResult | null => {
   const match = cls.match(/^contrast-(\[.+\]|\(.+\)|[\d.]+)$/);
   if (!match) return null;
 
   const [, raw] = match;
 
-  if (raw.match(/^[\d.]+$/)) return [`filter: contrast(${raw}%)`];
+  if (raw.match(/^[\d.]+$/)) return prop([`filter: contrast(${raw}%)`]);
 
   const value = resolveDynamic(raw);
   if (!value) return null;
 
-  return [`filter: contrast(${value})`];
+  return prop([`filter: contrast(${value})`]);
 };

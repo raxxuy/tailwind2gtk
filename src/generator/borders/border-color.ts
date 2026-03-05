@@ -1,8 +1,11 @@
-import { DIRECTIONS } from "../constants";
-import { resolveColorValue } from "../utils";
+import type { UtilityResult } from "../../core";
+import { CHILD_SELECTOR, DIRECTIONS } from "../constants";
+import { prop, propWithSelector, resolveColorValue } from "../utils";
 
-export const generateBorderColor = (cls: string): string[] | null => {
-  const match = cls.match(/^border(-[xytbrl])?-((?:\[.+\]|\(.+\)|[a-z0-9-]+)(?:\/[\d.[\]]+)?)$/);
+export const generateBorderColor = (cls: string): UtilityResult | null => {
+  const match = cls.match(
+    /^border(-[xytbrl])?-((?:\[.+\]|\(.+\)|[a-z0-9-]+)(?:\/[\d.[\]]+)?)$/,
+  );
   if (!match) return null;
 
   const [, dirRaw = "", raw] = match;
@@ -11,5 +14,22 @@ export const generateBorderColor = (cls: string): string[] | null => {
 
   const dir = dirRaw.slice(1);
   const parts = DIRECTIONS[dir as keyof typeof DIRECTIONS] ?? [""];
-  return parts.map((p) => `border${p ? `-${p}` : ""}-color: ${value}`);
+  return prop(parts.map((p) => `border${p ? `-${p}` : ""}-color: ${value}`));
+};
+
+export const generateDivideColor = (cls: string): UtilityResult | null => {
+  if (!cls.startsWith("divide-")) return null;
+  const rest = cls.slice(7);
+
+  const varMatch = rest.match(/^\((.+)\)$/);
+  if (varMatch) {
+    return propWithSelector(CHILD_SELECTOR, [
+      `border-color: var(${varMatch[1]})`,
+    ]);
+  }
+
+  const value = resolveColorValue(rest);
+  if (!value) return null;
+
+  return propWithSelector(CHILD_SELECTOR, [`border-color: ${value}`]);
 };

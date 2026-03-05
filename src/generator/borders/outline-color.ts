@@ -1,11 +1,14 @@
-import { resolveColorValue } from "../utils";
+import type { UtilityResult } from "../../core";
+import { prop, resolveColorValue } from "../utils";
 
-export const generateOutlineColor = (cls: string): string[] | null => {
-  const match = cls.match(/^outline-((?:\[.+\]|\(.+\)|[a-z0-9-]+)(?:\/[\d.[\]]+)?)$/);
+export const generateOutlineColor = (cls: string): UtilityResult | null => {
+  const match = cls.match(
+    /^outline-((?:\[.+\]|\(.+\)|[a-z0-9-]+)(?:\/[\d.[\]]+)?)$/,
+  );
   if (!match) return null;
 
   const value = resolveColorValue(match[1]);
   if (!value) return null;
 
-  return [`outline-color: ${value}`];
+  return prop([`outline-color: ${value}`]);
 };

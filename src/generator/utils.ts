@@ -1,3 +1,4 @@
+import type { UtilityResult } from "../core";
 import { getCustomColors } from ".";
 import { COLORS } from "./colors";
 import { COLOR_KEYWORDS, NUMERIC_VARIABLES } from "./constants";
@@ -46,3 +47,10 @@ export const toRem = (raw: string): string | null => {
   if (Number.isNaN(num)) return null;
   return `${(num * NUMERIC_VARIABLES.spacing).toFixed(3).replace(/\.?0+$/, "")}rem`;
 };
+
+export const prop = (properties: string[]): UtilityResult => ({ properties });
+
+export const propWithSelector = (
+  selector: string,
+  properties: string[],
+): UtilityResult => ({ selector, properties });

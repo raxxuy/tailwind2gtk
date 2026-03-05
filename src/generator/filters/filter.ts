@@ -1,7 +1,8 @@
-import { resolveDynamic } from "../utils";
+import type { UtilityResult } from "../../core";
+import { prop, resolveDynamic } from "../utils";
 
-export const generateFilter = (cls: string): string[] | null => {
-  if (cls === "filter-none") return [`filter: none`];
+export const generateFilter = (cls: string): UtilityResult | null => {
+  if (cls === "filter-none") return prop([`filter: none`]);
 
   const match = cls.match(/^filter-(\[.+\]|\(.+\))$/);
   if (!match) return null;
@@ -9,5 +10,5 @@ export const generateFilter = (cls: string): string[] | null => {
   const value = resolveDynamic(match[1]);
   if (!value) return null;
 
-  return [`filter: ${value}`];
+  return prop([`filter: ${value}`]);
 };

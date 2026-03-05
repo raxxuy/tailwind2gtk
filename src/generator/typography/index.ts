@@ -6,7 +6,7 @@ export { generateFontStyle } from "./font-style";
 export { generateFontVariantNumeric } from "./font-variant-numeric";
 export { generateFontWeight } from "./font-weight";
 export { generateLetterSpacing } from "./letter-spacing";
-export { generateLineHeight } from "./line-height";
+export { generateLeading, generateLineHeight } from "./line-height";
 export { generateTextDecorationColor } from "./text-decoration-color";
 export { generateTextDecorationLine } from "./text-decoration-line";
 export { generateTextDecorationStyle } from "./text-decoration-style";

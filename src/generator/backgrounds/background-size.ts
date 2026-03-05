@@ -1,11 +1,12 @@
+import type { UtilityResult } from "../../core";
 import { BACKGROUND_SIZE_KEYWORDS } from "../constants";
-import { resolveDynamic } from "../utils";
+import { prop, resolveDynamic } from "../utils";
 
-export const generateBackgroundSize = (cls: string): string[] | null => {
+export const generateBackgroundSize = (cls: string): UtilityResult | null => {
   if (cls in BACKGROUND_SIZE_KEYWORDS) {
-    return [
+    return prop([
       `background-size: ${BACKGROUND_SIZE_KEYWORDS[cls as keyof typeof BACKGROUND_SIZE_KEYWORDS]}`,
-    ];
+    ]);
   }
 
   const match = cls.match(/^bg-size-(\[.+\]|\(.+\))$/);
@@ -14,5 +15,5 @@ export const generateBackgroundSize = (cls: string): string[] | null => {
   const value = resolveDynamic(match[1]);
   if (!value) return null;
 
-  return [`background-size: ${value}`];
+  return prop([`background-size: ${value}`]);
 };

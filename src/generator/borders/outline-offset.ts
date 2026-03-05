@@ -1,16 +1,20 @@
-import { resolveDynamic } from "../utils";
+import type { UtilityResult } from "../../core";
+import { prop, resolveDynamic } from "../utils";
 
-export const generateOutlineOffset = (cls: string): string[] | null => {
+export const generateOutlineOffset = (cls: string): UtilityResult | null => {
   const match = cls.match(/^(-?)outline-offset-(\[.+\]|\(.+\)|[\d.]+)$/);
   if (!match) return null;
 
   const [, negative, raw] = match;
 
-  if (raw.match(/^[\d.]+$/))
-    return [`outline-offset: ${negative ? `calc(${raw}px * -1)` : `${raw}px`}`];
+  if (raw.match(/^[\d.]+$/)) {
+    return prop([
+      `outline-offset: ${negative ? `calc(${raw}px * -1)` : `${raw}px`}`,
+    ]);
+  }
 
   const value = resolveDynamic(raw);
   if (!value) return null;
 
-  return [`outline-offset: ${negative ? `calc(${value} * -1)` : value}`];
+  return prop([`outline-offset: ${negative ? `calc(${value} * -1)` : value}`]);
 };

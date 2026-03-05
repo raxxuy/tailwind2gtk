@@ -1,9 +1,10 @@
+import type { UtilityResult } from "../../core";
 import {
   RADIUS_KEYWORDS,
   RADIUS_SIZES,
   ROUNDED_DIRECTIONS,
 } from "../constants";
-import { resolveDynamic } from "../utils";
+import { prop, resolveDynamic } from "../utils";
 
 const resolveRadius = (raw: string): string | null => {
   if (raw in RADIUS_KEYWORDS)
@@ -12,7 +13,7 @@ const resolveRadius = (raw: string): string | null => {
   return resolveDynamic(raw);
 };
 
-export const generateBorderRadius = (cls: string): string[] | null => {
+export const generateBorderRadius = (cls: string): UtilityResult | null => {
   const match = cls.match(
     /^rounded(-[trbl]{1,2})?(?:-(\[.+\]|\(.+\)|[a-z0-9-]+))?$/,
   );
@@ -24,5 +25,5 @@ export const generateBorderRadius = (cls: string): string[] | null => {
 
   const dir = dirRaw.slice(1);
   const parts = ROUNDED_DIRECTIONS[dir as keyof typeof ROUNDED_DIRECTIONS];
-  return parts.map((p) => `border${p ? `-${p}` : ""}-radius: ${value}`);
+  return prop(parts.map((p) => `border${p ? `-${p}` : ""}-radius: ${value}`));
 };
