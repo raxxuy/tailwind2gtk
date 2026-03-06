@@ -1,7 +1,7 @@
 import { generateRoot, getUtility } from "./generator";
 import { STATES, type State } from "./states";
 
-const escapeClassName = (cls: string) => cls.replace(/[!:.()#/[\]]/g, "\\$&");
+const escapeClassName = (cls: string) => cls.replace(/[!:.'"()#/[\]]/g, "\\$&");
 
 const getStates = (
   cls: string,
