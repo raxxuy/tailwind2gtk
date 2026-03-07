@@ -177,6 +177,17 @@ export const BACKGROUND_SIZE_KEYWORDS = {
   "bg-contain": "contain",
 } as const;
 
+export const INTERPOLATION_MODES = [
+  "srgb",
+  "hsl",
+  "oklab",
+  "oklch",
+  "longer",
+  "shorter",
+  "increasing",
+  "decreasing",
+] as const;
+
 /* SIZING */
 export const SIZING_KEYWORDS = {
   auto: "auto",
