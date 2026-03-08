@@ -31,8 +31,22 @@ export const initConfig = (config: TailwindConfig) => {
   customVariables = config.theme?.variables ?? {};
 };
 
+const splitPrefix = (className: string): string => {
+  let depth = 0;
+  let lastColon = -1;
+
+  for (let i = 0; i < className.length; i++) {
+    const char = className[i];
+    if (char === "[" || char === "(") depth++;
+    else if (char === "]" || char === ")") depth--;
+    else if (char === ":" && depth === 0) lastColon = i;
+  }
+
+  return lastColon === -1 ? className : className.slice(lastColon + 1);
+};
+
 const generate = (className: string): UtilityResult | null => {
-  const cls = className.split(":").at(-1) ?? className;
+  const cls = splitPrefix(className);
   const important = cls.endsWith("!");
   const baseCls = important ? cls.slice(0, -1) : cls;
 
