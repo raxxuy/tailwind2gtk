@@ -1,12 +1,33 @@
 import { generateRoot, getUtility } from "./generator";
 import { STATES, type State } from "./states";
 
-const escapeClassName = (cls: string) => cls.replace(/[!:.,'"%()#/[\]]/g, "\\$&");
+const escapeClassName = (cls: string) =>
+  cls.replace(/[!:.,'"%()#/[\]]/g, "\\$&");
+
+const splitParts = (cls: string): string[] => {
+  const parts: string[] = [];
+  let depth = 0;
+  let current = "";
+
+  for (const char of cls) {
+    if (char === "[" || char === "(") depth++;
+    else if (char === "]" || char === ")") depth--;
+    else if (char === ":" && depth === 0) {
+      parts.push(current);
+      current = "";
+      continue;
+    }
+    current += char;
+  }
+
+  parts.push(current);
+  return parts;
+};
 
 const getStates = (
   cls: string,
 ): { pseudos: string[]; media: string | null } => {
-  const parts = cls.split(":");
+  const parts = splitParts(cls);
   const states = parts.slice(0, -1);
   const media = states.find((s) => s === "dark" || s === "light") ?? null;
   const pseudos = states.filter((s) => s !== "dark" && s !== "light");
@@ -14,7 +35,7 @@ const getStates = (
 };
 
 const getStatePriority = (className: string): number => {
-  const state = className.split(":")[0];
+  const state = splitParts(className)[0];
   const priority = STATES.indexOf(state as State);
   return priority === -1 ? 999 : priority;
 };
