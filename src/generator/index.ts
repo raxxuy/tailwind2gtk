@@ -8,6 +8,7 @@ import * as filters from "./filters";
 import { KEYFRAMES } from "./keyframes";
 import * as sizing from "./sizing";
 import * as spacing from "./spacing";
+import * as transforms from "./transforms";
 import * as transitions from "./transitions";
 import * as typography from "./typography";
 
@@ -23,6 +24,7 @@ const generators = [
   ...Object.values(borders),
   ...Object.values(effects),
   ...Object.values(filters),
+  ...Object.values(transforms),
   ...Object.values(transitions),
 ];
 

@@ -311,6 +311,19 @@ export const BACKGROUND_BLEND_MODE_KEYWORDS = {
   "bg-blend-luminosity": "luminosity",
 } as const;
 
+/* TRANSFORMS */
+export const ORIGIN_KEYWORDS = {
+  center: "center",
+  top: "top",
+  "top-right": "top right",
+  right: "right",
+  "bottom-right": "bottom right",
+  bottom: "bottom",
+  "bottom-left": "bottom left",
+  left: "left",
+  "top-left": "top left",
+} as const;
+
 /* TRANSITIONS */
 export const TRANSITION_PROPERTIES = {
   "": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events",
