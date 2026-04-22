@@ -11,8 +11,6 @@ export const generateMinHeight = (cls: string): UtilityResult | null => {
 
   const [, raw] = match;
 
-  console.log(raw);
-
   if (raw in SIZING_KEYWORDS)
     return prop([`min-height: ${SIZING_KEYWORDS[raw]}`]);
   if (CONTAINER_SIZES.has(`container-${raw}`))

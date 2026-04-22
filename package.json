@@ -1,6 +1,6 @@
 {
   "name": "tailwind2gtk",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "A Tailwind-inspired utility class generator for GTK/AGS applications",
   "main": "src/index.ts",
   "type": "module",
