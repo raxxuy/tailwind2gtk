@@ -13,7 +13,7 @@ export const generateMinWidth = (cls: string): UtilityResult | null => {
 
   if (raw in SIZING_KEYWORDS)
     return prop([`min-width: ${SIZING_KEYWORDS[raw]}`]);
-  if (CONTAINER_SIZES.has(raw))
+  if (CONTAINER_SIZES.has(`container-${raw}`))
     return prop([`min-width: var(--container-${raw})`]);
 
   const value = resolveValue(raw);
