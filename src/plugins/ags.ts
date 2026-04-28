@@ -32,7 +32,11 @@ export const createAgsPlugin = (options: AgsOptions) => {
 
   const seenWidgets = new WeakSet<Gtk.Widget>();
 
-  const loadClasses = (component: { name: string }, name?: string) => {
+  const loadClasses = (
+    component: { name: string },
+    name?: string,
+    shallow = false,
+  ) => {
     const kebabName = name || kebabCase(component.name);
 
     return (self: Gtk.Widget) => {
@@ -41,10 +45,13 @@ export const createAgsPlugin = (options: AgsOptions) => {
         seenWidgets.add(self);
       }
 
-      core.setClasses(getUsedClasses(self));
+      const getClasses = () =>
+        shallow ? self.get_css_classes() : getUsedClasses(self);
+
+      core.setClasses(getClasses());
 
       const handler = self.connect("notify::css-classes", () =>
-        core.setClasses(getUsedClasses(self)),
+        core.setClasses(getClasses()),
       );
 
       onCleanup(() => {
