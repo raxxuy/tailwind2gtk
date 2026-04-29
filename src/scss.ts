@@ -2,7 +2,9 @@ import { generateRoot, getUtility } from "./generator";
 import { STATES, type State } from "./states";
 
 const escapeClassName = (cls: string) =>
-  cls.replace(/[!:.,'"%()#/[\]]/g, "\\$&");
+  cls.replace(/[!:.,'"&%()#/[\]]/g, "\\$&");
+
+const isArbitrarySelector = (part: string) => part.startsWith("[&");
 
 const splitParts = (cls: string): string[] => {
   const parts: string[] = [];
@@ -24,14 +26,16 @@ const splitParts = (cls: string): string[] => {
   return parts;
 };
 
-const getStates = (
-  cls: string,
-): { pseudos: string[]; media: string | null } => {
+const getStates = (cls: string) => {
   const parts = splitParts(cls);
   const states = parts.slice(0, -1);
   const media = states.find((s) => s === "dark" || s === "light") ?? null;
-  const pseudos = states.filter((s) => s !== "dark" && s !== "light");
-  return { pseudos, media };
+  const arbitrarySelector = states.find(isArbitrarySelector) ?? null;
+  const pseudos = states.filter(
+    (s) => s !== "dark" && s !== "light" && !isArbitrarySelector(s),
+  );
+
+  return { pseudos, media, arbitrarySelector };
 };
 
 const getStatePriority = (className: string): number => {
@@ -74,10 +78,13 @@ export const generateScss = (
     const utility = getUtility(cls);
     if (!utility) continue;
 
-    const { pseudos, media } = getStates(cls);
+    const { pseudos, media, arbitrarySelector } = getStates(cls);
     const escapedCls = `.${escapeClassName(cls)}`;
     const pseudoSuffix = pseudos.length > 0 ? `:${pseudos.join(":")}` : "";
-    const outerSelector = `${escapedCls}${pseudoSuffix}`;
+    
+    const outerSelector = arbitrarySelector
+      ? arbitrarySelector.slice(1, -1).replace("&", escapedCls)
+      : `${escapedCls}${pseudoSuffix}`;
 
     const css = utility.selector
       ? buildRule(outerSelector, [
