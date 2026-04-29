@@ -2,7 +2,7 @@ import { generateRoot, getUtility } from "./generator";
 import { STATES, type State } from "./states";
 
 const escapeClassName = (cls: string) =>
-  cls.replace(/[!:.,'"&%()#/[\]]/g, "\\$&");
+  cls.replace(/[!:.,'">&%()#/[\]]/g, "\\$&");
 
 const isArbitrarySelector = (part: string) => part.startsWith("[&");
 
