@@ -1,4 +1,5 @@
 import { escapeClassName } from "../escape";
+import { gradientVars } from "../helpers/gradientVars";
 import { parseClass } from "../parser";
 import type { ResolvedConfig } from "../types";
 import { applyVariants } from "../variants";
@@ -30,28 +31,32 @@ export const generateCSS = (
   );
 
 export const generateRoot = (config: ResolvedConfig): string => {
-  const colorVars = Object.entries(config.colors)
-    .map(([key, value]) => `  --color-${key}: ${value};`)
-    .join("\n");
+  const vars = [
+    `  --spacing: ${config.spacing};`,
+    ...Object.entries(config.colors).map(
+      ([key, value]) => `  --color-${key}: ${value};`,
+    ),
+    ...Object.entries(config.containerSizes).map(
+      ([key, value]) => `  --container-${key}: ${value};`,
+    ),
+    ...Object.entries(config.fontFamilies).map(
+      ([key, value]) => `  --font-${key}: ${value.join(", ")};`,
+    ),
+    ...Object.entries(config.fontSizes).flatMap(([key, [size, lineHeight]]) => [
+      `  --text-${key}: ${size};`,
+      `  --text-${key}--line-height: ${lineHeight};`,
+    ]),
+    ...Object.entries(config.letterSpacings).map(
+      ([key, value]) => `  --tracking-${key}: ${value};`,
+    ),
+    `  ${gradientVars.from}: initial;`,
+    `  ${gradientVars.fromPosition}: 0%;`,
+    `  ${gradientVars.via}: initial;`,
+    `  ${gradientVars.viaPosition}: 50%;`,
+    `  ${gradientVars.to}: initial;`,
+    `  ${gradientVars.toPosition}: 100%;`,
+    `  ${gradientVars.stops}: initial;`,
+  ].join("\n");
 
-  const containerVars = Object.entries(config.containerSizes)
-    .map(([key, value]) => `  --container-${key}: ${value};`)
-    .join("\n");
-
-  const fontFamilyVars = Object.entries(config.fontFamilies)
-    .map(([key, value]) => `  --font-${key}: ${value.join(", ")};`)
-    .join("\n");
-
-  const fontSizeVars = Object.entries(config.fontSizes)
-    .map(
-      ([key, [size, lineHeight]]) =>
-        `  --text-${key}: ${size};\n  --text-${key}--line-height: ${lineHeight};`,
-    )
-    .join("\n");
-
-  const letterSpacingVars = Object.entries(config.letterSpacings)
-    .map(([key, value]) => `  --tracking-${key}: ${value};`)
-    .join("\n");
-
-  return `:root {\n  --spacing: ${config.spacing};\n${colorVars}\n${containerVars}\n${fontFamilyVars}\n${fontSizeVars}\n${letterSpacingVars}\n}`;
+  return `:root {\n${vars}\n}`;
 };

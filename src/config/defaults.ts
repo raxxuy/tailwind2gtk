@@ -1,4 +1,5 @@
 import type { ResolvedConfig } from "../types";
+
 export const defaults: ResolvedConfig = {
   colors: {
     black: "#000",

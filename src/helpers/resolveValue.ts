@@ -8,7 +8,7 @@ export const resolveValue = (value: string): string | null => {
 
   if (raw === "px") return `${sign}1px`;
   if (raw.startsWith("[") && raw.endsWith("]"))
-    return `${sign}${raw.slice(1, -1)}`;
+    return `${sign}${raw.slice(1, -1).replace(/_/g, " ")}`;
   if (raw.startsWith("(") && raw.endsWith(")"))
     return negative
       ? `calc(-1 * var(${raw.slice(1, -1)}))`

@@ -1,11 +1,13 @@
 {
   "name": "tailwind2gtk",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A Tailwind-inspired utility class generator for GTK/AGS applications",
-  "main": "src/index.ts",
+  "main": "./index.ts",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./plugins/ags": "./src/plugins/ags.ts",
+    "./plugins/node": "./src/plugins/node.ts"
   },
   "scripts": {
     "lint": "biome lint ./src",
