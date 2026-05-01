@@ -2,8 +2,8 @@ import type { ResolvedConfig } from "../types";
 
 export const defaults: ResolvedConfig = {
   colors: {
-    black: "#000",
-    white: "#fff",
+    black: "oklch(0% 0 0)",
+    white: "oklch(100% 0 0)",
     "red-50": "oklch(97.1% 0.013 17.38)",
     "red-100": "oklch(93.6% 0.032 17.717)",
     "red-200": "oklch(88.5% 0.062 18.334)",
