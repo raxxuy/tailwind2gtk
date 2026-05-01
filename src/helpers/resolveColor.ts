@@ -12,7 +12,7 @@ export const resolveColor = (
 ): string | null => {
   if (value in statics) return statics[value];
 
-  const withOpacity = value.match(/^([\w-]+)\/(\d+(?:\.\d+)?)$/);
+  const withOpacity = value.match(/^(.+)\/(\d+(?:\.\d+)?)$/);
   if (withOpacity && withOpacity[1] in config.colors)
     return `oklch(from var(--color-${withOpacity[1]}) l c h / ${withOpacity[2]}%)`;
 

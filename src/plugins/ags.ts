@@ -15,9 +15,15 @@ const readFile = (path: string): string | null => {
 
 const writeFile = (path: string, content: string): void => {
   const file = Gio.File.new_for_path(path);
-  const stream = file.replace(null, false, Gio.FileCreateFlags.NONE, null);
-  stream.write_all(new TextEncoder().encode(content), null);
-  stream.close(null);
+  const bytes = new TextEncoder().encode(content);
+  file.replace_contents_async(
+    bytes,
+    null,
+    false,
+    Gio.FileCreateFlags.REPLACE_DESTINATION,
+    null,
+    null,
+  );
 };
 
 export const agsPlugin = (
