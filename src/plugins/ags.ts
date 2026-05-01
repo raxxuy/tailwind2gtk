@@ -20,12 +20,16 @@ const writeFile = (path: string, content: string): void => {
   stream.close(null);
 };
 
-export const agsPlugin = (options?: Plugin["options"]): Plugin => {
+export const agsPlugin = (
+  options?: Plugin["options"],
+  onUpdate?: () => void,
+): Plugin => {
   const plugin = createPlugin({
     name: "ags",
     options,
     readFile,
     writeFile,
+    onUpdate,
   });
 
   const traverseWidget = (self: Gtk.Widget): string[] => {

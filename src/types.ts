@@ -52,6 +52,7 @@ export interface CacheOptions {
 
 export interface Plugin {
   name: string;
+  onUpdate?: () => void;
   options?: Omit<CacheOptions, "readFile" | "writeFile">;
   readFile: (path: string) => string | null;
   run: (classes: string[]) => void;
