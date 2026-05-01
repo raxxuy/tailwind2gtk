@@ -1,7 +1,10 @@
 import { resolveValue } from "../../helpers/resolveValue";
-import type { CSSRule } from "../../types";
+import type { CSSRule, ResolvedConfig } from "../../types";
 
-export const resolvePadding = (utility: string): CSSRule[] | null => {
+export const resolvePadding = (
+  utility: string,
+  _config: ResolvedConfig,
+): CSSRule[] | null => {
   const match = utility.match(/^(p|px|py|pt|pr|pb|pl)-(.+)$/);
   if (!match) return null;
 

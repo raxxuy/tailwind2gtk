@@ -1,3 +1,3 @@
 export const escapeClassName = (cls: string): string => {
-  return cls.replace(/[:[\]()/&.!>]/g, "\\$&");
+  return cls.replace(/[:*#[\]()/&.!>]/g, "\\$&");
 };

@@ -19,7 +19,7 @@ export const updateCache = (classes: string[], options: CacheOptions): void => {
 
   if (newClasses.length === 0) return;
 
-  const generated = generateCSS(newClasses);
+  const generated = generateCSS(newClasses, config);
   Object.assign(cache, generated);
 
   const root = generateRoot(config);

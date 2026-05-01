@@ -1,14 +1,16 @@
-import { defaults } from "../../config/defaults";
 import { resolveValue } from "../../helpers/resolveValue";
-import type { CSSRule } from "../../types";
+import type { CSSRule, ResolvedConfig } from "../../types";
 
-export const resolveMinWidth = (utility: string): CSSRule[] | null => {
+export const resolveMinWidth = (
+  utility: string,
+  config: ResolvedConfig,
+): CSSRule[] | null => {
   const match = utility.match(/^min-w-(.+)$/);
   if (!match) return null;
 
   const [, value] = match;
 
-  if (value in defaults.containerSizes)
+  if (value in config.containerSizes)
     return [
       {
         selector: "",

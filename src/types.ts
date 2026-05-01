@@ -20,16 +20,26 @@ export interface CSSRule {
 
 export interface TailwindConfig {
   theme?: {
-    spacing?: number;
+    colors: Record<string, string>;
     container?: {
       screens?: Record<string, string>;
     };
+    fontFamily?: Record<string, string[]>;
+    fontSize?: Record<string, [string, string]>;
+    fontWeight?: Record<string, string>;
+    letterSpacing?: Record<string, string>;
+    spacing?: string;
   };
 }
 
 export interface ResolvedConfig {
+  colors: Record<string, string>;
   containerSizes: Record<string, string>;
-  spacing: number;
+  fontFamilies: Record<string, string[]>;
+  fontSizes: Record<string, [string, string]>;
+  fontWeights: Record<string, string>;
+  letterSpacings: Record<string, string>;
+  spacing: string;
 }
 
 export interface CacheOptions {
