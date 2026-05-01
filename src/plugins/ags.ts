@@ -1,71 +1,59 @@
-import { onCleanup } from "ags";
-import type { Gtk } from "ags/gtk4";
-import { kebabCase, range } from "es-toolkit";
-import { type CoreOptions, createCore } from "../core";
+import Gio from "gi://Gio";
+import type Gtk from "gi://Gtk";
+import type { Plugin } from "../types";
+import { createPlugin } from "./base";
 
-export interface AgsOptions extends CoreOptions {
-  getUsedClasses?: (widget: Gtk.Widget | Gtk.Widget[]) => string[];
-}
-
-const defaultGetUsedClasses = (widget: Gtk.Widget | Gtk.Widget[]): string[] => {
-  const classes = new Set<string>();
-
-  const traverse = (w: Gtk.Widget) => {
-    w.get_css_classes().forEach((cls: string) => {
-      classes.add(cls);
-    });
-
-    const children = w.observe_children();
-
-    range(children.get_n_items()).forEach((i) => {
-      traverse(children.get_item(i) as Gtk.Widget);
-    });
-  };
-
-  Array.isArray(widget) ? widget.forEach(traverse) : traverse(widget);
-  return Array.from(classes);
+const readFile = (path: string): string | null => {
+  try {
+    const file = Gio.File.new_for_path(path);
+    const [, contents] = file.load_contents(null);
+    return new TextDecoder().decode(contents);
+  } catch {
+    return null;
+  }
 };
 
-export const createAgsPlugin = (options: AgsOptions) => {
-  const { getUsedClasses = defaultGetUsedClasses, ...coreOptions } = options;
-  const core = createCore(coreOptions);
+const writeFile = (path: string, content: string): void => {
+  const file = Gio.File.new_for_path(path);
+  const stream = file.replace(null, false, Gio.FileCreateFlags.NONE, null);
+  stream.write_all(new TextEncoder().encode(content), null);
+  stream.close(null);
+};
 
-  const seenWidgets = new WeakSet<Gtk.Widget>();
+export const agsPlugin = (options?: Plugin["options"]): Plugin => {
+  const plugin = createPlugin({
+    name: "ags",
+    options,
+    readFile,
+    writeFile,
+  });
 
-  const loadClasses = (
-    component: { name: string },
-    name?: string,
-    shallow = false,
-  ) => {
-    const kebabName = name || kebabCase(component.name);
+  const traverseWidget = (self: Gtk.Widget): string[] => {
+    const classes = self.get_css_classes();
 
-    return (self: Gtk.Widget) => {
-      if (!seenWidgets.has(self)) {
-        core.isNewComponent(kebabName);
-        seenWidgets.add(self);
-      }
+    const childClasses: string[] = [];
+    let child = self.get_first_child();
+    while (child) {
+      childClasses.push(...traverseWidget(child));
+      child = child.get_next_sibling();
+    }
 
-      const getClasses = () =>
-        shallow ? self.get_css_classes() : getUsedClasses(self);
-
-      core.setClasses(getClasses());
-
-      const handler = self.connect("notify::css-classes", () =>
-        core.setClasses(getClasses()),
-      );
-
-      onCleanup(() => {
-        self.disconnect(handler);
-        core.flushWrite();
-      });
-    };
+    return [...classes, ...childClasses];
   };
 
   return {
-    ...core,
-    getCachedClasses: core.getUsedClasses,
-    loadClasses,
-    getUsedClasses: (widget?: Gtk.Widget | Gtk.Widget[]) =>
-      getUsedClasses(widget),
+    ...plugin,
+    setup: (self: Gtk.Widget) => {
+      plugin.run(self.get_css_classes());
+
+      const handler = self.connect("notify::css-classes", () =>
+        plugin.run(self.get_css_classes()),
+      );
+
+      return () => self.disconnect(handler);
+    },
+    scan: (root: Gtk.Widget) => {
+      plugin.run(traverseWidget(root));
+    },
   };
 };
