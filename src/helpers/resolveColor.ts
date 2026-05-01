@@ -13,13 +13,14 @@ export const resolveColor = (
   if (value in statics) return statics[value];
 
   const withOpacity = value.match(/^([\w-]+)\/(\d+(?:\.\d+)?)$/);
-  if (withOpacity && withOpacity[1] in config.colors) {
-    const inner = config.colors[withOpacity[1]].replace(
-      /^oklch\((.+)\)$/,
-      "$1",
-    );
-    return `oklch(${inner} / ${withOpacity[2]}%)`;
-  }
+  if (withOpacity[1] in config.colors)
+    return `oklch(from var(--color-${withOpacity[1]}) l c h / ${withOpacity[2]}%)`;
+
+  if (withOpacity[1].startsWith("(") && withOpacity[1].endsWith(")"))
+    return `oklch(from var(${withOpacity[1].slice(1, -1)}) l c h / ${withOpacity[2]}%)`;
+
+  if (withOpacity[1].startsWith("[") && withOpacity[1].endsWith("]"))
+    return `oklch(from ${withOpacity[1].slice(1, -1)} l c h / ${withOpacity[2]}%)`;
 
   if (value in config.colors) return `var(--color-${value})`;
 

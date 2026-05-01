@@ -6,28 +6,50 @@ import { applyVariants } from "../variants";
 import { resolveUtility } from "./resolve";
 import { serializeRules } from "./serialize";
 
+const pseudoPriority: Record<string, number> = {
+  "first-child": 0,
+  "last-child": 1,
+  hover: 2,
+  active: 3,
+  focus: 4,
+  "focus-within": 5,
+  "focus-visible": 6,
+  checked: 7,
+  selected: 8,
+  disabled: 9,
+};
+
+const getClassPriority = (cls: string): number => {
+  const parsed = parseClass(cls);
+  const pseudo = parsed.variants.find((v) => v.kind === "pseudo");
+  if (!pseudo) return -1;
+  return pseudoPriority[pseudo.value] ?? 0;
+};
+
 export const generateCSS = (
   classes: string[],
   config: ResolvedConfig,
 ): Record<string, string> =>
   Object.fromEntries(
-    classes.flatMap((cls) => {
-      const parsed = parseClass(cls);
-      const rules = resolveUtility(parsed.utility, config);
-      if (!rules) return [];
+    [...classes]
+      .sort((a, b) => getClassPriority(a) - getClassPriority(b))
+      .flatMap((cls) => {
+        const parsed = parseClass(cls);
+        const rules = resolveUtility(parsed.utility, config);
+        if (!rules) return [];
 
-      const escapedSelector = `.${escapeClassName(cls)}`;
-      const withSelector = rules.map((rule) => ({
-        ...rule,
-        selector: escapedSelector,
-      }));
-      const { rules: finalRules, mediaQuery } = applyVariants(
-        parsed.variants,
-        withSelector,
-      );
+        const escapedSelector = `.${escapeClassName(cls)}`;
+        const withSelector = rules.map((rule) => ({
+          ...rule,
+          selector: escapedSelector,
+        }));
+        const { rules: finalRules, mediaQuery } = applyVariants(
+          parsed.variants,
+          withSelector,
+        );
 
-      return [[cls, serializeRules(finalRules, mediaQuery)]];
-    }),
+        return [[cls, serializeRules(finalRules, mediaQuery)]];
+      }),
   );
 
 export const generateRoot = (config: ResolvedConfig): string => {
