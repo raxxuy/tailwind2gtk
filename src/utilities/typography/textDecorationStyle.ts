@@ -1,23 +1,17 @@
 import type { CSSRule, ResolvedConfig } from "../../types";
 
-const styles: Record<string, string> = {
-  solid: "solid",
-  double: "double",
-  dotted: "dotted",
-  dashed: "dashed",
-  wavy: "wavy",
-};
+const styles = ["solid", "double", "dotted", "dashed", "wavy"];
 
 export const resolveTextDecorationStyle = (
   utility: string,
   _config: ResolvedConfig,
 ): CSSRule[] | null => {
-  const named = utility.match(/^decoration-([\w-]+)$/);
-  if (named && named[1] in styles)
+  const style = utility.match(/^decoration-([\w-]+)$/);
+  if (style && styles.includes(style[1]))
     return [
       {
         selector: "",
-        properties: { "text-decoration-style": styles[named[1]] },
+        properties: { "text-decoration-style": style[1] },
       },
     ];
 

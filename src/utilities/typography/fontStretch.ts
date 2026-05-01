@@ -1,25 +1,25 @@
 import type { CSSRule, ResolvedConfig } from "../../types";
 
-const stretches: Record<string, string> = {
-  "ultra-condensed": "ultra-condensed",
-  "extra-condensed": "extra-condensed",
-  condensed: "condensed",
-  "semi-condensed": "semi-condensed",
-  normal: "normal",
-  "semi-expanded": "semi-expanded",
-  expanded: "expanded",
-  "extra-expanded": "extra-expanded",
-  "ultra-expanded": "ultra-expanded",
-};
+const stretches = [
+  "ultra-condensed",
+  "extra-condensed",
+  "condensed",
+  "semi-condensed",
+  "normal",
+  "semi-expanded",
+  "expanded",
+  "extra-expanded",
+  "ultra-expanded",
+];
 
 export const resolveFontStretch = (
   utility: string,
   _config: ResolvedConfig,
 ): CSSRule[] | null => {
-  const named = utility.match(/^font-stretch-([\w-]+)$/);
-  if (named && named[1] in stretches)
+  const stretch = utility.match(/^font-stretch-([\w-]+)$/);
+  if (stretch && stretches.includes(stretch[1]))
     return [
-      { selector: "", properties: { "font-stretch": stretches[named[1]] } },
+      { selector: "", properties: { "font-stretch": stretches[stretch[1]] } },
     ];
 
   const percentage = utility.match(/^font-stretch-(\d+)%$/);

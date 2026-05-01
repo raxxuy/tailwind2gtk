@@ -20,6 +20,7 @@ export interface CSSRule {
 
 export interface TailwindConfig {
   theme?: {
+    borderRadius?: Record<string, string>;
     colors: Record<string, string>;
     container?: {
       screens?: Record<string, string>;
@@ -33,6 +34,7 @@ export interface TailwindConfig {
 }
 
 export interface ResolvedConfig {
+  borderRadii: Record<string, string>;
   colors: Record<string, string>;
   containerSizes: Record<string, string>;
   fontFamilies: Record<string, string[]>;

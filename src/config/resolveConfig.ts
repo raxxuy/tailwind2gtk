@@ -2,6 +2,10 @@ import type { ResolvedConfig, TailwindConfig } from "../types";
 import { defaults } from "./defaults";
 
 export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
+  borderRadii: {
+    ...defaults.borderRadii,
+    ...config?.theme?.borderRadius,
+  },
   colors: {
     ...defaults.colors,
     ...config?.theme?.colors,

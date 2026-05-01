@@ -1,6 +1,16 @@
 import type { ResolvedConfig } from "../types";
 
 export const defaults: ResolvedConfig = {
+  borderRadii: {
+    xs: "0.125rem",
+    sm: "0.25rem",
+    md: "0.375rem",
+    lg: "0.5rem",
+    xl: "0.75rem",
+    "2xl": "1rem",
+    "3xl": "1.5rem",
+    "4xl": "2rem",
+  },
   colors: {
     black: "oklch(0% 0 0)",
     white: "oklch(100% 0 0)",

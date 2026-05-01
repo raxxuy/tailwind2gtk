@@ -54,15 +54,17 @@ export const generateCSS = (
 
 export const generateRoot = (config: ResolvedConfig): string => {
   const vars = [
-    `  --spacing: ${config.spacing};`,
     ...Object.entries(config.colors).map(
       ([key, value]) => `  --color-${key}: ${value};`,
+    ),
+    ...Object.entries(config.fontFamilies).map(
+      ([key, value]) => `  --font-${key}: ${value.join(", ")};`,
     ),
     ...Object.entries(config.containerSizes).map(
       ([key, value]) => `  --container-${key}: ${value};`,
     ),
-    ...Object.entries(config.fontFamilies).map(
-      ([key, value]) => `  --font-${key}: ${value.join(", ")};`,
+    ...Object.entries(config.borderRadii).map(
+      ([key, value]) => `  --radius-${key}: ${value};`,
     ),
     ...Object.entries(config.fontSizes).flatMap(([key, [size, lineHeight]]) => [
       `  --text-${key}: ${size};`,
@@ -71,6 +73,7 @@ export const generateRoot = (config: ResolvedConfig): string => {
     ...Object.entries(config.letterSpacings).map(
       ([key, value]) => `  --tracking-${key}: ${value};`,
     ),
+    `  --spacing: ${config.spacing};`,
     `  ${gradientVars.from}: initial;`,
     `  ${gradientVars.fromPosition}: 0%;`,
     `  ${gradientVars.via}: initial;`,

@@ -1,5 +1,6 @@
 import type { CSSRule, ResolvedConfig } from "../types";
 import * as backgrounds from "../utilities/backgrounds";
+import * as borders from "../utilities/borders";
 import * as sizing from "../utilities/sizing";
 import * as spacing from "../utilities/spacing";
 import * as typography from "../utilities/typography";
@@ -13,6 +14,7 @@ export const resolveUtility = (
     ...Object.values(sizing),
     ...Object.values(typography),
     ...Object.values(backgrounds),
+    ...Object.values(borders),
   ];
 
   for (const resolver of resolvers) {
