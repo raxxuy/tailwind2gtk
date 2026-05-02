@@ -2,8 +2,10 @@ import type { CSSRule, ResolvedConfig } from "../types";
 import * as backgrounds from "../utilities/backgrounds";
 import * as borders from "../utilities/borders";
 import * as effects from "../utilities/effects";
+import * as interactivity from "../utilities/interactivity";
 import * as sizing from "../utilities/sizing";
 import * as spacing from "../utilities/spacing";
+import * as transforms from "../utilities/transforms";
 import * as transitionsAnimations from "../utilities/transitions-animations";
 import * as typography from "../utilities/typography";
 
@@ -19,6 +21,8 @@ export const resolveUtility = (
     ...Object.values(backgrounds),
     ...Object.values(borders),
     ...Object.values(transitionsAnimations),
+    ...Object.values(transforms),
+    ...Object.values(interactivity),
   ];
 
   for (const resolver of resolvers) {

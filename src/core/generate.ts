@@ -98,6 +98,18 @@ export const generateRoot = (config: ResolvedConfig): string => {
     `  ${gradientVars.stops}: initial;`,
     `  --default-transition-duration: 150ms;`,
     `  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);`,
+    `  --rotate: initial;`,
+    `  --rotate-x: initial;`,
+    `  --rotate-y: initial;`,
+    `  --rotate-z: initial;`,
+    `  --scale-x: scaleX(1);`,
+    `  --scale-y: scaleY(1);`,
+    `  --scale-z: scaleZ(1);`,
+    `  --skew-x: initial;`,
+    `  --skew-y: initial;`,
+    `  --translate-x: translateX(0);`,
+    `  --translate-y: translateY(0);`,
+    `  --translate-z: translateZ(0);`,
   ].join("\n");
 
   const keyframes = Object.entries(config.keyframes)
