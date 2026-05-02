@@ -59,6 +59,6 @@ export interface Plugin {
   readFile: (path: string) => string | null;
   run: (classes: string[]) => void;
   scan?: (root: Gtk.Widget) => void;
-  setup?: (self: Gtk.Widget) => () => void;
+  setup?: (self: Gtk.Widget) => void;
   writeFile: (path: string, content: string) => void;
 }

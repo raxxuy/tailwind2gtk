@@ -1,5 +1,6 @@
 import Gio from "gi://Gio";
-import type Gtk from "gi://Gtk";
+import { onCleanup } from "ags";
+import type { Gtk } from "ags/gtk4";
 import type { Plugin } from "../types";
 import { createPlugin } from "./base";
 
@@ -54,13 +55,13 @@ export const agsPlugin = (
   return {
     ...plugin,
     setup: (self: Gtk.Widget) => {
-      plugin.run(self.get_css_classes());
+      plugin.run(traverseWidget(self));
 
       const handler = self.connect("notify::css-classes", () =>
-        plugin.run(self.get_css_classes()),
+        plugin.run(traverseWidget(self)),
       );
 
-      return () => self.disconnect(handler);
+      onCleanup(() => self.disconnect(handler));
     },
     scan: (root: Gtk.Widget) => {
       plugin.run(traverseWidget(root));
