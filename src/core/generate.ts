@@ -82,6 +82,12 @@ export const generateRoot = (config: ResolvedConfig): string => {
     ...Object.entries(config.textShadows).map(
       ([key, value]) => `  --text-shadow-${key}: ${value};`,
     ),
+    ...Object.entries(config.transitionTimingFunctions).map(
+      ([key, value]) => `  --ease-${key}: ${value};`,
+    ),
+    ...Object.entries(config.animations).map(
+      ([key, value]) => `  --animate-${key}: ${value};`,
+    ),
     `  --spacing: ${config.spacing};`,
     `  ${gradientVars.from}: initial;`,
     `  ${gradientVars.fromPosition}: 0%;`,
@@ -90,7 +96,23 @@ export const generateRoot = (config: ResolvedConfig): string => {
     `  ${gradientVars.to}: initial;`,
     `  ${gradientVars.toPosition}: 100%;`,
     `  ${gradientVars.stops}: initial;`,
+    `  --default-transition-duration: 150ms;`,
+    `  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);`,
   ].join("\n");
 
-  return `:root {\n${vars}\n}`;
+  const keyframes = Object.entries(config.keyframes)
+    .map(([name, frames]) => {
+      const frameBlocks = Object.entries(frames)
+        .map(([selector, properties]) => {
+          const props = Object.entries(properties)
+            .map(([prop, value]) => `    ${prop}: ${value};`)
+            .join("\n");
+          return `  ${selector} {\n${props}\n  }`;
+        })
+        .join("\n");
+      return `@keyframes ${name} {\n${frameBlocks}\n}`;
+    })
+    .join("\n");
+
+  return `:root {\n${vars}\n}\n${keyframes}`;
 };

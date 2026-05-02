@@ -20,6 +20,7 @@ export interface CSSRule {
 
 export interface TailwindConfig {
   theme?: {
+    animation?: Record<string, string>;
     borderRadius?: Record<string, string>;
     boxShadow?: Record<string, string>;
     colors?: Record<string, string>;
@@ -30,13 +31,16 @@ export interface TailwindConfig {
     fontSize?: Record<string, [string, string]>;
     fontWeight?: Record<string, string>;
     insetBoxShadow?: Record<string, string>;
+    keyframes?: Record<string, Record<string, Record<string, string>>>;
     letterSpacing?: Record<string, string>;
     spacing?: string;
     textShadow?: Record<string, string>;
+    transitionTimingFunction?: Record<string, string>;
   };
 }
 
 export interface ResolvedConfig {
+  animations: Record<string, string>;
   borderRadii: Record<string, string>;
   boxShadows: Record<string, string>;
   colors: Record<string, string>;
@@ -45,9 +49,11 @@ export interface ResolvedConfig {
   fontSizes: Record<string, [string, string]>;
   fontWeights: Record<string, string>;
   insetBoxShadows: Record<string, string>;
+  keyframes: Record<string, Record<string, Record<string, string>>>;
   letterSpacings: Record<string, string>;
   spacing: string;
   textShadows: Record<string, string>;
+  transitionTimingFunctions: Record<string, string>;
 }
 
 export interface CacheOptions {

@@ -2,6 +2,10 @@ import type { ResolvedConfig, TailwindConfig } from "../types";
 import { defaults } from "./defaults";
 
 export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
+  animations: {
+    ...defaults.animations,
+    ...config?.theme?.animation,
+  },
   borderRadii: {
     ...defaults.borderRadii,
     ...config?.theme?.borderRadius,
@@ -34,6 +38,10 @@ export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
     ...defaults.insetBoxShadows,
     ...config?.theme?.insetBoxShadow,
   },
+  keyframes: {
+    ...defaults.keyframes,
+    ...config?.theme?.keyframes,
+  },
   letterSpacings: {
     ...defaults.letterSpacings,
     ...config?.theme?.letterSpacing,
@@ -42,5 +50,9 @@ export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
   textShadows: {
     ...defaults.textShadows,
     ...config?.theme?.textShadow,
+  },
+  transitionTimingFunctions: {
+    ...defaults.transitionTimingFunctions,
+    ...config?.theme?.transitionTimingFunction,
   },
 });

@@ -1,6 +1,11 @@
 import type { ResolvedConfig } from "../types";
 
 export const defaults: ResolvedConfig = {
+  animations: {
+    spin: "spin 1s linear infinite",
+    ping: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
+    pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+  },
   borderRadii: {
     xs: "0.125rem",
     sm: "0.25rem",
@@ -385,6 +390,11 @@ export const defaults: ResolvedConfig = {
     xs: "inset 0 1px 1px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
     sm: "inset 0 2px 4px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
   },
+  keyframes: {
+    spin: { to: { transform: "rotate(360deg)" } },
+    ping: { "75%, 100%": { transform: "scale(2)", opacity: "0" } },
+    pulse: { "50%": { opacity: "0.5" } },
+  },
   letterSpacings: {
     tighter: "-0.05em",
     tight: "-0.025em",
@@ -400,5 +410,10 @@ export const defaults: ResolvedConfig = {
     sm: "0px 1px 0px var(--shadow-color, rgb(0 0 0 / 0.075)), 0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.075))",
     md: "0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.1)), 0px 1px 2px var(--shadow-color, rgb(0 0 0 / 0.1))",
     lg: "0px 1px 2px var(--shadow-color, rgb(0 0 0 / 0.1)), 0px 3px 2px var(--shadow-color, rgb(0 0 0 / 0.1))",
+  },
+  transitionTimingFunctions: {
+    in: "cubic-bezier(0.4, 0, 1, 1)",
+    out: "cubic-bezier(0, 0, 0.2, 1)",
+    "in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
   },
 };

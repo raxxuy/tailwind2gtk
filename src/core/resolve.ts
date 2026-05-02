@@ -4,6 +4,7 @@ import * as borders from "../utilities/borders";
 import * as effects from "../utilities/effects";
 import * as sizing from "../utilities/sizing";
 import * as spacing from "../utilities/spacing";
+import * as transitionsAnimations from "../utilities/transitions-animations";
 import * as typography from "../utilities/typography";
 
 export const resolveUtility = (
@@ -17,6 +18,7 @@ export const resolveUtility = (
     ...Object.values(typography),
     ...Object.values(backgrounds),
     ...Object.values(borders),
+    ...Object.values(transitionsAnimations),
   ];
 
   for (const resolver of resolvers) {
