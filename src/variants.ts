@@ -1,7 +1,7 @@
 import type { CSSRule, Variant } from "./types";
 
 const parseArbitraryVariant = (value: string, selector: string): string => {
-  const inner = value.slice(1, -1);
+  const inner = value.slice(1, -1).replace(/_/g, " ");
   return inner.replace("&", selector);
 };
 
