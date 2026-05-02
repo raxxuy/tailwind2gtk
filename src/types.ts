@@ -47,18 +47,21 @@ export interface ResolvedConfig {
 export interface CacheOptions {
   cssPath?: string;
   jsonPath?: string;
+  onCacheUpdate?: (
+    cache: Record<string, string>,
+    config: ResolvedConfig,
+  ) => void;
   readFile: (path: string) => string | null;
   tailwindConfig?: TailwindConfig;
-  writeFile: (path: string, content: string) => void;
+  writeFile: (path: string, content: string) => Promise<void>;
 }
 
 export interface Plugin {
   name: string;
-  onUpdate?: () => void;
   options?: Omit<CacheOptions, "readFile" | "writeFile">;
   readFile: (path: string) => string | null;
-  run: (classes: string[]) => void;
+  run: (classes: string[]) => Promise<void>;
   scan?: (root: Gtk.Widget) => void;
   setup?: (self: Gtk.Widget) => void;
-  writeFile: (path: string, content: string) => void;
+  writeFile: (path: string, content: string) => Promise<void>;
 }

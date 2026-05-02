@@ -3,15 +3,14 @@ import type { Plugin } from "../types";
 
 export const createPlugin = (plugin: Omit<Plugin, "run">): Plugin => ({
   ...plugin,
-  run: (classes: string[]) => {
-    updateCache(classes, {
+  run: async (classes: string[]) => {
+    await updateCache(classes, {
       jsonPath: plugin.options?.jsonPath,
       cssPath: plugin.options?.cssPath,
+      onCacheUpdate: plugin.options?.onCacheUpdate ?? (() => {}),
       tailwindConfig: plugin.options?.tailwindConfig,
       readFile: plugin.readFile,
       writeFile: plugin.writeFile,
     });
-
-    plugin.onUpdate?.();
   },
 });

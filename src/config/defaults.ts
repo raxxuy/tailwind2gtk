@@ -348,7 +348,7 @@ export const defaults: ResolvedConfig = {
   fontSizes: {
     xs: ["0.75rem", "calc(1 / 0.75)"],
     sm: ["0.875rem", "calc(1.25 / 0.875)"],
-    md: ["1rem", "calc(1.5 / 1)"],
+    base: ["1rem", "calc(1.5 / 1)"],
     lg: ["1.125rem", "calc(1.75 / 1.125)"],
     xl: ["1.25rem", "calc(1.75 / 1.25)"],
     "2xl": ["1.5rem", "calc(2 / 1.5)"],
