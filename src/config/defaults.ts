@@ -11,6 +11,15 @@ export const defaults: ResolvedConfig = {
     "3xl": "1.5rem",
     "4xl": "2rem",
   },
+  boxShadows: {
+    "2xs": "0 1px var(--shadow-color, rgb(0 0 0 / 0.05))",
+    xs: "0 1px 2px 0 var(--shadow-color, rgb(0 0 0 / 0.05))",
+    sm: "0 1px 3px 0 var(--shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--shadow-color, rgb(0 0 0 / 0.1))",
+    md: "0 4px 6px -1px var(--shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--shadow-color, rgb(0 0 0 / 0.1))",
+    lg: "0 10px 15px -3px var(--shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--shadow-color, rgb(0 0 0 / 0.1))",
+    xl: "0 20px 25px -5px var(--shadow-color, rgb(0 0 0 / 0.1)), 0 8px 10px -6px var(--shadow-color, rgb(0 0 0 / 0.1))",
+    "2xl": "0 25px 50px -12px var(--shadow-color, rgb(0 0 0 / 0.25))",
+  },
   colors: {
     black: "oklch(0% 0 0)",
     white: "oklch(100% 0 0)",
@@ -371,6 +380,11 @@ export const defaults: ResolvedConfig = {
     extrabold: "800",
     black: "900",
   },
+  insetBoxShadows: {
+    "2xs": "inset 0 1px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
+    xs: "inset 0 1px 1px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
+    sm: "inset 0 2px 4px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
+  },
   letterSpacings: {
     tighter: "-0.05em",
     tight: "-0.025em",
@@ -380,4 +394,11 @@ export const defaults: ResolvedConfig = {
     widest: "0.1em",
   },
   spacing: "0.25rem",
+  textShadows: {
+    "2xs": "0px 1px 0px var(--shadow-color, rgb(0 0 0 / 0.15))",
+    xs: "0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.2))",
+    sm: "0px 1px 0px var(--shadow-color, rgb(0 0 0 / 0.075)), 0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.075))",
+    md: "0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.1)), 0px 1px 2px var(--shadow-color, rgb(0 0 0 / 0.1))",
+    lg: "0px 1px 2px var(--shadow-color, rgb(0 0 0 / 0.1)), 0px 3px 2px var(--shadow-color, rgb(0 0 0 / 0.1))",
+  },
 };

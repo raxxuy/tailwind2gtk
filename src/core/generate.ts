@@ -73,6 +73,15 @@ export const generateRoot = (config: ResolvedConfig): string => {
     ...Object.entries(config.letterSpacings).map(
       ([key, value]) => `  --tracking-${key}: ${value};`,
     ),
+    ...Object.entries(config.boxShadows).map(
+      ([key, value]) => `  --shadow-${key}: ${value};`,
+    ),
+    ...Object.entries(config.insetBoxShadows).map(
+      ([key, value]) => `  --inset-shadow-${key}: ${value};`,
+    ),
+    ...Object.entries(config.textShadows).map(
+      ([key, value]) => `  --text-shadow-${key}: ${value};`,
+    ),
     `  --spacing: ${config.spacing};`,
     `  ${gradientVars.from}: initial;`,
     `  ${gradientVars.fromPosition}: 0%;`,

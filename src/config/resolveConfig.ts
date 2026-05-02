@@ -6,6 +6,10 @@ export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
     ...defaults.borderRadii,
     ...config?.theme?.borderRadius,
   },
+  boxShadows: {
+    ...defaults.boxShadows,
+    ...config?.theme?.boxShadow,
+  },
   colors: {
     ...defaults.colors,
     ...config?.theme?.colors,
@@ -26,9 +30,17 @@ export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
     ...defaults.fontWeights,
     ...config?.theme?.fontWeight,
   },
+  insetBoxShadows: {
+    ...defaults.insetBoxShadows,
+    ...config?.theme?.insetBoxShadow,
+  },
   letterSpacings: {
     ...defaults.letterSpacings,
     ...config?.theme?.letterSpacing,
   },
   spacing: config?.theme?.spacing ?? defaults.spacing,
+  textShadows: {
+    ...defaults.textShadows,
+    ...config?.theme?.textShadow,
+  },
 });
