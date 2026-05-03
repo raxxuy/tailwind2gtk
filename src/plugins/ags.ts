@@ -38,56 +38,36 @@ const writeFile = (path: string, content: string): Promise<void> =>
 
 export const agsPlugin = (options?: Plugin["options"]): Plugin => {
   const plugin = createPlugin({ name: "ags", options, readFile, writeFile });
+  let setupCount = 0;
 
-  const traverseWidget = (self: Gtk.Widget): Set<string> => {
-    const classes = new Set(self.get_css_classes() as string[]);
-    let child = self.get_first_child();
+  const collectClasses = (widget: Gtk.Widget): string[] => {
+    const classes = [...(widget.get_css_classes() as string[])];
+    let child = widget.get_first_child();
     while (child) {
-      for (const cls of traverseWidget(child)) classes.add(cls);
+      classes.push(...collectClasses(child));
       child = child.get_next_sibling();
     }
     return classes;
   };
 
-  const pending = new Set<string>();
-  const lastSeenClasses = new Set<string>();
-  let setupCount = 0;
-
-  const flush = debounce(async () => {
-    if (pending.size === 0) return;
-    await plugin.run([...pending]);
-    pending.clear();
-  }, 0);
-
-  const scheduleFlush = (root: Gtk.Widget) => {
-    const current = traverseWidget(root);
-    const newClasses = [...current].filter((cls) => !lastSeenClasses.has(cls));
-
-    if (newClasses.length === 0) return;
-
-    for (const cls of newClasses) {
-      lastSeenClasses.add(cls);
-      pending.add(cls);
-    }
-
-    flush();
-  };
+  const run = debounce(
+    (widget: Gtk.Widget) => plugin.run(collectClasses(widget)),
+    16,
+  );
 
   return {
     ...plugin,
     setup: (self: Gtk.Widget) => {
       setupCount++;
-      scheduleFlush(self);
+      run(self);
 
-      const handler = self.connect("notify::css-classes", () =>
-        scheduleFlush(self),
-      );
+      const handler = self.connect("notify::css-classes", () => run(self));
 
       onCleanup(() => {
         self.disconnect(handler);
-        if (--setupCount === 0) flush.cancel();
+        if (--setupCount === 0) run.cancel();
       });
     },
-    scan: (root: Gtk.Widget) => scheduleFlush(root),
+    scan: (root: Gtk.Widget) => plugin.run(collectClasses(root)),
   };
 };

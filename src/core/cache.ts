@@ -9,26 +9,40 @@ const readCache = (options: CacheOptions): Cache => {
   return raw ? JSON.parse(raw) : {};
 };
 
+let writing = false;
+const queue = new Set<string>();
+
 export const updateCache = async (
   classes: string[],
   options: CacheOptions,
 ): Promise<void> => {
-  const jsonPath = options.jsonPath ?? "utilities.json";
-  const cssPath = options.cssPath ?? "utilities.css";
+  for (const cls of classes) queue.add(cls);
 
-  const config = resolveConfig(options.tailwindConfig);
-  const cache = readCache(options);
-  const newClasses = [...new Set(classes)].filter((cls) => !(cls in cache));
+  if (writing) return;
+  writing = true;
 
-  if (newClasses.length === 0) return;
+  try {
+    while (queue.size > 0) {
+      const jsonPath = options.jsonPath ?? "utilities.json";
+      const cssPath = options.cssPath ?? "utilities.css";
 
-  const generated = generateCSS(newClasses, config);
-  Object.assign(cache, generated);
+      const config = resolveConfig(options.tailwindConfig);
+      const cache = readCache(options);
 
-  const root = generateRoot(config);
-  const css = [root, ...Object.values(cache)].join("\n");
+      const newClasses = [...queue].filter((cls) => !(cls in cache));
+      queue.clear();
 
-  await options.writeFile(jsonPath, JSON.stringify(cache, null, 2));
-  await options.writeFile(cssPath, css);
-  options.onCacheUpdate?.(cache, config);
+      if (newClasses.length === 0) continue;
+
+      Object.assign(cache, generateCSS(newClasses, config));
+
+      const css = [generateRoot(config), ...Object.values(cache)].join("\n");
+
+      await options.writeFile(jsonPath, JSON.stringify(cache, null, 2));
+      await options.writeFile(cssPath, css);
+      options.onCacheUpdate?.(cache, config);
+    }
+  } finally {
+    writing = false;
+  }
 };
