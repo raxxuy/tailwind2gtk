@@ -81,8 +81,8 @@ export const resolveSpace = (utility: string): CSSRule[] | null => {
         }
       : {
           "--space-y-reverse": "0",
-          "margin-block-start": `calc(${resolved} * var(--space-y-reverse))`,
-          "margin-block-end": `calc(${resolved} * calc(1 - var(--space-y-reverse)))`,
+          "margin-top": `calc(${resolved} * var(--space-y-reverse))`,
+          "margin-bottom": `calc(${resolved} * calc(1 - var(--space-y-reverse)))`,
         };
 
   return [
