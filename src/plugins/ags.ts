@@ -1,7 +1,6 @@
 import Gio from "gi://Gio";
 import { onCleanup } from "ags";
 import type { Gtk } from "ags/gtk4";
-import { debounce } from "es-toolkit";
 import type { Plugin } from "../types";
 import { createPlugin } from "./base";
 
@@ -38,7 +37,6 @@ const writeFile = (path: string, content: string): Promise<void> =>
 
 export const agsPlugin = (options?: Plugin["options"]): Plugin => {
   const plugin = createPlugin({ name: "ags", options, readFile, writeFile });
-  let setupCount = 0;
 
   const collectClasses = (widget: Gtk.Widget): string[] => {
     const classes = [...(widget.get_css_classes() as string[])];
@@ -50,23 +48,16 @@ export const agsPlugin = (options?: Plugin["options"]): Plugin => {
     return classes;
   };
 
-  const run = debounce(
-    (widget: Gtk.Widget) => plugin.run(collectClasses(widget)),
-    16,
-  );
-
   return {
     ...plugin,
     setup: (self: Gtk.Widget) => {
-      setupCount++;
-      run(self);
+      plugin.run(collectClasses(self));
 
-      const handler = self.connect("notify::css-classes", () => run(self));
-
-      onCleanup(() => {
-        self.disconnect(handler);
-        if (--setupCount === 0) run.cancel();
+      const handler = self.connect("notify::css-classes", () => {
+        plugin.run(collectClasses(self));
       });
+
+      onCleanup(() => self.disconnect(handler));
     },
     scan: (root: Gtk.Widget) => plugin.run(collectClasses(root)),
   };
