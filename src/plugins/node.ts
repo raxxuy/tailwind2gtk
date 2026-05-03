@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFile } from "node:fs";
 import type { Plugin } from "../types";
 import { createPlugin } from "./base";
 
-export const nodePlugin = (options?: Plugin["options"]) =>
+export const nodePlugin = (options?: Plugin["options"]): Plugin =>
   createPlugin({
     name: "node",
     options,

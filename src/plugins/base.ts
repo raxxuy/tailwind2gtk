@@ -8,8 +8,10 @@ export const createPlugin = (plugin: Omit<Plugin, "run">): Plugin => ({
       jsonPath: plugin.options?.jsonPath,
       cssPath: plugin.options?.cssPath,
       onCacheUpdate: plugin.options?.onCacheUpdate ?? (() => {}),
-      tailwindConfig: plugin.options?.tailwindConfig,
       readFile: plugin.readFile,
+      resolveVarsFrom: plugin.options?.resolveVarsFrom,
+      tailwindConfig: plugin.options?.tailwindConfig,
+      themePath: plugin.options?.themePath,
       writeFile: plugin.writeFile,
     });
   },

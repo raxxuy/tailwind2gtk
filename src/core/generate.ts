@@ -128,3 +128,55 @@ export const generateRoot = (config: ResolvedConfig): string => {
 
   return `:root {\n${vars}\n}\n${keyframes}`;
 };
+
+export const generateTheme = (
+  config: ResolvedConfig,
+  resolveVars?: Record<string, string>,
+): string => {
+  const resolve = (value: string): string => {
+    if (!resolveVars) return value;
+    const match = value.match(/^var\(--([\w_-]+)\)$/);
+    if (!match) return value;
+    return resolveVars[`--${match[1]}`] ?? value;
+  };
+
+  const vars = [
+    ...Object.entries(config.colors).map(
+      ([key, value]) => `  --color-${key}: ${resolve(value)};`,
+    ),
+    ...Object.entries(config.fontFamilies).map(
+      ([key, value]) => `  --font-${key}: ${value.join(", ")};`,
+    ),
+    ...Object.entries(config.containerSizes).map(
+      ([key, value]) => `  --container-${key}: ${value};`,
+    ),
+    ...Object.entries(config.borderRadii).map(
+      ([key, value]) => `  --radius-${key}: ${value};`,
+    ),
+    ...Object.entries(config.fontSizes).flatMap(([key, [size, lineHeight]]) => [
+      `  --text-${key}: ${size};`,
+      `  --text-${key}--line-height: ${lineHeight};`,
+    ]),
+    ...Object.entries(config.letterSpacings).map(
+      ([key, value]) => `  --tracking-${key}: ${value};`,
+    ),
+    ...Object.entries(config.boxShadows).map(
+      ([key, value]) => `  --shadow-${key}: ${value};`,
+    ),
+    ...Object.entries(config.insetBoxShadows).map(
+      ([key, value]) => `  --inset-shadow-${key}: ${value};`,
+    ),
+    ...Object.entries(config.textShadows).map(
+      ([key, value]) => `  --text-shadow-${key}: ${value};`,
+    ),
+    ...Object.entries(config.transitionTimingFunctions).map(
+      ([key, value]) => `  --ease-${key}: ${value};`,
+    ),
+    ...Object.entries(config.animations).map(
+      ([key, value]) => `  --animate-${key}: ${value};`,
+    ),
+    `  --spacing: ${config.spacing};`,
+  ].join("\n");
+
+  return `@import "tailwindcss";\n\n@theme {\n${vars}\n}\n`;
+};

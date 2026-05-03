@@ -64,7 +64,9 @@ export interface CacheOptions {
     config: ResolvedConfig,
   ) => void;
   readFile: (path: string) => string | null;
+  resolveVarsFrom?: string;
   tailwindConfig?: TailwindConfig;
+  themePath?: string;
   writeFile: (path: string, content: string) => Promise<void>;
 }
 

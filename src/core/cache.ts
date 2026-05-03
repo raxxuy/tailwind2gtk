@@ -1,6 +1,7 @@
 import { resolveConfig } from "../config/resolveConfig";
+import { parseVars } from "../helpers/parseVars";
 import type { CacheOptions } from "../types";
-import { generateCSS, generateRoot } from "./generate";
+import { generateCSS, generateRoot, generateTheme } from "./generate";
 
 type Cache = Record<string, string>;
 
@@ -40,6 +41,15 @@ export const updateCache = async (
 
       await options.writeFile(jsonPath, JSON.stringify(cache, null, 2));
       await options.writeFile(cssPath, css);
+
+      if (options.themePath) {
+        const raw = options.resolveVarsFrom
+          ? options.readFile(options.resolveVarsFrom)
+          : null;
+        const vars = raw ? parseVars(raw) : undefined;
+        await options.writeFile(options.themePath, generateTheme(config, vars));
+      }
+
       options.onCacheUpdate?.(cache, config);
     }
   } finally {

@@ -4,22 +4,38 @@ import { nodePlugin } from "../src/plugins/node";
 
 const JSON_PATH = "tests/fixtures/utilities.json";
 const CSS_PATH = "tests/fixtures/utilities.css";
+const THEME_PATH = "tests/fixtures/theme.css";
+const RESOLVE_VARS_FROM = "tests/fixtures/resolve-vars.css";
 
 beforeEach(() => {
   if (existsSync(JSON_PATH)) rmSync(JSON_PATH);
   if (existsSync(CSS_PATH)) rmSync(CSS_PATH);
+  if (existsSync(THEME_PATH)) rmSync(THEME_PATH);
 });
 
 afterEach(() => {
   if (existsSync(JSON_PATH)) rmSync(JSON_PATH);
   if (existsSync(CSS_PATH)) rmSync(CSS_PATH);
+  if (existsSync(THEME_PATH)) rmSync(THEME_PATH);
 });
 
 describe("gradient utilities", () => {
-  it("generates linear gradient classes", () => {
-    const plugin = nodePlugin({ jsonPath: JSON_PATH, cssPath: CSS_PATH });
+  it("generates linear gradient classes", async () => {
+    const plugin = nodePlugin({
+      jsonPath: JSON_PATH,
+      cssPath: CSS_PATH,
+      themePath: THEME_PATH,
+      tailwindConfig: {
+        theme: {
+          colors: {
+            primary: "var(--primary)",
+          },
+        },
+      },
+      resolveVarsFrom: RESOLVE_VARS_FROM,
+    });
 
-    plugin.run([
+    await plugin.run([
       "bg-linear-to-r",
       "bg-linear-to-t",
       "bg-linear-to-bl",
@@ -34,10 +50,10 @@ describe("gradient utilities", () => {
     expect(css).toContain(".bg-linear-65");
   });
 
-  it("generates radial gradient classes", () => {
+  it("generates radial gradient classes", async () => {
     const plugin = nodePlugin({ jsonPath: JSON_PATH, cssPath: CSS_PATH });
 
-    plugin.run([
+    await plugin.run([
       "bg-radial",
       "bg-radial-[at_50%_75%]",
       "bg-radial-[at_25%_25%]",
@@ -50,10 +66,10 @@ describe("gradient utilities", () => {
     expect(css).toContain(".bg-radial-\\[at_25\\%_25\\%\\]");
   });
 
-  it("generates conic gradient classes", () => {
+  it("generates conic gradient classes", async () => {
     const plugin = nodePlugin({ jsonPath: JSON_PATH, cssPath: CSS_PATH });
 
-    plugin.run(["bg-conic", "bg-conic-180", "bg-conic/decreasing"]);
+    await plugin.run(["bg-conic", "bg-conic-180", "bg-conic/decreasing"]);
 
     const css = readFileSync(CSS_PATH, "utf-8");
 
@@ -62,10 +78,13 @@ describe("gradient utilities", () => {
     expect(css).toContain(".bg-conic\\/decreasing");
   });
 
-  it("handles gradient color stops with positions", () => {
-    const plugin = nodePlugin({ jsonPath: JSON_PATH, cssPath: CSS_PATH });
+  it("handles gradient color stops with positions", async () => {
+    const plugin = nodePlugin({
+      jsonPath: JSON_PATH,
+      cssPath: CSS_PATH,
+    });
 
-    plugin.run([
+    await plugin.run([
       "from-indigo-500",
       "from-10%",
       "via-sky-500",
@@ -84,10 +103,10 @@ describe("gradient utilities", () => {
     expect(css).toContain(".to-90\\%");
   });
 
-  it("handles arbitrary gradient values", () => {
+  it("handles arbitrary gradient values", async () => {
     const plugin = nodePlugin({ jsonPath: JSON_PATH, cssPath: CSS_PATH });
 
-    plugin.run([
+    await plugin.run([
       "bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal]",
       "bg-linear-(--my-gradient)",
     ]);
@@ -100,7 +119,7 @@ describe("gradient utilities", () => {
     expect(css).toContain(".bg-linear-\\(--my-gradient\\)");
   });
 
-  it("stores all gradient classes in cache", () => {
+  it("stores all gradient classes in cache", async () => {
     const plugin = nodePlugin({ jsonPath: JSON_PATH, cssPath: CSS_PATH });
 
     const classes = [
@@ -111,7 +130,7 @@ describe("gradient utilities", () => {
       "to-fuchsia-700",
     ];
 
-    plugin.run(classes);
+    await plugin.run(classes);
 
     const cache = JSON.parse(readFileSync(JSON_PATH, "utf-8"));
 
@@ -120,13 +139,13 @@ describe("gradient utilities", () => {
     }
   });
 
-  it("does not duplicate cached gradient classes", () => {
+  it("does not duplicate cached gradient classes", async () => {
     const plugin = nodePlugin({ jsonPath: JSON_PATH, cssPath: CSS_PATH });
 
-    plugin.run(["bg-linear-to-r"]);
+    await plugin.run(["bg-linear-to-r"]);
     const first = readFileSync(JSON_PATH, "utf-8");
 
-    plugin.run(["bg-linear-to-r"]);
+    await plugin.run(["bg-linear-to-r"]);
     const second = readFileSync(JSON_PATH, "utf-8");
 
     expect(first).toBe(second);
