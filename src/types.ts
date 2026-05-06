@@ -21,6 +21,7 @@ export interface CSSRule {
 export interface TailwindConfig {
   theme?: {
     animation?: Record<string, string>;
+    apply?: Record<string, string | string[]>;
     borderRadius?: Record<string, string>;
     boxShadow?: Record<string, string>;
     colors?: Record<string, string>;
@@ -41,6 +42,7 @@ export interface TailwindConfig {
 
 export interface ResolvedConfig {
   animations: Record<string, string>;
+  apply?: Record<string, string | string[]>;
   borderRadii: Record<string, string>;
   boxShadows: Record<string, string>;
   colors: Record<string, string>;

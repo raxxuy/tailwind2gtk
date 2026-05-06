@@ -6,6 +6,7 @@ export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
     ...defaults.animations,
     ...config?.theme?.animation,
   },
+  apply: config?.theme?.apply,
   borderRadii: {
     ...defaults.borderRadii,
     ...config?.theme?.borderRadius,

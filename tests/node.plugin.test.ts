@@ -150,4 +150,33 @@ describe("gradient utilities", () => {
 
     expect(first).toBe(second);
   });
+
+  it("handles apply classes", async () => {
+    const plugin = nodePlugin({
+      jsonPath: JSON_PATH,
+      cssPath: CSS_PATH,
+      tailwindConfig: {
+        theme: {
+          apply: {
+            "gradient-btn": [
+              "bg-linear-to-r",
+              "from-pink-400",
+              "to-fuchsia-700",
+            ],
+          },
+        },
+      },
+    });
+
+    await plugin.run(["gradient-btn"]);
+    const css = readFileSync(CSS_PATH, "utf-8");
+
+    expect(css).toContain(
+      `.gradient-btn {
+  background-image: linear-gradient(to right, var(--gradient-stops));
+  --gradient-from: var(--color-pink-400);
+  --gradient-to: var(--color-fuchsia-700);
+}`,
+    );
+  });
 });
