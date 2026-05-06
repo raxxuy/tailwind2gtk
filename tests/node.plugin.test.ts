@@ -163,12 +163,14 @@ describe("gradient utilities", () => {
               "from-pink-400",
               "to-fuchsia-700",
             ],
+            "bar-menubutton":
+              "min-h-6.5 min-w-6.5 rounded-lg transition-colors checked:bg-zinc-700 hover:bg-zinc-800 active:bg-zinc-700",
           },
         },
       },
     });
 
-    await plugin.run(["gradient-btn"]);
+    await plugin.run(["gradient-btn", "bar-menubutton"]);
     const css = readFileSync(CSS_PATH, "utf-8");
 
     expect(css).toContain(
@@ -176,6 +178,23 @@ describe("gradient utilities", () => {
   background-image: linear-gradient(to right, var(--gradient-stops));
   --gradient-from: var(--color-pink-400);
   --gradient-to: var(--color-fuchsia-700);
+}
+.bar-menubutton {
+  min-height: calc(var(--spacing) * 6.5);
+  min-width: calc(var(--spacing) * 6.5);
+  border-radius: var(--radius-lg);
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+  transition-timing-function: var(--default-transition-timing-function);
+  transition-duration: var(--default-transition-duration);
+}
+.bar-menubutton:checked {
+  background-color: var(--color-zinc-700);
+}
+.bar-menubutton:hover {
+  background-color: var(--color-zinc-800);
+}
+.bar-menubutton:active {
+  background-color: var(--color-zinc-700);
 }`,
     );
   });

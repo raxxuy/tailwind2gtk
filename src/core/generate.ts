@@ -26,6 +26,49 @@ const getClassPriority = (cls: string): number => {
   return pseudoPriority[pseudo.value] ?? 0;
 };
 
+const resolveClassToCSS = (
+  cls: string,
+  escapedSelector: string,
+  config: ResolvedConfig,
+): {
+  selector: string;
+  properties: Record<string, string>;
+  children: CSSRule[];
+  mediaQuery?: string;
+} | null => {
+  const parsed = parseClass(cls);
+  const rules = resolveUtility(parsed.utility, config);
+  if (!rules) return null;
+
+  const withSelector = rules.map((rule) => ({
+    ...rule,
+    selector: escapedSelector,
+  }));
+  const { rules: finalRules, mediaQuery } = applyVariants(
+    parsed.variants,
+    withSelector,
+  );
+
+  const properties: Record<string, string> = {};
+  const children: CSSRule[] = [];
+  finalRules.forEach((rule) => {
+    Object.assign(properties, rule.properties);
+    if (rule.children) children.push(...rule.children);
+  });
+
+  return {
+    selector: finalRules[0]?.selector ?? escapedSelector,
+    properties,
+    children,
+    mediaQuery,
+  };
+};
+
+const getPseudoPriority = (selector: string): number => {
+  const match = selector.match(/:([a-z-]+)$/);
+  return match ? (pseudoPriority[match[1]] ?? 0) : -1;
+};
+
 export const generateCSS = (
   classes: string[],
   config: ResolvedConfig,
@@ -35,70 +78,57 @@ export const generateCSS = (
   [...classes]
     .sort((a, b) => getClassPriority(a) - getClassPriority(b))
     .forEach((cls) => {
-      const apply = config.apply?.[cls];
+      const escapedSelector = `.${escapeClassName(cls)}`;
+      const expanded = config.apply?.[cls]
+        ? Array.isArray(config.apply[cls])
+          ? config.apply[cls]
+          : (config.apply[cls] as string).split(/\s+/)
+        : [cls];
 
-      if (!apply) {
-        const parsed = parseClass(cls);
-        const rules = resolveUtility(parsed.utility, config);
-        if (!rules) return;
+      const byMedia = new Map<
+        string,
+        {
+          selector: string;
+          properties: Record<string, string>;
+          children: CSSRule[];
+          mediaQuery?: string;
+        }
+      >();
 
-        const escapedSelector = `.${escapeClassName(cls)}`;
-        const withSelector = rules.map((rule) => ({
-          ...rule,
-          selector: escapedSelector,
-        }));
-        const { rules: finalRules, mediaQuery } = applyVariants(
-          parsed.variants,
-          withSelector,
+      expanded.forEach((expandedCls) => {
+        const resolved = resolveClassToCSS(
+          expandedCls,
+          escapedSelector,
+          config,
         );
-        result.set(cls, serializeRules(finalRules, mediaQuery));
-      } else {
-        const expanded = Array.isArray(apply) ? apply : apply.split(/\s+/);
-        const escapedSelector = `.${escapeClassName(cls)}`;
+        if (!resolved) return;
+        const key = `${resolved.mediaQuery ?? ""}||${resolved.selector}`;
+        if (!byMedia.has(key))
+          byMedia.set(key, { ...resolved, properties: {}, children: [] });
+        const bucket = byMedia.get(key) as CSSRule;
+        Object.assign(bucket.properties, resolved.properties);
+        bucket.children.push(...resolved.children);
+      });
 
-        const byMedia = new Map<
-          string | undefined,
-          { properties: Record<string, string>; children: CSSRule[] }
-        >();
-
-        expanded.forEach((expandedCls) => {
-          const parsed = parseClass(expandedCls);
-          const rules = resolveUtility(parsed.utility, config);
-          if (!rules) return;
-
-          const withSelector = rules.map((rule) => ({
-            ...rule,
-            selector: escapedSelector,
-          }));
-          const { rules: finalRules, mediaQuery } = applyVariants(
-            parsed.variants,
-            withSelector,
-          );
-
-          const key = mediaQuery;
-          if (!byMedia.has(key))
-            byMedia.set(key, { properties: {}, children: [] });
-          const bucket = byMedia.get(key) as CSSRule;
-
-          finalRules.forEach((rule) => {
-            Object.assign(bucket.properties, rule.properties);
-            if (rule.children) bucket.children.push(...rule.children);
-          });
-        });
-
-        const parts = [...byMedia.entries()].map(
-          ([mediaQuery, { properties, children }]) => {
-            const mergedRule: CSSRule = {
-              selector: escapedSelector,
-              properties,
-              ...(children.length ? { children } : {}),
-            };
-            return serializeRules([mergedRule], mediaQuery);
-          },
+      const parts = [...byMedia.values()]
+        .sort(
+          (a, b) =>
+            getPseudoPriority(a.selector) - getPseudoPriority(b.selector),
+        )
+        .map(({ selector, properties, children, mediaQuery }) =>
+          serializeRules(
+            [
+              {
+                selector,
+                properties,
+                ...(children.length ? { children } : {}),
+              },
+            ],
+            mediaQuery,
+          ),
         );
 
-        if (parts.length) result.set(cls, parts.join("\n"));
-      }
+      if (parts.length) result.set(cls, parts.join("\n"));
     });
 
   return Object.fromEntries(result);
