@@ -37,28 +37,35 @@ const writeFile = (path: string, content: string): Promise<void> =>
 
 export const agsPlugin = (options?: Plugin["options"]): Plugin => {
   const plugin = createPlugin({ name: "ags", options, readFile, writeFile });
+  const cleanups: (() => void)[] = [];
 
-  const collectClasses = (widget: Gtk.Widget): string[] => {
+  const scanWidget = (widget: Gtk.Widget): string[] => {
     const classes = [...(widget.get_css_classes() as string[])];
+
+    const handlerId = widget.connect("notify::css-classes", () => {
+      plugin.run(scanWidget(widget));
+    });
+    cleanups.push(() => widget.disconnect(handlerId));
+
     let child = widget.get_first_child();
     while (child) {
-      classes.push(...collectClasses(child));
+      classes.push(...scanWidget(child));
       child = child.get_next_sibling();
     }
+
     return classes;
   };
 
   return {
     ...plugin,
-    setup: (self: Gtk.Widget) => {
-      plugin.run(collectClasses(self));
-
-      const handler = self.connect("notify::css-classes", () => {
-        plugin.run(collectClasses(self));
+    scan: (root: Gtk.Widget) => {
+      onCleanup(() => {
+        cleanups.forEach((cleanup) => {
+          cleanup();
+        });
+        cleanups.length = 0;
       });
-
-      onCleanup(() => self.disconnect(handler));
+      plugin.run(scanWidget(root));
     },
-    scan: (root: Gtk.Widget) => plugin.run(collectClasses(root)),
   };
 };
