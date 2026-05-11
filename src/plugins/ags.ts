@@ -38,16 +38,24 @@ const writeFile = (path: string, content: string): Promise<void> =>
 export const agsPlugin = (options?: Plugin["options"]): Plugin => {
   const plugin = createPlugin({ name: "ags", options, readFile, writeFile });
   const cleanups: (() => void)[] = [];
+  const connected = new WeakSet<Gtk.Widget>();
 
   const scanWidget = (widget: Gtk.Widget): string[] => {
     const classes = [...(widget.get_css_classes() as string[])];
 
-    const handlerId = widget.connect("notify::css-classes", () => {
-      plugin.run(scanWidget(widget));
-    });
-    cleanups.push(() => widget.disconnect(handlerId));
+    if (!connected.has(widget)) {
+      connected.add(widget);
+      const handlerId = widget.connect("notify::css-classes", () => {
+        plugin.run(scanWidget(widget));
+      });
+      cleanups.push(() => {
+        widget.disconnect(handlerId);
+        connected.delete(widget);
+      });
+    }
 
     let child = widget.get_first_child();
+
     while (child) {
       classes.push(...scanWidget(child));
       child = child.get_next_sibling();
@@ -65,8 +73,6 @@ export const agsPlugin = (options?: Plugin["options"]): Plugin => {
 
   return {
     ...plugin,
-    scan: (root: Gtk.Widget) => {
-      plugin.run(scanWidget(root));
-    },
+    scan: (root: Gtk.Widget) => plugin.run(scanWidget(root)),
   };
 };
