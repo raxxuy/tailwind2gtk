@@ -37,25 +37,27 @@ const writeFile = (path: string, content: string): Promise<void> =>
 
 export const agsPlugin = (options?: Plugin["options"]): Plugin => {
   const plugin = createPlugin({ name: "ags", options, readFile, writeFile });
-  const cleanups: (() => void)[] = [];
-  const connected = new WeakSet<Gtk.Widget>();
+  const cleanups = new Map<Gtk.Widget, () => void>();
+  let connected = new WeakSet<Gtk.Widget>();
 
   const scanWidget = (widget: Gtk.Widget): string[] => {
     const classes = [...(widget.get_css_classes() as string[])];
 
     if (!connected.has(widget)) {
       connected.add(widget);
+
       const handlerId = widget.connect("notify::css-classes", () => {
         plugin.run(scanWidget(widget));
       });
-      cleanups.push(() => {
+
+      cleanups.set(widget, () => {
         widget.disconnect(handlerId);
         connected.delete(widget);
+        cleanups.delete(widget);
       });
     }
 
     let child = widget.get_first_child();
-
     while (child) {
       classes.push(...scanWidget(child));
       child = child.get_next_sibling();
@@ -64,15 +66,28 @@ export const agsPlugin = (options?: Plugin["options"]): Plugin => {
     return classes;
   };
 
+  const unscanWidget = (widget: Gtk.Widget) => {
+    const cleanup = cleanups.get(widget);
+    if (cleanup) cleanup();
+
+    let child = widget.get_first_child();
+    while (child) {
+      unscanWidget(child);
+      child = child.get_next_sibling();
+    }
+  };
+
   onCleanup(() => {
     cleanups.forEach((cleanup) => {
       cleanup();
     });
-    cleanups.length = 0;
+    cleanups.clear();
+    connected = new WeakSet();
   });
 
   return {
     ...plugin,
     scan: (root: Gtk.Widget) => plugin.run(scanWidget(root)),
+    unscan: unscanWidget,
   };
 };

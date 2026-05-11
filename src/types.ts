@@ -78,5 +78,6 @@ export interface Plugin {
   readFile: (path: string) => string | null;
   run: (classes: string[]) => Promise<void>;
   scan?: (root: Gtk.Widget) => void;
+  unscan?: (root: Gtk.Widget) => void;
   writeFile: (path: string, content: string) => Promise<void>;
 }
