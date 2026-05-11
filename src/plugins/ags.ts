@@ -56,15 +56,16 @@ export const agsPlugin = (options?: Plugin["options"]): Plugin => {
     return classes;
   };
 
+  onCleanup(() => {
+    cleanups.forEach((cleanup) => {
+      cleanup();
+    });
+    cleanups.length = 0;
+  });
+
   return {
     ...plugin,
     scan: (root: Gtk.Widget) => {
-      onCleanup(() => {
-        cleanups.forEach((cleanup) => {
-          cleanup();
-        });
-        cleanups.length = 0;
-      });
       plugin.run(scanWidget(root));
     },
   };
