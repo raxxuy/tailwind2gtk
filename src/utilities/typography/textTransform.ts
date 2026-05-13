@@ -11,12 +11,11 @@ export const resolveTextTransforms = (
   utility: string,
   _config: ResolvedConfig,
 ): CSSRule[] | null => {
-  const named = utility.match(/^decoration-([\w-]+)$/);
-  if (named && named[1] in transforms)
+  if (utility in transforms)
     return [
       {
         selector: "",
-        properties: { "text-transform": transforms[named[1]] },
+        properties: { "text-transform": transforms[utility] },
       },
     ];
 
