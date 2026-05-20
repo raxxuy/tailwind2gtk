@@ -73,6 +73,7 @@ export interface CacheOptions {
 }
 
 export interface Plugin {
+  cleanupWidget?: (widget: GObject.Object) => void;
   name: string;
   options?: Omit<CacheOptions, "readFile" | "writeFile">;
   readFile: (path: string) => string | null;

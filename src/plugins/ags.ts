@@ -89,5 +89,7 @@ export const agsPlugin = (options?: Plugin["options"]): Plugin => {
     ...plugin,
     scan: (root: Gtk.Widget) => plugin.run(scanWidget(root)),
     unscan: unscanWidget,
+    cleanupWidget: (widget: GObject.Object) =>
+      unscanWidget(widget as Gtk.Widget),
   };
 };
