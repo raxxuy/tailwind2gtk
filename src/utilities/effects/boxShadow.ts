@@ -13,7 +13,7 @@ export const resolveBoxShadow = (
     return [
       {
         selector: "",
-        properties: { "box-shadow": `var(--shadow-${named[1]})` },
+        properties: { "box-shadow": config.boxShadows[named[1]] },
       },
     ];
 
@@ -66,7 +66,7 @@ export const resolveInsetBoxShadow = (
     return [
       {
         selector: "",
-        properties: { "box-shadow": `var(--inset-shadow-${named[1]})` },
+        properties: { "box-shadow": config.insetBoxShadows[named[1]] },
       },
     ];
 

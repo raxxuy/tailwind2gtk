@@ -13,7 +13,7 @@ export const resolveDropShadow = (
     return [
       {
         selector: "",
-        properties: { filter: `drop-shadow(var(--drop-shadow-${named[1]}))` },
+        properties: { filter: `drop-shadow(${config.dropShadows[named[1]]})` },
       },
     ];
 
