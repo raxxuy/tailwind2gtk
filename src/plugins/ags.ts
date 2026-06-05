@@ -1,71 +1,95 @@
+import Gio from "gi://Gio";
 import { onCleanup } from "ags";
 import type { Gtk } from "ags/gtk4";
-import { kebabCase, range } from "es-toolkit";
-import { type CoreOptions, createCore } from "../core";
+import type { Plugin } from "../types";
+import { createPlugin } from "./base";
 
-export interface AgsOptions extends CoreOptions {
-  getUsedClasses?: (widget: Gtk.Widget | Gtk.Widget[]) => string[];
-}
-
-const defaultGetUsedClasses = (widget: Gtk.Widget | Gtk.Widget[]): string[] => {
-  const classes = new Set<string>();
-
-  const traverse = (w: Gtk.Widget) => {
-    w.get_css_classes().forEach((cls: string) => {
-      classes.add(cls);
-    });
-
-    const children = w.observe_children();
-
-    range(children.get_n_items()).forEach((i) => {
-      traverse(children.get_item(i) as Gtk.Widget);
-    });
-  };
-
-  Array.isArray(widget) ? widget.forEach(traverse) : traverse(widget);
-  return Array.from(classes);
+const readFile = (path: string): string | null => {
+  try {
+    const file = Gio.File.new_for_path(path);
+    const [, contents] = file.load_contents(null);
+    return new TextDecoder().decode(contents);
+  } catch {
+    return null;
+  }
 };
 
-export const createAgsPlugin = (options: AgsOptions) => {
-  const { getUsedClasses = defaultGetUsedClasses, ...coreOptions } = options;
-  const core = createCore(coreOptions);
+const writeFile = (path: string, content: string): Promise<void> =>
+  new Promise((resolve, reject) => {
+    const file = Gio.File.new_for_path(path);
+    const bytes = new TextEncoder().encode(content);
+    file.replace_contents_async(
+      bytes,
+      null,
+      false,
+      Gio.FileCreateFlags.REPLACE_DESTINATION,
+      null,
+      (_: Gio.File, result: Gio.AsyncResult) => {
+        try {
+          file.replace_contents_finish(result);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      },
+    );
+  });
 
-  const seenWidgets = new WeakSet<Gtk.Widget>();
+export const agsPlugin = (options?: Plugin["options"]): Plugin => {
+  const plugin = createPlugin({ name: "ags", options, readFile, writeFile });
+  const cleanups = new Map<Gtk.Widget, () => void>();
+  let connected = new WeakSet<Gtk.Widget>();
 
-  const loadClasses = (
-    component: { name: string },
-    name?: string,
-    shallow = false,
-  ) => {
-    const kebabName = name || kebabCase(component.name);
+  const scanWidget = (widget: Gtk.Widget): string[] => {
+    const classes = [...(widget.get_css_classes() as string[])];
 
-    return (self: Gtk.Widget) => {
-      if (!seenWidgets.has(self)) {
-        core.isNewComponent(kebabName);
-        seenWidgets.add(self);
-      }
+    if (!connected.has(widget)) {
+      connected.add(widget);
 
-      const getClasses = () =>
-        shallow ? self.get_css_classes() : getUsedClasses(self);
-
-      core.setClasses(getClasses());
-
-      const handler = self.connect("notify::css-classes", () =>
-        core.setClasses(getClasses()),
-      );
-
-      onCleanup(() => {
-        self.disconnect(handler);
-        core.flushWrite();
+      const handlerId = widget.connect("notify::css-classes", () => {
+        plugin.run(scanWidget(widget));
       });
-    };
+
+      cleanups.set(widget, () => {
+        widget.disconnect(handlerId);
+        connected.delete(widget);
+        cleanups.delete(widget);
+      });
+    }
+
+    let child = widget.get_first_child();
+    while (child) {
+      classes.push(...scanWidget(child));
+      child = child.get_next_sibling();
+    }
+
+    return classes;
   };
 
+  const unscanWidget = (widget: Gtk.Widget) => {
+    const cleanup = cleanups.get(widget);
+    if (cleanup) cleanup();
+
+    let child = widget.get_first_child();
+    while (child) {
+      unscanWidget(child);
+      child = child.get_next_sibling();
+    }
+  };
+
+  onCleanup(() => {
+    cleanups.forEach((cleanup) => {
+      cleanup();
+    });
+    cleanups.clear();
+    connected = new WeakSet();
+  });
+
   return {
-    ...core,
-    getCachedClasses: core.getUsedClasses,
-    loadClasses,
-    getUsedClasses: (widget?: Gtk.Widget | Gtk.Widget[]) =>
-      getUsedClasses(widget),
+    ...plugin,
+    scan: (root: Gtk.Widget) => plugin.run(scanWidget(root)),
+    unscan: unscanWidget,
+    cleanupWidget: (widget: GObject.Object) =>
+      unscanWidget(widget as Gtk.Widget),
   };
 };

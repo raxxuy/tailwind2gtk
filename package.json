@@ -1,14 +1,13 @@
 {
   "name": "tailwind2gtk",
-  "version": "0.2.21",
+  "version": "0.3.26",
   "description": "A Tailwind-inspired utility class generator for GTK/AGS applications",
-  "main": "src/index.ts",
+  "main": "./index.ts",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./plugins/node": "./src/plugins/node.ts",
+    ".": "./index.ts",
     "./plugins/ags": "./src/plugins/ags.ts",
-    "./plugins/ags-simple": "./src/plugins/ags-simple.ts"
+    "./plugins/node": "./src/plugins/node.ts"
   },
   "scripts": {
     "lint": "biome lint ./src",
@@ -23,16 +22,10 @@
   ],
   "author": "raxxuy",
   "license": "MIT",
-  "peerDependencies": {
-    "ags": "*",
-    "es-toolkit": "*"
-  },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
+    "@biomejs/biome": "^2.4.16",
+    "@types/node": "^25.9.1",
     "ags": "github:Aylur/ags",
-    "es-toolkit": "^1.45.1"
-  },
-  "dependencies": {
-    "@types/node": "^25.3.3"
+    "vitest": "^4.1.8"
   }
 }

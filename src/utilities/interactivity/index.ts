@@ -1,0 +1,1 @@
+export { resolveCaretColor } from "./caretColor";

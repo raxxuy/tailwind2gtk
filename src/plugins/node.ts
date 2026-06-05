@@ -1,13 +1,20 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { type CoreOptions, createCore } from "../core";
+import { existsSync, readFileSync, writeFile } from "node:fs";
+import type { Plugin } from "../types";
+import { createPlugin } from "./base";
 
-type NodeOptions = Omit<CoreOptions, "readFile" | "writeFile" | "fileExists">;
-
-export const createNodeCore = (options: NodeOptions) => {
-  return createCore({
-    ...options,
-    readFile: (path) => readFileSync(path, "utf-8"),
-    writeFile: (path, content) => writeFileSync(path, content, "utf-8"),
-    fileExists: (path) => existsSync(path),
+export const nodePlugin = (options?: Plugin["options"]): Plugin =>
+  createPlugin({
+    name: "node",
+    options,
+    readFile: (path) => (existsSync(path) ? readFileSync(path, "utf-8") : null),
+    writeFile: (path, content) =>
+      new Promise((resolve, reject) => {
+        writeFile(path, content, "utf-8", (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      }),
   });
-};

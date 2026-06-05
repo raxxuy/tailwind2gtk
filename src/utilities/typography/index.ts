@@ -1,0 +1,14 @@
+export { resolveTextColor } from "./color";
+export { resolveFontFamily } from "./fontFamily";
+export { resolveFontFeatureSettings } from "./fontFeatureSettings";
+export { resolveFontSize } from "./fontSize";
+export { resolveFontStretch } from "./fontStretch";
+export { resolveFontStyle } from "./fontStyle";
+export { resolveFontVariantNumeric } from "./fontVariantNumeric";
+export { resolveFontWeight } from "./fontWeight";
+export { resolveLetterSpacing } from "./letterSpacing";
+export { resolveLineHeight } from "./lineHeight";
+export { resolveTextDecorationColor } from "./textDecorationColor";
+export { resolveTextDecorationLine } from "./textDecorationLine";
+export { resolveTextDecorationStyle } from "./textDecorationStyle";
+export { resolveTextTransforms } from "./textTransform";
