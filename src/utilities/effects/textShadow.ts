@@ -13,7 +13,7 @@ export const resolveTextShadow = (
     return [
       {
         selector: "",
-        properties: { "text-shadow": config.textShadows[named[1]] },
+        properties: { "text-shadow": `var(--text-shadow-${named[1]})` },
       },
     ];
 

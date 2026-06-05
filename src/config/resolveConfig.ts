@@ -7,6 +7,10 @@ export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
     ...config?.theme?.animation,
   },
   apply: config?.theme?.apply,
+  blurSizes: {
+    ...defaults.blurSizes,
+    ...config?.theme?.blur,
+  },
   borderRadii: {
     ...defaults.borderRadii,
     ...config?.theme?.borderRadius,
@@ -22,6 +26,10 @@ export const resolveConfig = (config?: TailwindConfig): ResolvedConfig => ({
   containerSizes: {
     ...defaults.containerSizes,
     ...config?.theme?.container?.screens,
+  },
+  dropShadows: {
+    ...defaults.dropShadows,
+    ...config?.theme?.dropShadow,
   },
   fontFamilies: {
     ...defaults.fontFamilies,

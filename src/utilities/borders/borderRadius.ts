@@ -26,7 +26,7 @@ const resolveRadiusValue = (
 
   if (value.startsWith("[") && value.endsWith("]"))
     return value.slice(1, -1).replace(/_/g, " ");
-    
+
   return null;
 };
 

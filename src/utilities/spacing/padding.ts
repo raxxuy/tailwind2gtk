@@ -12,7 +12,7 @@ export const resolvePadding = (
   const resolved = resolveValue(value);
   if (!resolved) return null;
 
-  const properties: Record<string, string> = (() => {
+  const properties = (() => {
     switch (prefix) {
       case "p":
         return { padding: resolved };
@@ -31,7 +31,7 @@ export const resolvePadding = (
       default:
         return {};
     }
-  })();
+  })() as Record<string, string>;
 
   return [{ selector: "", properties }];
 };

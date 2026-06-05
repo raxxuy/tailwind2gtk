@@ -12,7 +12,7 @@ export const resolveMargin = (
   const resolved = resolveValue(`${negative}${value}`);
   if (!resolved) return null;
 
-  const properties: Record<string, string> = (() => {
+  const properties = (() => {
     switch (prefix) {
       case "m":
         return { margin: resolved };
@@ -31,7 +31,7 @@ export const resolveMargin = (
       default:
         return {};
     }
-  })();
+  })() as Record<string, string>;
 
   return [{ selector: "", properties }];
 };

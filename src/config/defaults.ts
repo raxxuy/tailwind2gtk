@@ -6,6 +6,15 @@ export const defaults: ResolvedConfig = {
     ping: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
     pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
   },
+  blurSizes: {
+    xs: "4px",
+    sm: "8px",
+    md: "12px",
+    lg: "16px",
+    xl: "24px",
+    "2xl": "40px",
+    "3xl": "64px",
+  },
   borderRadii: {
     xs: "0.125rem",
     sm: "0.25rem",
@@ -329,6 +338,14 @@ export const defaults: ResolvedConfig = {
     "5xl": "1024px",
     "6xl": "1152px",
     "7xl": "1280px",
+  },
+  dropShadows: {
+    xs: "0 1px 1px var(--drop-shadow-color, rgb(0 0 0 / 0.05))",
+    sm: "0 1px 2px var(--drop-shadow-color, rgb(0 0 0 / 0.15))",
+    md: "0 3px 3px var(--drop-shadow-color, rgb(0 0 0 / 0.12))",
+    lg: "0 4px 4px var(--drop-shadow-color, rgb(0 0 0 / 0.15))",
+    xl: "0 9px 7px var(--drop-shadow-color, rgb(0 0 0 / 0.1))",
+    "2xl": "0 25px 25px var(--drop-shadow-color, rgb(0 0 0 / 0.15))",
   },
   fontFamilies: {
     sans: [

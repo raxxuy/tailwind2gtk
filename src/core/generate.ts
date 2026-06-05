@@ -158,6 +158,9 @@ export const generateRoot = (config: ResolvedConfig): string => {
     ...Object.entries(config.boxShadows).map(
       ([key, value]) => `  --shadow-${key}: ${value};`,
     ),
+    ...Object.entries(config.dropShadows).map(
+      ([key, value]) => `  --drop-shadow-${key}: ${value};`,
+    ),
     ...Object.entries(config.insetBoxShadows).map(
       ([key, value]) => `  --inset-shadow-${key}: ${value};`,
     ),
@@ -169,6 +172,9 @@ export const generateRoot = (config: ResolvedConfig): string => {
     ),
     ...Object.entries(config.animations).map(
       ([key, value]) => `  --animate-${key}: ${value};`,
+    ),
+    ...Object.entries(config.blurSizes).map(
+      ([key, value]) => `  --blur-${key}: ${value};`,
     ),
     `  --spacing: ${config.spacing};`,
     `  ${gradientVars.from}: initial;`,
@@ -245,6 +251,9 @@ export const generateTheme = (
     ...Object.entries(config.boxShadows).map(
       ([key, value]) => `  --shadow-${key}: ${value};`,
     ),
+    ...Object.entries(config.dropShadows).map(
+      ([key, value]) => `  --drop-shadow-${key}: ${value};`,
+    ),
     ...Object.entries(config.insetBoxShadows).map(
       ([key, value]) => `  --inset-shadow-${key}: ${value};`,
     ),
@@ -256,6 +265,9 @@ export const generateTheme = (
     ),
     ...Object.entries(config.animations).map(
       ([key, value]) => `  --animate-${key}: ${value};`,
+    ),
+    ...Object.entries(config.blurSizes).map(
+      ([key, value]) => `  --blur-${key}: ${value};`,
     ),
     `  --spacing: ${config.spacing};`,
   ].join("\n");

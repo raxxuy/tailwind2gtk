@@ -22,12 +22,14 @@ export interface TailwindConfig {
   theme?: {
     animation?: Record<string, string>;
     apply?: Record<string, string | string[]>;
+    blur?: Record<string, string>;
     borderRadius?: Record<string, string>;
     boxShadow?: Record<string, string>;
     colors?: Record<string, string>;
     container?: {
       screens?: Record<string, string>;
     };
+    dropShadow?: Record<string, string>;
     fontFamily?: Record<string, string[]>;
     fontSize?: Record<string, [string, string]>;
     fontWeight?: Record<string, string>;
@@ -43,10 +45,12 @@ export interface TailwindConfig {
 export interface ResolvedConfig {
   animations: Record<string, string>;
   apply?: Record<string, string | string[]>;
+  blurSizes: Record<string, string>;
   borderRadii: Record<string, string>;
   boxShadows: Record<string, string>;
   colors: Record<string, string>;
   containerSizes: Record<string, string>;
+  dropShadows: Record<string, string>;
   fontFamilies: Record<string, string[]>;
   fontSizes: Record<string, [string, string]>;
   fontWeights: Record<string, string>;

@@ -18,9 +18,7 @@ export const resolveFontStretch = (
 ): CSSRule[] | null => {
   const stretch = utility.match(/^font-stretch-([\w-]+)$/);
   if (stretch && stretches.includes(stretch[1]))
-    return [
-      { selector: "", properties: { "font-stretch": stretches[stretch[1]] } },
-    ];
+    return [{ selector: "", properties: { "font-stretch": stretch[1] } }];
 
   const percentage = utility.match(/^font-stretch-(\d+)%$/);
   if (percentage)
