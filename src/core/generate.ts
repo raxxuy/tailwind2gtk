@@ -80,9 +80,8 @@ export const generateCSS = (
     .forEach((cls) => {
       const escapedSelector = `.${escapeClassName(cls)}`;
       const expanded = config.apply?.[cls]
-        ? Array.isArray(config.apply[cls])
-          ? config.apply[cls]
-          : (config.apply[cls] as string).split(/\s+/)
+        ? (Array.isArray(config.apply[cls]) ? config.apply[cls] : [config.apply[cls] as string])
+            .flatMap((c) => c.split(/\s+/))
         : [cls];
 
       const byMedia = new Map<
