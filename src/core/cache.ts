@@ -35,7 +35,13 @@ export const updateCache = async (
 
       if (newClasses.length === 0) continue;
 
-      Object.assign(cache, generateCSS(newClasses, config));
+      const generated = generateCSS(newClasses, config);
+
+      for (const cls of newClasses) {
+        if (!(cls in generated)) generated[cls] = "";
+      }
+      
+      Object.assign(cache, generated);
 
       const css = [generateRoot(config), ...Object.values(cache)].join("\n");
 
