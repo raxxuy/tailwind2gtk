@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const resolveSkewValue = (value: string, negative: boolean): string => {
   const num = Number(value);
@@ -16,7 +16,7 @@ const resolveSkewValue = (value: string, negative: boolean): string => {
 export const resolveSkew = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^(-?)skew(?:-(x|y))?-(.+)$/);
   if (!match) return null;
 

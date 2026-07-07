@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const resolveOutlineValue = (value: string | undefined): string | null => {
   if (!value) return "1px";
@@ -19,7 +19,7 @@ const resolveOutlineValue = (value: string | undefined): string | null => {
 export const resolveOutlineWidth = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^outline(?:-(.+))?$/);
   if (!match) return null;
 

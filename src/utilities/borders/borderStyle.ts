@@ -1,11 +1,11 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const styles = ["solid", "dashed", "dotted", "double", "hidden", "none"];
 
 export const resolveBorderStyle = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const border = utility.match(
     /^border-(solid|dashed|dotted|double|hidden|none)$/,
   );

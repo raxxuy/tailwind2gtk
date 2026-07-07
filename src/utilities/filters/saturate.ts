@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveSaturate = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const number = utility.match(/^saturate-(\d+(?:\.\d+)?)$/);
   if (number)
     return [{ selector: "", properties: { filter: `saturate(${number}%)` } }];

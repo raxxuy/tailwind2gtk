@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const origins: Record<string, string> = {
   "origin-center": "center",
@@ -15,7 +15,7 @@ const origins: Record<string, string> = {
 export const resolveTransformOrigin = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility in origins)
     return [
       { selector: "", properties: { "transform-origin": origins[utility] } },

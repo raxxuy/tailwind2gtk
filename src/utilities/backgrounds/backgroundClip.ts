@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const clips: Record<string, string> = {
   border: "border-box",
@@ -9,7 +9,7 @@ const clips: Record<string, string> = {
 export const resolveBackgroundClip = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const named = utility.match(/^bg-clip-([\w-]+)$/);
   if (named && named[1] in clips)
     return [

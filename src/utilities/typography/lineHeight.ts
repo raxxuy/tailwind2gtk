@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveLineHeight = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "leading-none")
     return [{ selector: "", properties: { "line-height": "1" } }];
 

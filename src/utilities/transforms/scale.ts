@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const resolveScaleValue = (value: string, negative: boolean): string => {
   const num = Number(value);
@@ -17,7 +17,7 @@ const resolveScaleValue = (value: string, negative: boolean): string => {
 export const resolveScale = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "scale-none")
     return [
       {

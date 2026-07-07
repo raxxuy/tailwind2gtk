@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveHueRotate = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^(-?)hue-rotate-(.+)$/);
   if (!match) return null;
 

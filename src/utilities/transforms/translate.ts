@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const resolveTranslateValue = (
   raw: string,
@@ -26,7 +26,7 @@ const resolveTranslateValue = (
 export const resolveTranslate = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "translate-none")
     return [
       {

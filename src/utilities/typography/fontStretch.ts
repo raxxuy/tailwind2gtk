@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const stretches = [
   "ultra-condensed",
@@ -15,7 +15,7 @@ const stretches = [
 export const resolveFontStretch = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const stretch = utility.match(/^font-stretch-([\w-]+)$/);
   if (stretch && stretches.includes(stretch[1]))
     return [{ selector: "", properties: { "font-stretch": stretch[1] } }];

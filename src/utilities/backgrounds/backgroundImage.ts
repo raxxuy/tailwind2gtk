@@ -1,6 +1,6 @@
 import { gradientVars } from "../../helpers/gradientVars";
 import { resolveColor } from "../../helpers/resolveColor";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const directions: Record<string, string> = {
   t: "to top",
@@ -27,7 +27,7 @@ const colorSpaces = [
 export const resolveBackgroundImage = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "bg-none")
     return [{ selector: "", properties: { "background-image": "none" } }];
 
@@ -205,7 +205,7 @@ export const resolveBackgroundImage = (
 export const resolveGradientStops = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const fromColor = utility.match(/^from-(.+)$/);
   if (fromColor) {
     const resolved = resolveColor(fromColor[1], config);

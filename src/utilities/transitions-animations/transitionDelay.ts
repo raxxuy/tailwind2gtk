@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveTransitionDelay = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const number = utility.match(/^delay-(\d+)$/);
   if (number)
     return [

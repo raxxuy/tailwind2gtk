@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveOutlineOffset = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^(-?)outline-offset-(.+)$/);
   if (!match) return null;
 

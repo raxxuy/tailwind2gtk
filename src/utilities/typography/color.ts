@@ -1,10 +1,10 @@
 import { resolveColor } from "../../helpers/resolveColor";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveTextColor = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^text-(.+)$/);
   if (!match) return null;
 

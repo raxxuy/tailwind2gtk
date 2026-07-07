@@ -1,4 +1,4 @@
-import type { CSSRule, Variant } from "./types";
+import type { StyleRule, Variant } from "./types";
 
 const parseArbitraryVariant = (value: string, selector: string): string => {
   const inner = value.slice(1, -1).replace(/_/g, " ");
@@ -12,7 +12,7 @@ const applyVariantToSelector = (variant: Variant, selector: string): string => {
   return selector;
 };
 
-const applyVariantsToRule = (variants: Variant[], rule: CSSRule): CSSRule => ({
+const applyVariantsToRule = (variants: Variant[], rule: StyleRule): StyleRule => ({
   ...rule,
   selector: variants.reduce(
     (sel, variant) => applyVariantToSelector(variant, sel),
@@ -23,8 +23,8 @@ const applyVariantsToRule = (variants: Variant[], rule: CSSRule): CSSRule => ({
 
 export const applyVariants = (
   variants: Variant[],
-  rules: CSSRule[],
-): { rules: CSSRule[]; mediaQuery?: string } => {
+  rules: StyleRule[],
+): { rules: StyleRule[]; mediaQuery?: string } => {
   const mediaVariant = variants.find((v) => v.kind === "media");
   const mediaQuery =
     mediaVariant?.kind === "media" ? mediaVariant.query : undefined;

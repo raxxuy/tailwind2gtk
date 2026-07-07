@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const sides: Record<string, string[]> = {
   "": ["border-radius"],
@@ -33,7 +33,7 @@ const resolveRadiusValue = (
 export const resolveBorderRadius = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^rounded(?:-(tl|tr|br|bl|t|r|b|l))?(?:-(.+))?$/);
   if (!match) return null;
 

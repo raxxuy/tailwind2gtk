@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveFontWeight = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const named = utility.match(/^font-([\w]+)$/);
   if (named && named[1] in config.fontWeights)
     return [

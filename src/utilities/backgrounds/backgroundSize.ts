@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const sizes: Record<string, string> = {
   auto: "auto",
@@ -9,7 +9,7 @@ const sizes: Record<string, string> = {
 export const resolveBackgroundSize = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const named = utility.match(/^bg-(auto|cover|contain)$/);
   if (named)
     return [

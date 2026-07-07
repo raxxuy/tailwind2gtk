@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const lines: Record<string, string> = {
   underline: "underline",
@@ -10,7 +10,7 @@ const lines: Record<string, string> = {
 export const resolveTextDecorationLine = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility in lines)
     return [
       {

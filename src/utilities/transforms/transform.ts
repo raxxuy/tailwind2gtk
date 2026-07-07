@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const TRANSFORM_CPU =
   "var(--rotate) var(--rotate-x) var(--rotate-y) var(--rotate-z) var(--scale-x) var(--scale-y) var(--scale-z) var(--skew-x) var(--skew-y) var(--translate-x) var(--translate-y) var(--translate-z)";
@@ -7,7 +7,7 @@ const TRANSFORM_GPU = `translateZ(0) ${TRANSFORM_CPU}`;
 export const resolveTransform = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "transform-none")
     return [{ selector: "", properties: { transform: "none" } }];
 

@@ -1,10 +1,10 @@
 import { resolveColor } from "../../helpers/resolveColor";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveDropShadow = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "drop-shadow-none")
     return [{ selector: "", properties: { filter: "drop-shadow(0 0 #0000)" } }];
 
@@ -43,7 +43,7 @@ export const resolveDropShadow = (
 export const resolveDropShadowColor = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const colorVar = utility.match(/^drop-shadow-\(color:(--[^)]+)\)$/);
   if (colorVar)
     return [

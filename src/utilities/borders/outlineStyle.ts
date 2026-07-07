@@ -1,11 +1,11 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const styles = ["solid", "dashed", "dotted", "double", "none"];
 
 export const resolveOutlineStyle = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^outline-(solid|dashed|dotted|double|none)$/);
   if (match && styles.includes(match[1]))
     return [{ selector: "", properties: { "outline-style": match[1] } }];

@@ -1,10 +1,10 @@
 import { resolveValue } from "../../helpers/resolveValue";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveMinHeight = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^min-h-(.+)$/);
   if (!match) return null;
 

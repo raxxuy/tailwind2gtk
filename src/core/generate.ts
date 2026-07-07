@@ -1,7 +1,7 @@
 import { escapeClassName } from "../escape";
 import { gradientVars } from "../helpers/gradientVars";
 import { parseClass } from "../parser";
-import type { CSSRule, ResolvedConfig } from "../types";
+import type { StyleRule, ResolvedConfig } from "../types";
 import { applyVariants } from "../variants";
 import { resolveUtility } from "./resolve";
 import { serializeRules } from "./serialize";
@@ -33,7 +33,7 @@ const resolveClassToCSS = (
 ): {
   selector: string;
   properties: Record<string, string>;
-  children: CSSRule[];
+  children: StyleRule[];
   mediaQuery?: string;
 } | null => {
   const parsed = parseClass(cls);
@@ -50,7 +50,7 @@ const resolveClassToCSS = (
   );
 
   const properties: Record<string, string> = {};
-  const children: CSSRule[] = [];
+  const children: StyleRule[] = [];
   finalRules.forEach((rule) => {
     Object.assign(properties, rule.properties);
     if (rule.children) children.push(...rule.children);
@@ -89,7 +89,7 @@ export const generateCSS = (
         {
           selector: string;
           properties: Record<string, string>;
-          children: CSSRule[];
+          children: StyleRule[];
           mediaQuery?: string;
         }
       >();
@@ -104,7 +104,7 @@ export const generateCSS = (
         const key = `${resolved.mediaQuery ?? ""}||${resolved.selector}`;
         if (!byMedia.has(key))
           byMedia.set(key, { ...resolved, properties: {}, children: [] });
-        const bucket = byMedia.get(key) as CSSRule;
+        const bucket = byMedia.get(key) as StyleRule;
         Object.assign(bucket.properties, resolved.properties);
         bucket.children.push(...resolved.children);
       });

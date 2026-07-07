@@ -1,11 +1,11 @@
-import type { CSSRule } from "../types";
+import type { StyleRule } from "../types";
 
 const serializeProperties = (properties: Record<string, string>): string =>
   Object.entries(properties)
     .map(([prop, value]) => `  ${prop}: ${value};`)
     .join("\n");
 
-const serializeRule = (rule: CSSRule): string => {
+const serializeRule = (rule: StyleRule): string => {
   const blocks: string[] = [];
 
   if (Object.keys(rule.properties).length > 0)
@@ -27,7 +27,7 @@ const serializeRule = (rule: CSSRule): string => {
 };
 
 export const serializeRules = (
-  rules: CSSRule[],
+  rules: StyleRule[],
   mediaQuery?: string,
 ): string => {
   const css = rules.map(serializeRule).join("\n");

@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const origins: Record<string, string> = {
   border: "border-box",
@@ -9,7 +9,7 @@ const origins: Record<string, string> = {
 export const resolveBackgroundOrigin = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const named = utility.match(/^bg-origin-([\w-]+)$/);
   if (named && named[1] in origins)
     return [

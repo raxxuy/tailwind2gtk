@@ -1,10 +1,10 @@
 import { resolveColor } from "../../helpers/resolveColor";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveBoxShadow = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "shadow-none")
     return [{ selector: "", properties: { "box-shadow": "0 0 #0000" } }];
 
@@ -38,7 +38,7 @@ export const resolveBoxShadow = (
 export const resolveBoxShadowColor = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const colorVar = utility.match(/^shadow-\(color:(--[^)]+)\)$/);
   if (colorVar)
     return [
@@ -57,7 +57,7 @@ export const resolveBoxShadowColor = (
 export const resolveInsetBoxShadow = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "inset-shadow-none")
     return [{ selector: "", properties: { "box-shadow": "inset 0 0 #0000" } }];
 
@@ -91,7 +91,7 @@ export const resolveInsetBoxShadow = (
 export const resolveInsetBoxShadowColor = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const colorVar = utility.match(/^inset-shadow-\(color:(--[^)]+)\)$/);
   if (colorVar)
     return [

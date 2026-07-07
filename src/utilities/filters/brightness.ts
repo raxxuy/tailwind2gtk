@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveBrightness = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const number = utility.match(/^brightness-(\d+(?:\.\d+)?)$/);
   if (number)
     return [{ selector: "", properties: { filter: `brightness(${number}%)` } }];

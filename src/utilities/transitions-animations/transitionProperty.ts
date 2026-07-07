@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const DEFAULT_TIMING = "var(--default-transition-timing-function)";
 const DEFAULT_DURATION = "var(--default-transition-duration)";
@@ -23,7 +23,7 @@ const properties: Record<string, string> = {
 export const resolveTransitionProperty = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "transition-none")
     return [{ selector: "", properties: { "transition-property": "none" } }];
 

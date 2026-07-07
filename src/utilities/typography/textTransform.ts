@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const transforms: Record<string, string> = {
   uppercase: "uppercase",
@@ -10,7 +10,7 @@ const transforms: Record<string, string> = {
 export const resolveTextTransforms = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility in transforms)
     return [
       {

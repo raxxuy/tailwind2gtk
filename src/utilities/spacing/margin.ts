@@ -1,10 +1,10 @@
 import { resolveValue } from "../../helpers/resolveValue";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveMargin = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^(-?)(m|mx|my|mt|mr|mb|ml)-(.+)$/);
   if (!match) return null;
 
@@ -36,7 +36,7 @@ export const resolveMargin = (
   return [{ selector: "", properties }];
 };
 
-export const resolveSpace = (utility: string): CSSRule[] | null => {
+export const resolveSpace = (utility: string): StyleRule[] | null => {
   if (utility === "space-x-reverse")
     return [
       {

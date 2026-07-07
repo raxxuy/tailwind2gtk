@@ -1,10 +1,10 @@
 import { resolveColor } from "../../helpers/resolveColor";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveTextShadow = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "text-shadow-none")
     return [{ selector: "", properties: { "text-shadow": "none" } }];
 
@@ -38,7 +38,7 @@ export const resolveTextShadow = (
 export const resolveTextShadowColor = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const colorVar = utility.match(/^text-shadow-\(color:(--[^)]+)\)$/);
   if (colorVar)
     return [

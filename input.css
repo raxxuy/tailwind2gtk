@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+.\:nth-child\(2n\)\:dark\:\[\&\>span\]\:hover\:bg-red-500 {
+    &:nth-child(2n) {
+        @media (prefers-color-scheme: dark) {
+            &:hover {
+                background-color: var(--color-red-500);
+            }
+        }
+    }
+}

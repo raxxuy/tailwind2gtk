@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const repeats: Record<string, string> = {
   repeat: "repeat",
@@ -12,7 +12,7 @@ const repeats: Record<string, string> = {
 export const resolveBackgroundRepeat = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const named = utility.match(
     /^bg-(repeat|no-repeat|repeat-x|repeat-y|round|space)$/,
   );

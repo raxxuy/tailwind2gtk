@@ -1,9 +1,9 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveOpacity = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const number = utility.match(/^opacity-(\d+)$/);
   if (number)
     return [{ selector: "", properties: { opacity: `${number[1]}%` } }];

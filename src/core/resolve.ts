@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../types";
+import type { StyleRule, ResolvedConfig } from "../types";
 import * as backgrounds from "../utilities/backgrounds";
 import * as borders from "../utilities/borders";
 import * as effects from "../utilities/effects";
@@ -13,7 +13,7 @@ import * as typography from "../utilities/typography";
 export const resolveUtility = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const resolvers = [
     ...Object.values(spacing),
     ...Object.values(sizing),

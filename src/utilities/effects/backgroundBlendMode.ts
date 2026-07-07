@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const modes = [
   "normal",
@@ -22,7 +22,7 @@ const modes = [
 export const resolveBackgroundBlendMode = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const mode = utility.match(/^bg-blend-([\w-]+)$/);
   if (mode && modes.includes(mode[1]))
     return [

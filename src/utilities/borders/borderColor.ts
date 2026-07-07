@@ -1,5 +1,5 @@
 import { resolveColor } from "../../helpers/resolveColor";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const sides: Record<string, string[]> = {
   "": ["border-color"],
@@ -14,7 +14,7 @@ const sides: Record<string, string[]> = {
 export const resolveBorderColor = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^border(?:-(x|y|t|r|b|l))?-(.+)$/);
   if (!match) return null;
 
@@ -36,7 +36,7 @@ export const resolveBorderColor = (
 export const resolveDivideColor = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^divide-(.+)$/);
   if (!match) return null;
 

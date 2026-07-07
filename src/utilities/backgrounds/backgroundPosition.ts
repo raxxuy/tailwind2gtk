@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const positions: Record<string, string> = {
   "top-left": "top left",
@@ -15,7 +15,7 @@ const positions: Record<string, string> = {
 export const resolveBackgroundPosition = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const named = utility.match(
     /^bg-(top-left|top-right|top|bottom-left|bottom-right|bottom|left|center|right)$/,
   );

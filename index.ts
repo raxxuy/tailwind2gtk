@@ -4,7 +4,7 @@ export { agsPlugin } from "./src/plugins/ags";
 export { createPlugin } from "./src/plugins/base";
 export { nodePlugin } from "./src/plugins/node";
 export type {
-  CSSRule,
+  StyleRule,
   ParsedClass,
   Plugin,
   TailwindConfig,

@@ -1,10 +1,10 @@
 import { resolveValue } from "../../helpers/resolveValue";
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 export const resolveFontSize = (
   utility: string,
   config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const namedWithLineHeight = utility.match(/^text-([\w-]+)\/(.+)$/);
   if (namedWithLineHeight && namedWithLineHeight[1] in config.fontSizes) {
     const size = `var(--text-${namedWithLineHeight[1]})`;

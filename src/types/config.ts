@@ -1,23 +1,3 @@
-import type { Gtk } from "ags/gtk4";
-
-export type Variant =
-  | { kind: "pseudo"; value: string }
-  | { kind: "arbitrary"; value: string }
-  | { kind: "media"; query: string };
-
-export interface ParsedClass {
-  raw: string;
-  utility: string;
-  variants: Variant[];
-}
-
-export interface CSSRule {
-  children?: CSSRule[];
-  mediaQuery?: string;
-  properties: Record<string, string>;
-  selector: string;
-}
-
 export interface TailwindConfig {
   theme?: {
     animation?: Record<string, string>;
@@ -73,16 +53,5 @@ export interface CacheOptions {
   resolveVarsFrom?: string;
   tailwindConfig?: TailwindConfig;
   themePath?: string;
-  writeFile: (path: string, content: string) => Promise<void>;
-}
-
-export interface Plugin {
-  cleanupWidget?: (widget: GObject.Object) => void;
-  name: string;
-  options?: Omit<CacheOptions, "readFile" | "writeFile">;
-  readFile: (path: string) => string | null;
-  run: (classes: string[]) => Promise<void>;
-  scan?: (root: Gtk.Widget) => void;
-  unscan?: (root: Gtk.Widget) => void;
   writeFile: (path: string, content: string) => Promise<void>;
 }

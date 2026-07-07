@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const sides: Record<string, string[]> = {
   "": ["border-width"],
@@ -28,7 +28,7 @@ const resolveBorderValue = (value: string | undefined): string | null => {
 export const resolveBorderWidth = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   const match = utility.match(/^border(?:-(x|y|t|r|b|l))?(?:-(.+))?$/);
   if (!match) return null;
 
@@ -50,7 +50,7 @@ export const resolveBorderWidth = (
 export const resolveDivide = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility === "divide-x-reverse")
     return [
       {

@@ -1,4 +1,4 @@
-import type { CSSRule, ResolvedConfig } from "../../types";
+import type { StyleRule, ResolvedConfig } from "../../types";
 
 const variants: Record<string, string> = {
   "normal-nums": "normal",
@@ -15,7 +15,7 @@ const variants: Record<string, string> = {
 export const resolveFontVariantNumeric = (
   utility: string,
   _config: ResolvedConfig,
-): CSSRule[] | null => {
+): StyleRule[] | null => {
   if (utility in variants)
     return [
       {
