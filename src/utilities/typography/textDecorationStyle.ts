@@ -1,19 +1,28 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const styles = ["solid", "double", "dotted", "dashed", "wavy"];
+const DECORATION_STYLE_SET = new Set([
+  "solid",
+  "double",
+  "dotted",
+  "dashed",
+  "wavy",
+]);
 
-export const resolveTextDecorationStyle = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const style = utility.match(/^decoration-([\w-]+)$/);
-  if (style && styles.includes(style[1]))
-    return [
-      {
-        selector: "",
-        properties: { "text-decoration-style": style[1] },
+export const resolveTextDecorationStyle = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^decoration-(.*)$/);
+  if (!match) return null;
+
+  const [, value] = match;
+
+  if (DECORATION_STYLE_SET.has(value)) {
+    return {
+      properties: {
+        "text-decoration-style": value,
       },
-    ];
+    };
+  }
 
   return null;
 };

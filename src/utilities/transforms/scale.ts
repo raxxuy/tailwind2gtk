@@ -1,71 +1,49 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import { resolveSidedProperty } from "@/resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const resolveScaleValue = (value: string, negative: boolean): string => {
-  const num = Number(value);
-  if (!Number.isNaN(num))
-    return negative ? `calc(${num / 100} * -1)` : `${num / 100}`;
+const SCALE_PROPERTY_MAP = {
+  scale: ["--tw-scale-x", "--tw-scale-y"],
+  "scale-x": ["--tw-scale-x"],
+  "scale-y": ["--tw-scale-y"],
+} as const satisfies Record<string, string[]>;
 
-  if (value.startsWith("(") && value.endsWith(")"))
-    return `var(${value.slice(1, -1)})`;
-
-  if (value.startsWith("[") && value.endsWith("]"))
-    return value.slice(1, -1).replace(/_/g, " ");
-
-  return value;
-};
-
-export const resolveScale = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "scale-none")
-    return [
-      {
-        selector: "",
-        properties: { "--scale-x": "1", "--scale-y": "1", "--scale-z": "1" },
-      },
-    ];
-
-  if (utility === "scale-3d")
-    return [
-      {
-        selector: "",
-        properties: {
-          "--scale-x": "var(--scale-x)",
-          "--scale-y": "var(--scale-y)",
-          "--scale-z": "var(--scale-z)",
-        },
-      },
-    ];
-
-  const match = utility.match(/^(-?)scale(?:-(x|y|z))?-(.+)$/);
-  if (!match) return null;
-
-  const [, negative, axis, raw] = match;
-  const resolved = resolveScaleValue(raw, !!negative);
-
-  if (axis === "x")
-    return [
-      { selector: "", properties: { "--scale-x": `scaleX(${resolved})` } },
-    ];
-
-  if (axis === "y")
-    return [
-      { selector: "", properties: { "--scale-y": `scaleY(${resolved})` } },
-    ];
-
-  if (axis === "z")
-    return [
-      { selector: "", properties: { "--scale-z": `scaleZ(${resolved})` } },
-    ];
-
-  return [
-    {
-      selector: "",
+export const resolveScale = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  if (utility === "scale-none") {
+    return {
       properties: {
-        "--scale-x": `scaleX(${resolved})`,
-        "--scale-y": `scaleY(${resolved})`,
+        "--tw-scale-x": "",
+        "--tw-scale-y": "",
+        transform:
+          "var(--tw-translate-x,) var(--tw-translate-y,) var(--tw-scale-x,) var(--tw-scale-y,) var(--tw-rotate,) var(--tw-skew-x,) var(--tw-skew-y,)",
       },
-    },
-  ];
+    };
+  }
+
+  const properties = resolveSidedProperty({
+    utility,
+    sideMap: SCALE_PROPERTY_MAP,
+    resolveValue: (v) =>
+      resolveNumber(v, {
+        fraction: false,
+        px: false,
+        spacing: false,
+        unit: "%",
+      }),
+    allowNegative: true,
+    formatProperty: (prop, value) =>
+      prop === "--tw-scale-x" ? `scaleX(${value})` : `scaleY(${value})`,
+  });
+
+  return properties
+    ? {
+        properties: {
+          ...properties,
+          transform:
+            "var(--tw-translate-x,) var(--tw-translate-y,) var(--tw-scale-x,) var(--tw-scale-y,) var(--tw-rotate,) var(--tw-skew-x,) var(--tw-skew-y,)",
+        },
+      }
+    : null;
 };

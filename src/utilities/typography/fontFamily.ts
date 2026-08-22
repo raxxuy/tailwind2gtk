@@ -1,27 +1,27 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveFontFamily = (
+const resolveFontFamilyValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  const named = utility.match(/^font-(.+)$/);
-  if (named && named[1] in config.fontFamilies)
-    return [
-      {
-        selector: "",
-        properties: { "font-family": `var(--font-${named[1]})` },
-      },
-    ];
+): string | null => {
+  const match = utility.match(/^font-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^font-\(family-name:(--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "font-family": `var(${customVar[1]})` } },
-    ];
+  return resolveToken({
+    value: match[1],
+    tokenMap: config.font,
+    formatVar: (v) => `var(--font-${v})`,
+    extra: "family-name",
+  });
+};
 
-  const arbitrary = utility.match(/^font-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { "font-family": arbitrary[1] } }];
+export const resolveFontFamily = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveFontFamilyValue(utility, config);
+  if (!value) return null;
 
-  return null;
+  return { properties: { "font-family": value } };
 };

@@ -1,27 +1,31 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveContrast = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const number = utility.match(/^contrast-(\d+(?:\.\d+)?)$/);
-  if (number)
-    return [{ selector: "", properties: { filter: `contrast(${number}%)` } }];
+const resolveContrastValue = (utility: string): string | null => {
+  const match = utility.match(/^contrast-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^contrast-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { filter: `contrast(var(${customVar[1]}))` },
-      },
-    ];
+  const resolved = resolveNumber(match[1], {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "%",
+  });
 
-  const arbitrary = utility.match(/^contrast-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      { selector: "", properties: { filter: `contrast(${arbitrary[1]})` } },
-    ];
+  return `contrast(${resolved})`;
+};
 
-  return null;
+export const resolveContrast = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveContrastValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "--tw-contrast": value,
+      filter:
+        "var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)",
+    },
+  };
 };

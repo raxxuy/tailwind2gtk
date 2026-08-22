@@ -1,41 +1,45 @@
-import { resolveValue } from "../../helpers/resolveValue";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveFontSize = (
+const resolveFontSizeValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  const namedWithLineHeight = utility.match(/^text-([\w-]+)\/(.+)$/);
-  if (namedWithLineHeight && namedWithLineHeight[1] in config.fontSizes) {
-    const size = `var(--text-${namedWithLineHeight[1]})`;
-    const lh = resolveValue(namedWithLineHeight[2]);
-    if (lh)
-      return [
-        { selector: "", properties: { "font-size": size, "line-height": lh } },
-      ];
-  }
+): [string, string] | null => {
+  const match = utility.match(/^text-([^/]+)(?:\/(.+))?$/);
+  if (!match) return null;
 
-  const named = utility.match(/^text-(.+)$/);
-  if (named && named[1] in config.fontSizes)
-    return [
-      {
-        selector: "",
-        properties: {
-          "font-size": `var(--text-${named[1]})`,
-          "line-height": `var(--text-${named[1]}--line-height)`,
-        },
-      },
-    ];
+  const [, value, explicitLh] = match;
 
-  const customVar = utility.match(/^text-\(length:(--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "font-size": `var(${customVar[1]})` } },
-    ];
+  const resolved = resolveToken({
+    value,
+    tokenMap: config.text,
+    formatVar: (v) => `var(--text-${v})`,
+    extra: "length",
+  });
 
-  const arbitrary = utility.match(/^text-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { "font-size": arbitrary[1] } }];
+  if (!resolved) return null;
 
-  return null;
+  const lh = explicitLh
+    ? resolveNumber(explicitLh, { px: false, fraction: false })
+    : value in config.text && config.text[value]["line-height"]
+      ? `var(--tw-leading, var(--text-${value}--line-height))`
+      : null;
+
+  return [resolved, lh];
+};
+
+export const resolveFontSize = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveFontSizeValue(utility, config);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "font-size": value[0],
+      ...(value[1] ? { "line-height": value[1] } : {}),
+    },
+  };
 };

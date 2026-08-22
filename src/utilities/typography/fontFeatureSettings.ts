@@ -1,23 +1,24 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveFontFeatureSettings = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const customVar = utility.match(/^font-features-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { "font-feature-settings": `var(${customVar[1]})` },
-      },
-    ];
+const resolveFontFeatureSettingsValue = (utility: string): string | null => {
+  const match = utility.match(/^font-features-(.*)$/);
+  if (!match) return null;
 
-  const arbitrary = utility.match(/^font-features-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      { selector: "", properties: { "font-feature-settings": arbitrary[1] } },
-    ];
+  return resolveToken({
+    value: match[1],
+  });
+};
 
-  return null;
+export const resolveFontFeatureSettings = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveFontFeatureSettingsValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "font-feature-settings": value,
+    },
+  };
 };

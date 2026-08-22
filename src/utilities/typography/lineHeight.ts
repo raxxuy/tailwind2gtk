@@ -1,30 +1,33 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveLineHeight = (
+const resolveLineHeightValue = (
   utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "leading-none")
-    return [{ selector: "", properties: { "line-height": "1" } }];
+  config: ResolvedConfig,
+): string | null => {
+  if (utility === "leading-none") return "1";
 
-  const number = utility.match(/^leading-(\d+(?:\.\d+)?)$/);
-  if (number)
-    return [
-      {
-        selector: "",
-        properties: { "line-height": `calc(var(--spacing) * ${number[1]})` },
-      },
-    ];
+  const match = utility.match(/^leading-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^leading-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "line-height": `var(${customVar[1]})` } },
-    ];
+  const [, value] = match;
 
-  const arbitrary = utility.match(/^leading-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { "line-height": arbitrary[1] } }];
+  if (value in config.leading) return `var(--leading-${value})`;
 
-  return null;
+  return resolveNumber(value, { fraction: false });
+};
+
+export const resolveLineHeight = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveLineHeightValue(utility, config);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "--tw-leading": value,
+      "line-height": value,
+    },
+  };
 };

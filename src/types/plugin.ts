@@ -1,5 +1,6 @@
 import type { Object as GObject } from "ags/gobject";
 import type { Gtk } from "ags/gtk4";
+
 import type { CacheOptions } from "./config";
 
 export interface Plugin {

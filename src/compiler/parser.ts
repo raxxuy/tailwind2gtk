@@ -1,4 +1,4 @@
-import type { ParsedClass, Variant } from "./types/core";
+import type { ParsedClass, Variant } from "../types/core";
 
 const PSEUDO_CLASSES = new Set([
   "link",
@@ -27,10 +27,6 @@ const PSEUDO_SHORTHANDS: Record<string, string> = {
   even: "nth-child(even)",
 };
 
-const NTH_BRACKET_RE = /^(nth|nth-last)-\[(.+)\]$/;
-
-const NOT_RE = /^not-(.+)$/;
-
 const MEDIA_QUERIES: Record<string, string> = {
   dark: "@media (prefers-color-scheme: dark)",
   light: "@media (prefers-color-scheme: light)",
@@ -39,6 +35,9 @@ const MEDIA_QUERIES: Record<string, string> = {
   "motion-reduce": "@media (prefers-reduced-motion: reduce)",
   "motion-safe": "@media (prefers-reduced-motion: no-preference)",
 };
+
+const NTH_BRACKET_RE = /^(nth|nth-last)-\[(.+)\]$/;
+const NOT_RE = /^not-(.+)$/;
 
 const resolvePseudoArg = (arg: string): string => {
   const nthMatch = arg.match(NTH_BRACKET_RE);
@@ -49,17 +48,11 @@ const resolvePseudoArg = (arg: string): string => {
   }
 
   const notMatch = arg.match(NOT_RE);
-  if (notMatch) {
-    return `not(:${resolvePseudoArg(notMatch[1])})`;
-  }
+  if (notMatch) return `not(:${resolvePseudoArg(notMatch[1])})`;
 
-  if (arg in PSEUDO_SHORTHANDS) {
-    return PSEUDO_SHORTHANDS[arg];
-  }
+  if (arg in PSEUDO_SHORTHANDS) return PSEUDO_SHORTHANDS[arg];
 
-  if (PSEUDO_CLASSES.has(arg)) {
-    return arg;
-  }
+  if (PSEUDO_CLASSES.has(arg)) return arg;
 
   throw new Error(`Unknown pseudo-class in not(): ${arg}`);
 };
@@ -103,7 +96,7 @@ const tokenizeClass = (cls: string): string[] => {
 /**
  * Transforms a raw token segment into a strongly-typed {@link Variant}.
  */
-const classifyVariantSegment = (segment: string): Variant => {
+const classifyVariantSegment = (segment: string): Variant | null => {
   // Arbitrary Variants
   if (segment.startsWith("[") && segment.endsWith("]")) {
     return { kind: "arbitrary", value: segment };
@@ -114,16 +107,25 @@ const classifyVariantSegment = (segment: string): Variant => {
     return { kind: "media", query: MEDIA_QUERIES[segment] };
   }
 
+  if (segment === "*") {
+    return { kind: "selector", value: "*" };
+  }
+
+  if (segment === "**") {
+    return { kind: "selector", value: "**" };
+  }
+
   // nth-[...] / nth-last-[...]
-  const nthMatch = segment.match(NTH_BRACKET_RE);
-  if (nthMatch) {
+  if (NTH_BRACKET_RE.test(segment)) {
     return { kind: "pseudo", value: resolvePseudoArg(segment) };
   }
 
   // not-...
-  const notMatch = segment.match(NOT_RE);
-  if (notMatch) {
-    return { kind: "pseudo", value: `not(:${resolvePseudoArg(notMatch[1])})` };
+  if (NOT_RE.test(segment)) {
+    return {
+      kind: "pseudo",
+      value: `not(:${resolvePseudoArg(segment.slice(4))})`,
+    };
   }
 
   if (segment in PSEUDO_SHORTHANDS) {

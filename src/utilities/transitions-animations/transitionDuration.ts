@@ -1,35 +1,30 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveTransitionDuration = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "duration-initial")
-    return [{ selector: "", properties: { "transition-duration": "initial" } }];
+const resolveTransitionDurationValue = (utility: string): string | null => {
+  if (utility === "duration-initial") return "initial";
 
-  const number = utility.match(/^duration-(\d+)$/);
-  if (number)
-    return [
-      { selector: "", properties: { "transition-duration": `${number[1]}ms` } },
-    ];
+  const match = utility.match(/^duration-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^duration-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { "transition-duration": `var(${customVar[1]})` },
-      },
-    ];
+  return resolveNumber(match[1], {
+    fraction: false,
+    spacing: false,
+    px: false,
+    unit: "ms",
+  });
+};
 
-  const arbitrary = utility.match(/^duration-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { "transition-duration": arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
+export const resolveTransitionDuration = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveTransitionDurationValue(utility);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      "--tw-duration": value,
+      ...(value === "initial" ? { "transition-duration": value } : {}),
+    },
+  };
 };

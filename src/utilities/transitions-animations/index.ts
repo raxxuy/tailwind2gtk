@@ -1,6 +1,6 @@
-export { resolveAnimation } from "./animation";
-export { resolveTransitionBehavior } from "./transitionBehavior";
-export { resolveTransitionDelay } from "./transitionDelay";
-export { resolveTransitionDuration } from "./transitionDuration";
-export { resolveTransitionProperty } from "./transitionProperty";
-export { resolveTransitionTimingFunction } from "./transitionTimingFunction";
+export * from "./animation";
+export * from "./transitionBehavior";
+export * from "./transitionDelay";
+export * from "./transitionDuration";
+export * from "./transitionProperty";
+export * from "./transitionTimingFunction";

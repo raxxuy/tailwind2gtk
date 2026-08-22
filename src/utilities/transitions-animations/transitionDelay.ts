@@ -1,32 +1,28 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveTransitionDelay = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const number = utility.match(/^delay-(\d+)$/);
-  if (number)
-    return [
-      { selector: "", properties: { "transition-delay": `${number[1]}ms` } },
-    ];
+const resolveTransitionDelayValue = (utility: string): string | null => {
+  const match = utility.match(/^delay-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^delay-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { "transition-delay": `var(${customVar[1]})` },
-      },
-    ];
+  return resolveNumber(match[1], {
+    fraction: false,
+    spacing: false,
+    px: false,
+    unit: "ms",
+  });
+};
 
-  const arbitrary = utility.match(/^delay-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { "transition-delay": arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
+export const resolveTransitionDelay = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveTransitionDelayValue(utility);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      "--tw-delay": value,
+      ...(value === "initial" ? { "transition-delay": value } : {}),
+    },
+  };
 };

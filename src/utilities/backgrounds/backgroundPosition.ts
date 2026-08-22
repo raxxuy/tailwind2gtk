@@ -1,49 +1,41 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const positions: Record<string, string> = {
-  "top-left": "top left",
+const POSITION_MAP: Record<string, string> = {
   top: "top",
-  "top-right": "top right",
+  right: "right",
+  bottom: "bottom",
   left: "left",
   center: "center",
-  right: "right",
+  "top-left": "top left",
+  "top-right": "top right",
   "bottom-left": "bottom left",
-  bottom: "bottom",
   "bottom-right": "bottom right",
+} as const;
+
+const resolveBackgroundPositionValue = (utility: string): string | null => {
+  const match = utility.match(/^bg-(.*)$/);
+  if (!match) return null;
+
+  if (match[1] in POSITION_MAP) return POSITION_MAP[match[1]];
+
+  const positionMatch = utility.match(/^bg-position-(.*)$/);
+  if (!positionMatch) return null;
+
+  return resolveToken({
+    value: positionMatch[1],
+  });
 };
 
-export const resolveBackgroundPosition = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const named = utility.match(
-    /^bg-(top-left|top-right|top|bottom-left|bottom-right|bottom|left|center|right)$/,
-  );
-  if (named && named[1] in positions)
-    return [
-      {
-        selector: "",
-        properties: { "background-position": positions[named[1]] },
-      },
-    ];
+export const resolveBackgroundPosition = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveBackgroundPositionValue(utility);
+  if (!value) return null;
 
-  const customVar = utility.match(/^bg-position-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { "background-position": `var(${customVar[1]})` },
-      },
-    ];
-
-  const arbitrary = utility.match(/^bg-position-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { "background-position": arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
-
-  return null;
+  return {
+    properties: {
+      "background-position": value,
+    },
+  };
 };

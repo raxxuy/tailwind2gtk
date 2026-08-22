@@ -1,8 +1,9 @@
-import Gio from "gi://Gio";
-import { onCleanup } from "ags";
+import type { Object as GObject } from "ags/gobject";
 import type { Gtk } from "ags/gtk4";
-import type { Plugin } from "../types";
+
+import type { Plugin } from "../types/plugin";
 import { createPlugin } from "./base";
+import Gio from "gi://Gio";
 
 const readFile = (path: string): string | null => {
   try {
@@ -38,7 +39,7 @@ const writeFile = (path: string, content: string): Promise<void> =>
 export const agsPlugin = (options?: Plugin["options"]): Plugin => {
   const plugin = createPlugin({ name: "ags", options, readFile, writeFile });
   const cleanups = new Map<Gtk.Widget, () => void>();
-  let connected = new WeakSet<Gtk.Widget>();
+  const connected = new WeakSet<Gtk.Widget>();
 
   const scanWidget = (widget: Gtk.Widget): string[] => {
     const classes = [...(widget.get_css_classes() as string[])];
@@ -77,19 +78,10 @@ export const agsPlugin = (options?: Plugin["options"]): Plugin => {
     }
   };
 
-  onCleanup(() => {
-    cleanups.forEach((cleanup) => {
-      cleanup();
-    });
-    cleanups.clear();
-    connected = new WeakSet();
-  });
-
   return {
     ...plugin,
     scan: (root: Gtk.Widget) => plugin.run(scanWidget(root)),
     unscan: unscanWidget,
-    cleanupWidget: (widget: GObject.Object) =>
-      unscanWidget(widget as Gtk.Widget),
+    cleanupWidget: (widget: GObject) => unscanWidget(widget as Gtk.Widget),
   };
 };

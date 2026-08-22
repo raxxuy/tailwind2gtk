@@ -1,32 +1,34 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveBlur = (
+const resolveBlurValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "blur-none")
-    return [{ selector: "", properties: { filter: "" } }];
+): string | null => {
+  if (utility === "blur-none") return "";
 
-  const named = utility.match(/^blur-(.+)$/);
-  if (named && named[1] in config.blurSizes)
-    return [
-      {
-        selector: "",
-        properties: {
-          filter: `blur(var(--blur-${named[1]}))`,
-        },
-      },
-    ];
+  const match = utility.match(/^blur-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^blur-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { filter: `blur(var(${customVar[1]}))` } },
-    ];
+  return resolveToken({
+    value: match[1],
+    tokenMap: config.blur,
+    formatVar: (v) => `var(--blur-${v})`,
+  });
+};
 
-  const arbitrary = utility.match(/^blur-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { filter: `blur(${arbitrary[1]})` } }];
+export const resolveBlur = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveBlurValue(utility, config);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      "--tw-blur": value,
+      filter:
+        "var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)",
+    },
+  };
 };

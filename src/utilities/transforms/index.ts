@@ -1,6 +1,6 @@
-export { resolveRotate } from "./rotate";
-export { resolveScale } from "./scale";
-export { resolveSkew } from "./skew";
-export { resolveTransform } from "./transform";
-export { resolveTransformOrigin } from "./transformOrigin";
-export { resolveTranslate } from "./translate";
+export * from "./rotate";
+export * from "./scale";
+export * from "./skew";
+export * from "./transform";
+export * from "./transformOrigin";
+export * from "./translate";

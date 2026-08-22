@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, writeFile } from "node:fs";
-import type { Plugin } from "../types";
+
+import type { Plugin } from "../types/plugin";
 import { createPlugin } from "./base";
 
 export const nodePlugin = (options?: Plugin["options"]): Plugin =>
@@ -10,11 +11,8 @@ export const nodePlugin = (options?: Plugin["options"]): Plugin =>
     writeFile: (path, content) =>
       new Promise((resolve, reject) => {
         writeFile(path, content, "utf-8", (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
+          if (err) reject(err);
+          else resolve();
         });
       }),
   });

@@ -1,32 +1,32 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveAnimation = (
+const resolveAnimationValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "animate-none")
-    return [{ selector: "", properties: { animation: "none" } }];
+): string | null => {
+  if (utility === "animate-none") return "none";
 
-  const named = utility.match(/^animate-(.+)$/);
-  if (named && named[1] in config.animations)
-    return [
-      { selector: "", properties: { animation: `var(--animate-${named[1]})` } },
-    ];
+  const match = utility.match(/^animate-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^animate-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { animation: `var(${customVar[1]})` } },
-    ];
+  return resolveToken({
+    value: match[1],
+    tokenMap: config.animate,
+    formatVar: (v) => `var(--animate-${v})`,
+  });
+};
 
-  const arbitrary = utility.match(/^animate-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { animation: arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
+export const resolveAnimation = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveAnimationValue(utility, config);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      animation: value,
+    },
+  };
 };

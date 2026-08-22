@@ -1,23 +1,22 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const transforms: Record<string, string> = {
+const TRANSFORM_MAP = {
+  "normal-case": "none",
   uppercase: "uppercase",
   lowercase: "lowercase",
   capitalize: "capitalize",
-  "normal-case": "none",
 };
 
-export const resolveTextTransforms = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility in transforms)
-    return [
-      {
-        selector: "",
-        properties: { "text-transform": transforms[utility] },
+export const resolveTextTransform = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  if (utility in TRANSFORM_MAP) {
+    return {
+      properties: {
+        "text-transform": TRANSFORM_MAP[utility],
       },
-    ];
+    };
+  }
 
   return null;
 };

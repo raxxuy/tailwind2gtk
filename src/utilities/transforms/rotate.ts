@@ -1,46 +1,33 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const resolveRotateValue = (value: string, negative: boolean): string => {
-  const num = Number(value);
-  if (!Number.isNaN(num))
-    return negative ? `calc(${num}deg * -1)` : `${num}deg`;
+const resolveRotateValue = (utility: string): string | null => {
+  if (utility === "rotate-none") return "none";
 
-  if (value.startsWith("(") && value.endsWith(")"))
-    return `var(${value.slice(1, -1)})`;
-
-  if (value.startsWith("[") && value.endsWith("]"))
-    return value.slice(1, -1).replace(/_/g, " ");
-
-  return value;
-};
-
-export const resolveRotate = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "rotate-none")
-    return [{ selector: "", properties: { "--rotate": "rotate(0deg)" } }];
-
-  const match = utility.match(/^(-?)rotate(?:-(x|y|z))?-(.+)$/);
+  const match = utility.match(/^(-?)rotate-(.*)$/);
   if (!match) return null;
 
-  const [, negative, axis, raw] = match;
-  const resolved = resolveRotateValue(raw, !!negative);
+  const [, negative, value] = match;
 
-  if (axis === "x")
-    return [
-      { selector: "", properties: { "--rotate-x": `rotateX(${resolved})` } },
-    ];
+  return resolveNumber(`${negative}${value}`, {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "deg",
+  });
+};
 
-  if (axis === "y")
-    return [
-      { selector: "", properties: { "--rotate-y": `rotateY(${resolved})` } },
-    ];
+export const resolveRotate = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveRotateValue(utility);
+  if (!value) return null;
 
-  if (axis === "z")
-    return [
-      { selector: "", properties: { "--rotate-z": `rotateZ(${resolved})` } },
-    ];
-
-  return [{ selector: "", properties: { "--rotate": `rotate(${resolved})` } }];
+  return {
+    properties: {
+      "--tw-rotate": value,
+      transform:
+        "var(--tw-translate-x,) var(--tw-translate-y,) var(--tw-scale-x,) var(--tw-scale-y,) var(--tw-rotate,) var(--tw-skew-x,) var(--tw-skew-y,)",
+    },
+  };
 };

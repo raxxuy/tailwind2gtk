@@ -1,6 +1,7 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const stretches = [
+const STRETCH_SET = new Set([
   "ultra-condensed",
   "extra-condensed",
   "condensed",
@@ -10,31 +11,29 @@ const stretches = [
   "expanded",
   "extra-expanded",
   "ultra-expanded",
-];
+]);
 
-export const resolveFontStretch = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const stretch = utility.match(/^font-stretch-([\w-]+)$/);
-  if (stretch && stretches.includes(stretch[1]))
-    return [{ selector: "", properties: { "font-stretch": stretch[1] } }];
+const resolveFontStretchValue = (utility: string): string | null => {
+  const match = utility.match(/^font-stretch-(.*)$/);
+  if (!match) return null;
 
-  const percentage = utility.match(/^font-stretch-(\d+)%$/);
-  if (percentage)
-    return [
-      { selector: "", properties: { "font-stretch": `${percentage[1]}%` } },
-    ];
+  const [, value] = match;
 
-  const customVar = utility.match(/^font-stretch-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "font-stretch": `var(${customVar[1]})` } },
-    ];
+  if (STRETCH_SET.has(value)) return value;
+  if (/^\d+%$/.test(value)) return value;
 
-  const arbitrary = utility.match(/^font-stretch-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { "font-stretch": arbitrary[1] } }];
+  return resolveToken({ value });
+};
 
-  return null;
+export const resolveFontStretch = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveFontStretchValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "font-stretch": value,
+    },
+  };
 };

@@ -1,6 +1,6 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const modes = [
+const BLEND_MODE_SET = new Set([
   "normal",
   "multiply",
   "screen",
@@ -17,20 +17,23 @@ const modes = [
   "saturation",
   "color",
   "luminosity",
-];
+]);
 
-export const resolveBackgroundBlendMode = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const mode = utility.match(/^bg-blend-([\w-]+)$/);
-  if (mode && modes.includes(mode[1]))
-    return [
-      {
-        selector: "",
-        properties: { "background-blend-mode": mode[1] },
+export const resolveBackgroundBlendMode = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^bg-blend-(.*)$/);
+  if (!match) return null;
+
+  const [, value] = match;
+
+  if (BLEND_MODE_SET.has(value)) {
+    return {
+      properties: {
+        "background-blend-mode": value,
       },
-    ];
+    };
+  }
 
   return null;
 };

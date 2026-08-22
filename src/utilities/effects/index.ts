@@ -1,9 +1,4 @@
-export { resolveBackgroundBlendMode } from "./backgroundBlendMode";
-export {
-  resolveBoxShadow,
-  resolveBoxShadowColor,
-  resolveInsetBoxShadow,
-  resolveInsetBoxShadowColor,
-} from "./boxShadow";
-export { resolveOpacity } from "./opacity";
-export { resolveTextShadow, resolveTextShadowColor } from "./textShadow";
+export * from "./backgroundBlendMode";
+export * from "./boxShadow";
+export * from "./opacity";
+export * from "./textShadow";

@@ -1,33 +1,32 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { wrapChild } from "@/compiler/rule";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const styles = ["solid", "dashed", "dotted", "double", "hidden", "none"];
-
-export const resolveBorderStyle = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const border = utility.match(
+export const resolveBorderStyle = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(
     /^border-(solid|dashed|dotted|double|hidden|none)$/,
   );
-  if (border && styles.includes(border[1]))
-    return [{ selector: "", properties: { "border-style": border[1] } }];
+  if (!match) return null;
 
-  const divide = utility.match(
+  return {
+    properties: {
+      "--tw-border-style": match[1],
+      "border-style": match[1],
+    },
+  };
+};
+
+export const resolveDivideStyle = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(
     /^divide-(solid|dashed|dotted|double|hidden|none)$/,
   );
-  if (divide && styles.includes(divide[1]))
-    return [
-      {
-        selector: "",
-        properties: {},
-        children: [
-          {
-            selector: "& > :not(:last-child)",
-            properties: { "border-style": divide[1] },
-          },
-        ],
-      },
-    ];
+  if (!match) return null;
 
-  return null;
+  return wrapChild("& > :not(:last-child)", {
+    "--tw-border-style": match[1],
+    "border-style": match[1],
+  });
 };

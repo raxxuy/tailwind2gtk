@@ -1,95 +1,54 @@
-import { resolveValue } from "../../helpers/resolveValue";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { wrapChild } from "@/compiler/rule";
+import { getTailwindVariable } from "@/compiler/runtime/variables";
+import { resolveNumber } from "@/resolvers/number";
+import { resolveSidedProperty } from "@/resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "@/types/core";
 
-export const resolveMargin = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^(-?)(m|mx|my|mt|mr|mb|ml)-(.+)$/);
-  if (!match) return null;
+const MARGIN_PROPERTY_MAP: Record<string, string[]> = {
+  m: ["margin"],
+  mx: ["margin-left", "margin-right"],
+  my: ["margin-top", "margin-bottom"],
+  mt: ["margin-top"],
+  mr: ["margin-right"],
+  mb: ["margin-bottom"],
+  ml: ["margin-left"],
+} as const;
 
-  const [, negative, prefix, value] = match;
-  const resolved = resolveValue(`${negative}${value}`);
-  if (!resolved) return null;
-
-  const properties = (() => {
-    switch (prefix) {
-      case "m":
-        return { margin: resolved };
-      case "mx":
-        return { "margin-left": resolved, "margin-right": resolved };
-      case "my":
-        return { "margin-top": resolved, "margin-bottom": resolved };
-      case "mt":
-        return { "margin-top": resolved };
-      case "mr":
-        return { "margin-right": resolved };
-      case "mb":
-        return { "margin-bottom": resolved };
-      case "ml":
-        return { "margin-left": resolved };
-      default:
-        return {};
-    }
-  })() as Record<string, string>;
-
-  return [{ selector: "", properties }];
+export const resolveMargin = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const properties = resolveSidedProperty({
+    utility,
+    sideMap: MARGIN_PROPERTY_MAP,
+    resolveValue: (v) => resolveNumber(v, { fraction: false }),
+    allowNegative: true,
+  });
+  return properties ? { properties } : null;
 };
 
-export const resolveSpace = (utility: string): StyleRule[] | null => {
-  if (utility === "space-x-reverse")
-    return [
-      {
-        selector: "",
-        properties: {},
-        children: [
-          {
-            selector: "& > :not(:last-child)",
-            properties: { "--space-x-reverse": "1" },
-          },
-        ],
-      },
-    ];
-
-  if (utility === "space-y-reverse")
-    return [
-      {
-        selector: "",
-        properties: {},
-        children: [
-          {
-            selector: "& > :not(:last-child)",
-            properties: { "--space-y-reverse": "1" },
-          },
-        ],
-      },
-    ];
-
-  const match = utility.match(/^(-?)space-(x|y)-(.+)$/);
+export const resolveSpace = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^(-?)space-(x|y)-(reverse|.+)$/);
   if (!match) return null;
 
   const [, negative, axis, value] = match;
-  const resolved = resolveValue(`${negative}${value}`);
+
+  const reverseVar = getTailwindVariable(`space-${axis}`);
+  if (!reverseVar) return null;
+
+  if (value === "reverse") {
+    return wrapChild("& > :not(:last-child)", { [reverseVar]: "1" });
+  }
+
+  const resolved = resolveNumber(`${negative}${value}`, { fraction: false });
   if (!resolved) return null;
 
-  const properties: Record<string, string> =
-    axis === "x"
-      ? {
-          "--space-x-reverse": "0",
-          "margin-left": `calc(${resolved} * var(--space-x-reverse))`,
-          "margin-right": `calc(${resolved} * calc(1 - var(--space-x-reverse)))`,
-        }
-      : {
-          "--space-y-reverse": "0",
-          "margin-top": `calc(${resolved} * var(--space-y-reverse))`,
-          "margin-bottom": `calc(${resolved} * calc(1 - var(--space-y-reverse)))`,
-        };
+  const [start, end] = MARGIN_PROPERTY_MAP[`m${axis}`];
 
-  return [
-    {
-      selector: "",
-      properties: {},
-      children: [{ selector: "& > :not(:last-child)", properties }],
-    },
-  ];
+  return wrapChild("& > :not(:last-child)", {
+    [reverseVar]: "0",
+    [start]: `calc(${resolved} * var(${reverseVar}))`,
+    [end]: `calc(${resolved} * calc(1 - var(${reverseVar})))`,
+  });
 };

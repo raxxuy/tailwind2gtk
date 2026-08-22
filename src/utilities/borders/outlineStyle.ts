@@ -1,25 +1,32 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const styles = ["solid", "dashed", "dotted", "double", "none"];
+const STYLE_SET = new Set(["solid", "dashed", "dotted", "double", "none"]);
 
-export const resolveOutlineStyle = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^outline-(solid|dashed|dotted|double|none)$/);
-  if (match && styles.includes(match[1]))
-    return [{ selector: "", properties: { "outline-style": match[1] } }];
-
-  if (utility === "outline-hidden")
-    return [
-      {
-        selector: "",
-        properties: {
-          outline: "2px solid transparent",
-          "outline-offset": "2px",
-        },
+export const resolveOutlineStyle = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  if (utility === "outline-hidden") {
+    return {
+      properties: {
+        "--tw-outline-style": "none",
+        "outline-style": "none",
+        "outline-width": "2px solid transparent",
+        "outline-offset": "2px",
       },
-    ];
+    };
+  }
+
+  const match = utility.match(/^outline-(.+)$/);
+  if (!match) return null;
+
+  if (STYLE_SET.has(match[1])) {
+    return {
+      properties: {
+        "--tw-outline-style": "none",
+        "outline-style": match[1],
+      },
+    };
+  }
 
   return null;
 };

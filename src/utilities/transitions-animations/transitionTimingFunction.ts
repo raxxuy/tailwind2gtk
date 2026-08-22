@@ -1,47 +1,34 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveTransitionTimingFunction = (
+const resolveTransitionTimingFunctionValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "ease-linear")
-    return [
-      { selector: "", properties: { "transition-timing-function": "linear" } },
-    ];
+): string | null => {
+  if (utility === "ease-linear") return "linear";
+  if (utility === "ease-initial") return "initial";
 
-  if (utility === "ease-initial")
-    return [
-      { selector: "", properties: { "transition-timing-function": "initial" } },
-    ];
+  const match = utility.match(/^ease-(.*)$/);
+  if (!match) return null;
 
-  const named = utility.match(/^ease-(.+)$/);
-  if (named && named[1] in config.transitionTimingFunctions)
-    return [
-      {
-        selector: "",
-        properties: { "transition-timing-function": `var(--ease-${named[1]})` },
-      },
-    ];
+  return resolveToken({
+    value: match[1],
+    tokenMap: config.ease,
+    formatVar: (v) => `var(--ease-${v})`,
+  });
+};
 
-  const customVar = utility.match(/^ease-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { "transition-timing-function": `var(${customVar[1]})` },
-      },
-    ];
+export const resolveTransitionTimingFunction = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveTransitionTimingFunctionValue(utility, config);
+  if (!value) return null;
 
-  const arbitrary = utility.match(/^ease-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: {
-          "transition-timing-function": arbitrary[1].replace(/_/g, " "),
-        },
-      },
-    ];
-
-  return null;
+  return {
+    properties: {
+      "--tw-ease": value,
+      "transition-timing-function": value,
+    },
+  };
 };

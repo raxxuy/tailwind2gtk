@@ -1,2 +1,2 @@
-export { resolveMinHeight } from "./minHeight";
-export { resolveMinWidth } from "./minWidth";
+export * from "./minHeight";
+export * from "./minWidth";

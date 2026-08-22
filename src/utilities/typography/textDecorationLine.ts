@@ -1,23 +1,22 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const lines: Record<string, string> = {
-  underline: "underline",
-  overline: "overline",
-  "line-through": "line-through",
+const DECORATION_LINE_MAP = {
   "no-underline": "none",
+  underline: "underline",
+  "line-through": "line-through",
+  overline: "overline",
 };
 
-export const resolveTextDecorationLine = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility in lines)
-    return [
-      {
-        selector: "",
-        properties: { "text-decoration-line": lines[utility] },
+export const resolveTextDecorationLine = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  if (utility in DECORATION_LINE_MAP) {
+    return {
+      properties: {
+        "text-decoration-line": DECORATION_LINE_MAP[utility],
       },
-    ];
+    };
+  }
 
   return null;
 };

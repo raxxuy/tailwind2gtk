@@ -1,57 +1,48 @@
-export interface TailwindConfig {
-  theme?: {
-    animation?: Record<string, string>;
-    apply?: Record<string, string | string[]>;
-    blur?: Record<string, string>;
-    borderRadius?: Record<string, string>;
-    boxShadow?: Record<string, string>;
-    colors?: Record<string, string>;
-    container?: {
-      screens?: Record<string, string>;
-    };
-    dropShadow?: Record<string, string>;
-    fontFamily?: Record<string, string[]>;
-    fontSize?: Record<string, [string, string]>;
-    fontWeight?: Record<string, string>;
-    insetBoxShadow?: Record<string, string>;
-    keyframes?: Record<string, Record<string, Record<string, string>>>;
-    letterSpacing?: Record<string, string>;
-    spacing?: string;
-    textShadow?: Record<string, string>;
-    transitionTimingFunction?: Record<string, string>;
-  };
+import type { KeyframeStep } from "./css";
+
+export interface CompoundValue {
+  value: string;
+  [modifier: string]: string;
 }
 
 export interface ResolvedConfig {
-  animations: Record<string, string>;
-  apply?: Record<string, string | string[]>;
-  blurSizes: Record<string, string>;
-  borderRadii: Record<string, string>;
-  boxShadows: Record<string, string>;
-  colors: Record<string, string>;
-  containerSizes: Record<string, string>;
-  dropShadows: Record<string, string>;
-  fontFamilies: Record<string, string[]>;
-  fontSizes: Record<string, [string, string]>;
-  fontWeights: Record<string, string>;
-  insetBoxShadows: Record<string, string>;
-  keyframes: Record<string, Record<string, Record<string, string>>>;
-  letterSpacings: Record<string, string>;
+  animate: Record<string, string>;
+  blur: Record<string, string>;
+  color: Record<string, string>;
+  container: Record<string, string>;
+  "drop-shadow": Record<string, string>;
+  ease: Record<string, string>;
+  extra: {
+    apply: Record<string, string[]>;
+    keyframes: Record<string, KeyframeStep[]>;
+  };
+  font: Record<string, string | CompoundValue>;
+  "font-weight": Record<string, string>;
+  "inset-shadow": Record<string, string>;
+  leading: Record<string, string>;
+  radius: Record<string, string>;
+  shadow: Record<string, string>;
   spacing: string;
-  textShadows: Record<string, string>;
-  transitionTimingFunctions: Record<string, string>;
+  text: Record<string, string | CompoundValue>;
+  "text-shadow": Record<string, string>;
+  tracking: Record<string, string>;
 }
 
 export interface CacheOptions {
   cssPath?: string;
+  extendPath?: string;
   jsonPath?: string;
   onCacheUpdate?: (
     cache: Record<string, string>,
     config: ResolvedConfig,
   ) => void;
   readFile: (path: string) => string | null;
-  resolveVarsFrom?: string;
-  tailwindConfig?: TailwindConfig;
   themePath?: string;
   writeFile: (path: string, content: string) => Promise<void>;
 }
+
+export const isCompoundValue = (
+  value: string | CompoundValue,
+): value is CompoundValue => {
+  return typeof value === "object" && value !== null;
+};

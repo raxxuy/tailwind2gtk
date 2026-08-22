@@ -1,12 +1,12 @@
-import type { ResolvedConfig } from "../types";
+import type { ResolvedConfig } from "../types/config";
 
 export const defaults: ResolvedConfig = {
-  animations: {
+  animate: {
     spin: "spin 1s linear infinite",
     ping: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
     pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
   },
-  blurSizes: {
+  blur: {
     xs: "4px",
     sm: "8px",
     md: "12px",
@@ -15,26 +15,7 @@ export const defaults: ResolvedConfig = {
     "2xl": "40px",
     "3xl": "64px",
   },
-  borderRadii: {
-    xs: "0.125rem",
-    sm: "0.25rem",
-    md: "0.375rem",
-    lg: "0.5rem",
-    xl: "0.75rem",
-    "2xl": "1rem",
-    "3xl": "1.5rem",
-    "4xl": "2rem",
-  },
-  boxShadows: {
-    "2xs": "0 1px var(--shadow-color, rgb(0 0 0 / 0.05))",
-    xs: "0 1px 2px 0 var(--shadow-color, rgb(0 0 0 / 0.05))",
-    sm: "0 1px 3px 0 var(--shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--shadow-color, rgb(0 0 0 / 0.1))",
-    md: "0 4px 6px -1px var(--shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--shadow-color, rgb(0 0 0 / 0.1))",
-    lg: "0 10px 15px -3px var(--shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--shadow-color, rgb(0 0 0 / 0.1))",
-    xl: "0 20px 25px -5px var(--shadow-color, rgb(0 0 0 / 0.1)), 0 8px 10px -6px var(--shadow-color, rgb(0 0 0 / 0.1))",
-    "2xl": "0 25px 50px -12px var(--shadow-color, rgb(0 0 0 / 0.25))",
-  },
-  colors: {
+  color: {
     black: "oklch(0% 0 0)",
     white: "oklch(100% 0 0)",
     "red-50": "oklch(97.1% 0.013 17.38)",
@@ -324,7 +305,7 @@ export const defaults: ResolvedConfig = {
     "taupe-900": "oklch(21.4% 0.009 43.1)",
     "taupe-950": "oklch(14.7% 0.004 49.3)",
   },
-  containerSizes: {
+  container: {
     "3xs": "256px",
     "2xs": "288px",
     xs: "320px",
@@ -339,59 +320,25 @@ export const defaults: ResolvedConfig = {
     "6xl": "1152px",
     "7xl": "1280px",
   },
-  dropShadows: {
-    xs: "0 1px 1px var(--drop-shadow-color, rgb(0 0 0 / 0.05))",
-    sm: "0 1px 2px var(--drop-shadow-color, rgb(0 0 0 / 0.15))",
-    md: "0 3px 3px var(--drop-shadow-color, rgb(0 0 0 / 0.12))",
-    lg: "0 4px 4px var(--drop-shadow-color, rgb(0 0 0 / 0.15))",
-    xl: "0 9px 7px var(--drop-shadow-color, rgb(0 0 0 / 0.1))",
-    "2xl": "0 25px 25px var(--drop-shadow-color, rgb(0 0 0 / 0.15))",
+  "drop-shadow": {
+    xs: "0 1px 1px rgb(0 0 0 / 0.05)",
+    sm: "0 1px 2px rgb(0 0 0 / 0.15)",
+    md: "0 3px 3px rgb(0 0 0 / 0.12)",
+    lg: "0 4px 4px rgb(0 0 0 / 0.15)",
+    xl: "0 9px 7px rgb(0 0 0 / 0.1)",
+    "2xl": "0 25px 25px rgb(0 0 0 / 0.15)",
   },
-  fontFamilies: {
-    sans: [
-      "ui-sans-serif",
-      "system-ui",
-      "sans-serif",
-      "'Apple Color Emoji'",
-      "'Segoe UI Emoji'",
-      "'Segoe UI Symbol'",
-      "'Noto Color Emoji'",
-    ],
-    serif: [
-      "ui-serif",
-      "Georgia",
-      "Cambria",
-      "'Times New Roman'",
-      "Times",
-      "serif",
-    ],
-    mono: [
-      "ui-monospace",
-      "SFMono-Regular",
-      "Menlo",
-      "Monaco",
-      "Consolas",
-      "'Liberation Mono'",
-      "'Courier New'",
-      "monospace",
-    ],
+  ease: {
+    in: "cubic-bezier(0.4, 0, 1, 1)",
+    out: "cubic-bezier(0, 0, 0.2, 1)",
+    "in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
   },
-  fontSizes: {
-    xs: ["0.75rem", "calc(1 / 0.75)"],
-    sm: ["0.875rem", "calc(1.25 / 0.875)"],
-    base: ["1rem", "calc(1.5 / 1)"],
-    lg: ["1.125rem", "calc(1.75 / 1.125)"],
-    xl: ["1.25rem", "calc(1.75 / 1.25)"],
-    "2xl": ["1.5rem", "calc(2 / 1.5)"],
-    "3xl": ["1.875rem", "calc(2.25 / 1.875)"],
-    "4xl": ["2.25rem", "calc(2.5 / 2.25)"],
-    "5xl": ["3rem", "1"],
-    "6xl": ["3.75rem", "1"],
-    "7xl": ["4.5rem", "1"],
-    "8xl": ["6rem", "1"],
-    "9xl": ["8.5rem", "1"],
+  font: {
+    sans: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Sysmbol", "Noto Color Emoji"',
+    serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+    mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
   },
-  fontWeights: {
+  "font-weight": {
     thin: "100",
     extralight: "200",
     light: "300",
@@ -402,17 +349,100 @@ export const defaults: ResolvedConfig = {
     extrabold: "800",
     black: "900",
   },
-  insetBoxShadows: {
-    "2xs": "inset 0 1px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
-    xs: "inset 0 1px 1px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
-    sm: "inset 0 2px 4px var(--inset-shadow-color, rgb(0 0 0 / 0.05))",
+  "inset-shadow": {
+    "2xs": "inset 0 1px rgb(0 0 0 / 0.05)",
+    xs: "inset 0 1px 1px rgb(0 0 0 / 0.05)",
+    sm: "inset 0 2px 4px rgb(0 0 0 / 0.05)",
   },
-  keyframes: {
-    spin: { to: { transform: "rotate(360deg)" } },
-    ping: { "75%, 100%": { transform: "scale(2)", opacity: "0" } },
-    pulse: { "50%": { opacity: "0.5" } },
+  leading: {
+    tight: "1.25",
+    snug: "1.375",
+    normal: "1.5",
+    relaxed: "1.625",
+    loose: "2",
   },
-  letterSpacings: {
+  radius: {
+    xs: "0.125rem",
+    sm: "0.25rem",
+    md: "0.375rem",
+    lg: "0.5rem",
+    xl: "0.75rem",
+    "2xl": "1rem",
+    "3xl": "1.5rem",
+    "4xl": "2rem",
+  },
+  shadow: {
+    "2xs": "0 1px rgb(0 0 0 / 0.05)",
+    xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+    md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+    xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+    "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+  },
+  spacing: "0.25rem",
+  text: {
+    xs: {
+      value: "0.75rem",
+      "line-height": "calc(1 / 0.75)",
+    },
+    sm: {
+      value: "0.875rem",
+      "line-height": "calc(1.25 / 0.875)",
+    },
+    base: {
+      value: "1rem",
+      "line-height": "calc(1.5 / 1)",
+    },
+    lg: {
+      value: "1.125rem",
+      "line-height": "calc(1.75 / 1.125)",
+    },
+    xl: {
+      value: "1.25rem",
+      "line-height": "calc(1.75 / 1.25)",
+    },
+    "2xl": {
+      value: "1.5rem",
+      "line-height": "calc(2 / 1.5)",
+    },
+    "3xl": {
+      value: "1.875rem",
+      "line-height": "calc(2.25 / 1.875)",
+    },
+    "4xl": {
+      value: "2.25rem",
+      "line-height": "calc(2.5 / 2.25)",
+    },
+    "5xl": {
+      value: "3rem",
+      "line-height": "1",
+    },
+    "6xl": {
+      value: "3.75rem",
+      "line-height": "1",
+    },
+    "7xl": {
+      value: "4.5rem",
+      "line-height": "1",
+    },
+    "8xl": {
+      value: "6rem",
+      "line-height": "1",
+    },
+    "9xl": {
+      value: "8rem",
+      "line-height": "1",
+    },
+  },
+  "text-shadow": {
+    "2xs": "0px 1px 0px rgb(0 0 0 / 0.15)",
+    xs: "0px 1px 1px rgb(0 0 0 / 0.2)",
+    sm: "0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075)",
+    md: "0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1)",
+    lg: "0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1)",
+  },
+  tracking: {
     tighter: "-0.05em",
     tight: "-0.025em",
     normal: "0em",
@@ -420,17 +450,30 @@ export const defaults: ResolvedConfig = {
     wider: "0.05em",
     widest: "0.1em",
   },
-  spacing: "0.25rem",
-  textShadows: {
-    "2xs": "0px 1px 0px var(--shadow-color, rgb(0 0 0 / 0.15))",
-    xs: "0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.2))",
-    sm: "0px 1px 0px var(--shadow-color, rgb(0 0 0 / 0.075)), 0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.075))",
-    md: "0px 1px 1px var(--shadow-color, rgb(0 0 0 / 0.1)), 0px 1px 2px var(--shadow-color, rgb(0 0 0 / 0.1))",
-    lg: "0px 1px 2px var(--shadow-color, rgb(0 0 0 / 0.1)), 0px 3px 2px var(--shadow-color, rgb(0 0 0 / 0.1))",
-  },
-  transitionTimingFunctions: {
-    in: "cubic-bezier(0.4, 0, 1, 1)",
-    out: "cubic-bezier(0, 0, 0.2, 1)",
-    "in-out": "cubic-bezier(0.4, 0, 0.2, 1)",
+  extra: {
+    apply: {},
+    keyframes: {
+      spin: [
+        {
+          selector: "to",
+          declarations: [{ property: "transform", value: "rotate(360deg)" }],
+        },
+      ],
+      ping: [
+        {
+          selector: "75%, 100%",
+          declarations: [
+            { property: "transform", value: "scale(2)" },
+            { property: "opacity", value: "0" },
+          ],
+        },
+      ],
+      pulse: [
+        {
+          selector: "50%",
+          declarations: [{ property: "opacity", value: "0.5" }],
+        },
+      ],
+    },
   },
 };

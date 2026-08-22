@@ -1,36 +1,34 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const TRANSFORM_CPU =
-  "var(--rotate) var(--rotate-x) var(--rotate-y) var(--rotate-z) var(--scale-x) var(--scale-y) var(--scale-z) var(--skew-x) var(--skew-y) var(--translate-x) var(--translate-y) var(--translate-z)";
-const TRANSFORM_GPU = `translateZ(0) ${TRANSFORM_CPU}`;
+const resolveTransformValue = (utility: string): string | null => {
+  if (utility === "transform-none") return "none";
 
-export const resolveTransform = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "transform-none")
-    return [{ selector: "", properties: { transform: "none" } }];
+  if (
+    utility === "transform" ||
+    utility === "transform-cpu" ||
+    utility === "transform-gpu"
+  ) {
+    return "var(--tw-translate-x,) var(--tw-translate-y,) var(--tw-scale-x,) var(--tw-scale-y,) var(--tw-rotate,) var(--tw-skew-x,) var(--tw-skew-y,)";
+  }
 
-  if (utility === "transform-cpu")
-    return [{ selector: "", properties: { transform: TRANSFORM_CPU } }];
+  const match = utility.match(/^transform-(.*)$/);
+  if (!match) return null;
 
-  if (utility === "transform-gpu")
-    return [{ selector: "", properties: { transform: TRANSFORM_GPU } }];
+  return resolveToken({
+    value: match[1],
+  });
+};
 
-  const customVar = utility.match(/^transform-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { transform: `var(${customVar[1]})` } },
-    ];
+export const resolveTransform = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveTransformValue(utility);
+  if (!value) return null;
 
-  const arbitrary = utility.match(/^transform-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { transform: arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
-
-  return null;
+  return {
+    properties: {
+      transform: value,
+    },
+  };
 };

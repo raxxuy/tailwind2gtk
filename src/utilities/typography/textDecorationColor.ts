@@ -1,15 +1,17 @@
-import { resolveColor } from "../../helpers/resolveColor";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveColor } from "@/resolvers/color";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveTextDecorationColor = (
-  utility: string,
-  config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^decoration-(.+)$/);
+export const resolveTextDecorationColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^decoration-(.*)$/);
   if (!match) return null;
 
   const resolved = resolveColor(match[1], config);
   if (!resolved) return null;
 
-  return [{ selector: "", properties: { "text-decoration-color": resolved } }];
+  return {
+    properties: { "text-decoration-color": resolved },
+  };
 };

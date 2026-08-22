@@ -1,100 +1,87 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { wrapChild } from "@/compiler/rule";
+import { getTailwindVariable } from "@/compiler/runtime/variables";
+import { resolveNumber } from "@/resolvers/number";
+import { resolveSidedProperty } from "@/resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const sides: Record<string, string[]> = {
-  "": ["border-width"],
-  x: ["border-left-width", "border-right-width"],
-  y: ["border-top-width", "border-bottom-width"],
-  t: ["border-top-width"],
-  r: ["border-right-width"],
-  b: ["border-bottom-width"],
-  l: ["border-left-width"],
-};
+const WIDTH_PROPERTY_MAP: Record<string, string[]> = {
+  border: ["border-width"],
+  "border-x": ["border-left-width", "border-right-width"],
+  "border-y": ["border-top-width", "border-bottom-width"],
+  "border-t": ["border-top-width"],
+  "border-r": ["border-right-width"],
+  "border-b": ["border-bottom-width"],
+  "border-l": ["border-left-width"],
+} as const;
 
-const resolveBorderValue = (value: string | undefined): string | null => {
+const STYLE_PROPERTY_MAP: Record<string, string[]> = {
+  border: ["border-style"],
+  "border-x": ["border-left-style", "border-right-style"],
+  "border-y": ["border-top-style", "border-bottom-style"],
+  "border-t": ["border-top-style"],
+  "border-r": ["border-right-style"],
+  "border-b": ["border-bottom-style"],
+  "border-l": ["border-left-style"],
+} as const;
+
+const resolveWidthValue = (value: string): string | null => {
   if (!value) return "1px";
-
-  const num = Number(value);
-  if (!Number.isNaN(num)) return `${num}px`;
-
-  if (value.startsWith("(length:") && value.endsWith(")"))
-    return `var(${value.slice(8, -1)})`;
-
-  if (value.startsWith("[") && value.endsWith("]"))
-    return value.slice(1, -1).replace(/_/g, " ");
-
-  return null;
+  return resolveNumber(value, {
+    px: false,
+    spacing: false,
+    fraction: false,
+    extra: "length",
+  });
 };
 
-export const resolveBorderWidth = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^border(?:-(x|y|t|r|b|l))?(?:-(.+))?$/);
-  if (!match) return null;
+export const resolveBorderWidth = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const width = resolveSidedProperty({
+    utility,
+    sideMap: WIDTH_PROPERTY_MAP,
+    resolveValue: resolveWidthValue,
+    allowBare: true,
+  });
+  if (!width) return null;
 
-  const side = match[1] ?? "";
-  const props = sides[side];
-  if (!props) return null;
+  const style = resolveSidedProperty({
+    utility,
+    sideMap: STYLE_PROPERTY_MAP,
+    resolveValue: () => "var(--tw-border-style)",
+    allowBare: true,
+  });
+  if (!style) return null;
 
-  const resolved = resolveBorderValue(match[2]);
-  if (!resolved) return null;
-
-  return [
-    {
-      selector: "",
-      properties: Object.fromEntries(props.map((p) => [p, resolved])),
-    },
-  ];
+  return { properties: { ...width, ...style } };
 };
 
-export const resolveDivide = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "divide-x-reverse")
-    return [
-      {
-        selector: "",
-        properties: {},
-        children: [
-          {
-            selector: "& > :not(:last-child)",
-            properties: { "--divide-x-reverse": "1" },
-          },
-        ],
-      },
-    ];
-
-  if (utility === "divide-y-reverse")
-    return [
-      {
-        selector: "",
-        properties: {},
-        children: [
-          {
-            selector: "& > :not(:last-child)",
-            properties: { "--divide-y-reverse": "1" },
-          },
-        ],
-      },
-    ];
-
-  const match = utility.match(/^divide-(x|y)(?:-(.+))?$/);
+export const resolveDivide = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^divide-(x|y)(?:-(reverse|.+))?$/);
   if (!match) return null;
 
-  const resolved = resolveBorderValue(match[2]);
+  const [, axis, value = ""] = match;
+
+  const reverseVar = getTailwindVariable(`divide-${axis}`);
+  if (!reverseVar) return null;
+
+  if (value === "reverse") {
+    return wrapChild("& > :not(:last-child)", { [reverseVar]: "1" });
+  }
+
+  const resolved = resolveWidthValue(value);
   if (!resolved) return null;
 
-  const properties: Record<string, string> =
-    match[1] === "x"
-      ? { "border-left-width": "0px", "border-right-width": resolved }
-      : { "border-top-width": "0px", "border-bottom-width": resolved };
+  const [styleStart, styleEnd] = STYLE_PROPERTY_MAP[`border-${axis}`];
+  const [start, end] = WIDTH_PROPERTY_MAP[`border-${axis}`];
 
-  return [
-    {
-      selector: "",
-      properties: {},
-      children: [{ selector: "& > :not(:last-child)", properties }],
-    },
-  ];
+  return wrapChild("& > :not(:last-child)", {
+    [reverseVar]: "0",
+    [styleStart]: "var(--tw-border-style)",
+    [styleEnd]: "var(--tw-border-style)",
+    [start]: `calc(${resolved} * var(${reverseVar}))`,
+    [end]: `calc(${resolved} * calc(1 - var(${reverseVar})))`,
+  });
 };

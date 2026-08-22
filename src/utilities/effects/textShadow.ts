@@ -1,58 +1,62 @@
-import { resolveColor } from "../../helpers/resolveColor";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import {
+  injectColorVar,
+  parseAlphaSuffix,
+  resolveColor,
+} from "@/resolvers/color";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveTextShadow = (
+const resolveTextShadowValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "text-shadow-none")
-    return [{ selector: "", properties: { "text-shadow": "none" } }];
+): string | null => {
+  if (utility === "text-shadow-none") return "none";
 
-  const named = utility.match(/^text-shadow-(2xs|xs|sm|md|lg)$/);
-  if (named && named[1] in config.textShadows)
-    return [
-      {
-        selector: "",
-        properties: { "text-shadow": config.textShadows[named[1]] },
-      },
-    ];
+  const { base, alpha } = parseAlphaSuffix(utility);
 
-  const customVar = utility.match(/^text-shadow-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "text-shadow": `var(${customVar[1]})` } },
-    ];
+  const match = base.match(/^text-shadow-(.+)$/);
+  if (!match) return null;
+  const [, value] = match;
 
-  const arbitrary = utility.match(/^text-shadow-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { "text-shadow": arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
-
-  return null;
+  return resolveToken({
+    value,
+    tokenMap: config["text-shadow"],
+    formatVar: (v) =>
+      injectColorVar(
+        config["text-shadow"][v],
+        "--tw-text-shadow-color",
+        alpha ?? undefined,
+      ),
+  });
 };
 
-export const resolveTextShadowColor = (
-  utility: string,
-  config: ResolvedConfig,
-): StyleRule[] | null => {
-  const colorVar = utility.match(/^text-shadow-\(color:(--[^)]+)\)$/);
-  if (colorVar)
-    return [
-      {
-        selector: "",
-        properties: { "--shadow-color": `var(${colorVar[1]})` },
-      },
-    ];
+export const resolveTextShadow = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveTextShadowValue(utility, config);
+  if (!value) return null;
 
-  const named = utility.match(/^text-shadow-(.+)$/);
-  if (!named) return null;
+  return {
+    properties: {
+      "text-shadow": value,
+    },
+  };
+};
 
-  const resolved = resolveColor(named[1], config);
+export const resolveTextShadowColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^text-shadow-(.*)$/);
+  if (!match) return null;
+
+  const resolved = resolveColor(match[1], config, "color");
   if (!resolved) return null;
 
-  return [{ selector: "", properties: { "--shadow-color": resolved } }];
+  return {
+    properties: {
+      "--tw-text-shadow-color": resolved,
+    },
+  };
 };

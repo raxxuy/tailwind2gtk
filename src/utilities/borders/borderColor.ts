@@ -1,58 +1,41 @@
-import { resolveColor } from "../../helpers/resolveColor";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { wrapChild } from "@/compiler/rule";
+import { resolveColor } from "@/resolvers/color";
+import { resolveSidedProperty } from "@/resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const sides: Record<string, string[]> = {
-  "": ["border-color"],
-  x: ["border-left-color", "border-right-color"],
-  y: ["border-top-color", "border-bottom-color"],
-  t: ["border-top-color"],
-  r: ["border-right-color"],
-  b: ["border-bottom-color"],
-  l: ["border-left-color"],
+const COLOR_PROPERTY_MAP: Record<string, string[]> = {
+  border: ["border-color"],
+  "border-x": ["border-left-color", "border-right-color"],
+  "border-y": ["border-top-color", "border-bottom-color"],
+  "border-t": ["border-top-color"],
+  "border-r": ["border-right-color"],
+  "border-b": ["border-bottom-color"],
+  "border-l": ["border-left-color"],
+} as const;
+
+export const resolveBorderColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const properties = resolveSidedProperty({
+    utility,
+    sideMap: COLOR_PROPERTY_MAP,
+    resolveValue: (v) => resolveColor(v, config),
+  });
+  return properties ? { properties } : null;
 };
 
-export const resolveBorderColor = (
-  utility: string,
-  config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^border(?:-(x|y|t|r|b|l))?-(.+)$/);
-  if (!match) return null;
-
-  const side = match[1] ?? "";
-  const props = sides[side];
-  if (!props) return null;
-
-  const resolved = resolveColor(match[2], config);
-  if (!resolved) return null;
-
-  return [
-    {
-      selector: "",
-      properties: Object.fromEntries(props.map((p) => [p, resolved])),
-    },
-  ];
-};
-
-export const resolveDivideColor = (
-  utility: string,
-  config: ResolvedConfig,
-): StyleRule[] | null => {
+export const resolveDivideColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
   const match = utility.match(/^divide-(.+)$/);
   if (!match) return null;
 
   const resolved = resolveColor(match[1], config);
   if (!resolved) return null;
 
-  return [
-    {
-      selector: "",
-      properties: {},
-      children: [
-        {
-          selector: "& > :not(:last-child)",
-          properties: { "border-color": resolved },
-        },
-      ],
-    },
-  ];
+  return wrapChild("& > :not(:last-child)", {
+    "border-color": resolved,
+  });
 };

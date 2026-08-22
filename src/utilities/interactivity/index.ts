@@ -1,1 +1,1 @@
-export { resolveCaretColor } from "./caretColor";
+export * from "./caretColor";

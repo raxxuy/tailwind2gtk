@@ -1,40 +1,24 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveOutlineOffset = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^(-?)outline-offset-(.+)$/);
+export const resolveOutlineOffset = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^(-?)outline-offset-(.*)$/);
   if (!match) return null;
 
   const [, negative, value] = match;
-  const num = Number(value);
 
-  if (!Number.isNaN(num))
-    return [
-      {
-        selector: "",
-        properties: {
-          "outline-offset": negative ? `calc(${num}px * -1)` : `${num}px`,
-        },
-      },
-    ];
+  const resolved = resolveNumber(`${negative}${value}`, {
+    fraction: false,
+    spacing: false,
+    px: false,
+  });
+  if (!resolved) return null;
 
-  if (value.startsWith("(") && value.endsWith(")"))
-    return [
-      {
-        selector: "",
-        properties: { "outline-offset": `var(${value.slice(1, -1)})` },
-      },
-    ];
-
-  if (value.startsWith("[") && value.endsWith("]"))
-    return [
-      {
-        selector: "",
-        properties: { "outline-offset": value.slice(1, -1).replace(/_/g, " ") },
-      },
-    ];
-
-  return null;
+  return {
+    properties: {
+      "outline-offset": resolved,
+    },
+  };
 };

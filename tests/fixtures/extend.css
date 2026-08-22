@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+    --text-large: 1.5rem;
+    --drop-shadow-3xl: 0 35px 35px rgb(var(--rgb-test)) rgb(0, 0, 0, 0.25)
+        rgba(0, 0, 0, 0.5);
+}
+
+.btn {
+    @apply bg-blue-500 text-white;
+}

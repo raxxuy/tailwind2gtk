@@ -2,6 +2,10 @@
   "compilerOptions": {
     "lib": ["esnext", "dom"],
     "target": "esnext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

@@ -1,19 +1,26 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveFilter = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "filter-none")
-    return [{ selector: "", properties: { filter: "none" } }];
+const resolveFilterValue = (utility: string): string | null => {
+  if (utility === "filter-none") return "none";
 
-  const customVar = utility.match(/^filter-\((--[^)]+)\)$/);
-  if (customVar)
-    return [{ selector: "", properties: { filter: `var(${customVar[1]})` } }];
+  const match = utility.match(/^filter-(.*)$/);
+  if (!match) return null;
 
-  const arbitrary = utility.match(/^filter-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { filter: arbitrary[1] } }];
+  return resolveToken({
+    value: match[1],
+  });
+};
 
-  return null;
+export const resolveFilter = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveFilterValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      filter: value,
+    },
+  };
 };

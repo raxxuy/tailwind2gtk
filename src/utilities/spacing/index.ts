@@ -1,2 +1,2 @@
-export { resolveMargin, resolveSpace } from "./margin";
-export { resolvePadding } from "./padding";
+export * from "./margin";
+export * from "./padding";

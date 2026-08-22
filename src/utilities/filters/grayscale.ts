@@ -1,30 +1,33 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveGrayscale = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "grayscale")
-    return [{ selector: "", properties: { filter: "grayscale(100%)" } }];
+const resolveGrayscaleValue = (utility: string): string | null => {
+  if (utility === "grayscale") return "grayscale(100%)";
 
-  const number = utility.match(/^grayscale-(\d+(?:\.\d+)?)$/);
-  if (number)
-    return [{ selector: "", properties: { filter: `grayscale(${number}%)` } }];
+  const match = utility.match(/^grayscale-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^grayscale-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { filter: `grayscale(var(${customVar[1]}))` },
-      },
-    ];
+  const resolved = resolveNumber(match[1], {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "%",
+  });
 
-  const arbitrary = utility.match(/^grayscale-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      { selector: "", properties: { filter: `grayscale(${arbitrary[1]})` } },
-    ];
+  return `grayscale(${resolved})`;
+};
 
-  return null;
+export const resolveGrayscale = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveGrayscaleValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "--tw-grayscale": value,
+      filter:
+        "var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)",
+    },
+  };
 };

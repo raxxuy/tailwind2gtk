@@ -3,3 +3,6 @@ package-lock.json
 .stversions/
 .stfolder/
 .stignore
+.zed
+output.css
+tailwind.test

@@ -1,30 +1,30 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveLetterSpacing = (
+const resolveLetterSpacingValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  const named = utility.match(/^tracking-([\w-]+)$/);
-  if (named && named[1] in config.letterSpacings)
-    return [
-      {
-        selector: "",
-        properties: { "letter-spacing": `var(--tracking-${named[1]})` },
-      },
-    ];
+): string | null => {
+  const match = utility.match(/^tracking-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^tracking-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { "letter-spacing": `var(${customVar[1]})` },
-      },
-    ];
+  return resolveToken({
+    value: match[1],
+    tokenMap: config.tracking,
+    formatVar: (v) => `var(--tracking-${v})`,
+  });
+};
 
-  const arbitrary = utility.match(/^tracking-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { "letter-spacing": arbitrary[1] } }];
+export const resolveLetterSpacing = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveLetterSpacingValue(utility, config);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      "letter-spacing": value,
+    },
+  };
 };

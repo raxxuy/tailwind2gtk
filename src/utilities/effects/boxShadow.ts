@@ -1,111 +1,251 @@
-import { resolveColor } from "../../helpers/resolveColor";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import {
+  injectColorVar,
+  parseAlphaSuffix,
+  resolveColor,
+} from "@/resolvers/color";
+import { resolveNumber } from "@/resolvers/number";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveBoxShadow = (
+const BOX_SHADOW_VALUE =
+  "var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)";
+
+const resolveBoxShadowValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "shadow-none")
-    return [{ selector: "", properties: { "box-shadow": "0 0 #0000" } }];
+): string | null => {
+  if (utility === "shadow-none") return "0 0 #0000";
 
-  const named = utility.match(/^shadow-(2xs|xs|sm|md|lg|xl|2xl)$/);
-  if (named && named[1] in config.boxShadows)
-    return [
-      {
-        selector: "",
-        properties: { "box-shadow": config.boxShadows[named[1]] },
-      },
-    ];
+  const { base, alpha } = parseAlphaSuffix(utility);
 
-  const customVar = utility.match(/^shadow-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "box-shadow": `var(${customVar[1]})` } },
-    ];
+  const match = base.match(/^shadow-(.+)$/);
+  if (!match) return null;
 
-  const arbitrary = utility.match(/^shadow-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { "box-shadow": arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
-
-  return null;
+  return resolveToken({
+    value: match[1],
+    tokenMap: config.shadow,
+    formatVar: (v) =>
+      injectColorVar(config.shadow[v], "--tw-shadow-color", alpha ?? undefined),
+  });
 };
 
-export const resolveBoxShadowColor = (
-  utility: string,
-  config: ResolvedConfig,
-): StyleRule[] | null => {
-  const colorVar = utility.match(/^shadow-\(color:(--[^)]+)\)$/);
-  if (colorVar)
-    return [
-      { selector: "", properties: { "--shadow-color": `var(${colorVar[1]})` } },
-    ];
+export const resolveBoxShadow = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveBoxShadowValue(utility, config);
+  if (!value) return null;
 
-  const named = utility.match(/^shadow-(.+)$/);
-  if (!named) return null;
+  return {
+    properties: {
+      "--tw-shadow": value,
+      "box-shadow": BOX_SHADOW_VALUE,
+    },
+  };
+};
 
-  const resolved = resolveColor(named[1], config);
+export const resolveBoxShadowColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^shadow-(.*)$/);
+  if (!match) return null;
+
+  const resolved = resolveColor(match[1], config, "color");
   if (!resolved) return null;
 
-  return [{ selector: "", properties: { "--shadow-color": resolved } }];
+  return {
+    properties: {
+      "--tw-shadow-color": resolved,
+    },
+  };
 };
 
-export const resolveInsetBoxShadow = (
+const resolveInsetShadowValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "inset-shadow-none")
-    return [{ selector: "", properties: { "box-shadow": "inset 0 0 #0000" } }];
+): string | null => {
+  if (utility === "inset-shadow-none") return "inset 0 0 #0000";
 
-  const named = utility.match(/^inset-shadow-(2xs|xs|sm)$/);
-  if (named && named[1] in config.insetBoxShadows)
-    return [
-      {
-        selector: "",
-        properties: { "box-shadow": config.insetBoxShadows[named[1]] },
-      },
-    ];
+  const { base, alpha } = parseAlphaSuffix(utility);
 
-  const customVar = utility.match(/^inset-shadow-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "box-shadow": `var(${customVar[1]})` } },
-    ];
+  const match = base.match(/^inset-shadow-(.+)$/);
+  if (!match) return null;
 
-  const arbitrary = utility.match(/^inset-shadow-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: { "box-shadow": arbitrary[1].replace(/_/g, " ") },
-      },
-    ];
-
-  return null;
+  return resolveToken({
+    value: match[1],
+    tokenMap: config["inset-shadow"],
+    formatVar: (v) =>
+      injectColorVar(
+        config["inset-shadow"][v],
+        "--tw-inset-shadow-color",
+        alpha ?? undefined,
+      ),
+  });
 };
 
-export const resolveInsetBoxShadowColor = (
-  utility: string,
-  config: ResolvedConfig,
-): StyleRule[] | null => {
-  const colorVar = utility.match(/^inset-shadow-\(color:(--[^)]+)\)$/);
-  if (colorVar)
-    return [
-      {
-        selector: "",
-        properties: { "--inset-shadow-color": `var(${colorVar[1]})` },
-      },
-    ];
+export const resolveInsetShadow = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveInsetShadowValue(utility, config);
+  if (!value) return null;
 
-  const named = utility.match(/^inset-shadow-(.+)$/);
-  if (!named) return null;
+  return {
+    properties: {
+      "--tw-inset-shadow": value,
+      "box-shadow": BOX_SHADOW_VALUE,
+    },
+  };
+};
 
-  const resolved = resolveColor(named[1], config);
+export const resolveInsetShadowColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^inset-shadow-(.*)$/);
+  if (!match) return null;
+
+  const resolved = resolveColor(match[1], config, "color");
   if (!resolved) return null;
 
-  return [{ selector: "", properties: { "--inset-shadow-color": resolved } }];
+  return {
+    properties: {
+      "--tw-inset-shadow-color": resolved,
+    },
+  };
+};
+
+const resolveRingValue = (utility: string): string | null => {
+  if (utility === "ring") return "1px";
+
+  const match = utility.match(/^ring-(.+)$/);
+  if (!match) return null;
+
+  return resolveNumber(match[1], {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "px",
+  });
+};
+
+export const resolveRing = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveRingValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "--tw-ring-shadow": `var(--tw-ring-inset,) 0 0 0 calc(${value} + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor)`,
+      "box-shadow": BOX_SHADOW_VALUE,
+    },
+  };
+};
+
+export const resolveRingColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^ring-(.*)$/);
+  if (!match) return null;
+
+  const resolved = resolveColor(match[1], config, "color");
+  if (!resolved) return null;
+
+  return {
+    properties: {
+      "--tw-ring-color": resolved,
+    },
+  };
+};
+
+const resolveInsetRingValue = (utility: string): string | null => {
+  if (utility === "inset-ring") return "1px";
+
+  const match = utility.match(/^inset-ring-(.+)$/);
+  if (!match) return null;
+
+  return resolveNumber(match[1], {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "px",
+  });
+};
+
+export const resolveInsetRing = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveInsetRingValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "--tw-inset-ring-shadow": `inset 0 0 0 ${value} var(--tw-inset-ring-color, currentcolor)`,
+      "box-shadow": BOX_SHADOW_VALUE,
+    },
+  };
+};
+
+export const resolveInsetRingColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^inset-ring-(.*)$/);
+  if (!match) return null;
+
+  const resolved = resolveColor(match[1], config, "color");
+  if (!resolved) return null;
+
+  return {
+    properties: {
+      "--tw-inset-ring-color": resolved,
+    },
+  };
+};
+
+const resolveRingOffsetWidthValue = (utility: string): string | null => {
+  const match = utility.match(/^ring-offset-(.+)$/);
+  if (!match) return null;
+
+  return resolveNumber(match[1], {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "px",
+  });
+};
+
+export const resolveRingOffsetWidth = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveRingOffsetWidthValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "--tw-ring-offset-width": value,
+      "--tw-ring-offset-shadow":
+        "var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)",
+    },
+  };
+};
+
+export const resolveRingOffsetColor = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^ring-offset-(.*)$/);
+  if (!match) return null;
+
+  const resolved = resolveColor(match[1], config, "color");
+  if (!resolved) return null;
+
+  return {
+    properties: {
+      "--tw-ring-offset-color": resolved,
+    },
+  };
 };

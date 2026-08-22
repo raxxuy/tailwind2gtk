@@ -1,27 +1,31 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveFontWeight = (
+const resolveFontWeightValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
-  const named = utility.match(/^font-([\w]+)$/);
-  if (named && named[1] in config.fontWeights)
-    return [
-      {
-        selector: "",
-        properties: { "font-weight": config.fontWeights[named[1]] },
-      },
-    ];
+): string | null => {
+  const match = utility.match(/^font-(.+)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^font-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      { selector: "", properties: { "font-weight": `var(${customVar[1]})` } },
-    ];
+  return resolveToken({
+    value: match[1],
+    tokenMap: config["font-weight"],
+    formatVar: (v) => `var(--font-weight-${v})`,
+  });
+};
 
-  const arbitrary = utility.match(/^font-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { "font-weight": arbitrary[1] } }];
+export const resolveFontWeight = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveFontWeightValue(utility, config);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      "--tw-font-weight": value,
+      "font-weight": value,
+    },
+  };
 };

@@ -1,8 +1,8 @@
-export { resolveBorderColor, resolveDivideColor } from "./borderColor";
-export { resolveBorderRadius } from "./borderRadius";
-export { resolveBorderStyle } from "./borderStyle";
-export { resolveBorderWidth, resolveDivide } from "./borderWidth";
-export { resolveOutlineColor } from "./outlineColor";
-export { resolveOutlineOffset } from "./outlineOffset";
-export { resolveOutlineStyle } from "./outlineStyle";
-export { resolveOutlineWidth } from "./outlineWidth";
+export * from "./borderColor";
+export * from "./borderRadius";
+export * from "./borderStyle";
+export * from "./borderWidth";
+export * from "./outlineColor";
+export * from "./outlineOffset";
+export * from "./outlineStyle";
+export * from "./outlineWidth";

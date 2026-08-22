@@ -1,54 +1,43 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveSidedProperty } from "@/resolvers/sided";
+import { resolveToken } from "@/resolvers/token";
+import type { ResolvedConfig } from "@/types";
+import type { StyleRule, UtilityResolverProps } from "@/types/core";
 
-const sides: Record<string, string[]> = {
-  "": ["border-radius"],
-  t: ["border-top-left-radius", "border-top-right-radius"],
-  r: ["border-top-right-radius", "border-bottom-right-radius"],
-  b: ["border-bottom-right-radius", "border-bottom-left-radius"],
-  l: ["border-top-left-radius", "border-bottom-left-radius"],
-  tl: ["border-top-left-radius"],
-  tr: ["border-top-right-radius"],
-  br: ["border-bottom-right-radius"],
-  bl: ["border-bottom-left-radius"],
-};
+const SIDES_PROPERTY_MAP: Record<string, string[]> = {
+  rounded: ["border-radius"],
+  "rounded-t": ["border-top-left-radius", "border-top-right-radius"],
+  "rounded-r": ["border-top-right-radius", "border-bottom-right-radius"],
+  "rounded-b": ["border-bottom-right-radius", "border-bottom-left-radius"],
+  "rounded-l": ["border-top-left-radius", "border-bottom-left-radius"],
+  "rounded-tl": ["border-top-left-radius"],
+  "rounded-tr": ["border-top-right-radius"],
+  "rounded-br": ["border-bottom-right-radius"],
+  "rounded-bl": ["border-bottom-left-radius"],
+} as const;
 
 const resolveRadiusValue = (
   value: string,
   config: ResolvedConfig,
 ): string | null => {
+  if (!value) return "0.25rem";
   if (value === "none") return "0";
   if (value === "full") return "9999px";
-
-  if (value in config.borderRadii) return `var(--radius-${value})`;
-
-  if (value.startsWith("(") && value.endsWith(")"))
-    return `var(${value.slice(1, -1)})`;
-
-  if (value.startsWith("[") && value.endsWith("]"))
-    return value.slice(1, -1).replace(/_/g, " ");
-
-  return null;
+  return resolveToken({
+    value,
+    tokenMap: config.radius,
+    formatVar: (v) => `var(--radius-${v})`,
+  });
 };
 
-export const resolveBorderRadius = (
-  utility: string,
-  config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^rounded(?:-(tl|tr|br|bl|t|r|b|l))?(?:-(.+))?$/);
-  if (!match) return null;
-
-  const side = match[1] ?? "";
-  const value = match[2] ?? "";
-  const props = sides[side];
-  if (!props) return null;
-
-  const resolved = resolveRadiusValue(value, config);
-  if (!resolved) return null;
-
-  return [
-    {
-      selector: "",
-      properties: Object.fromEntries(props.map((p) => [p, resolved])),
-    },
-  ];
+export const resolveBorderRadius = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const properties = resolveSidedProperty({
+    utility,
+    sideMap: SIDES_PROPERTY_MAP,
+    resolveValue: (v) => resolveRadiusValue(v, config),
+    allowBare: true,
+  });
+  return properties ? { properties } : null;
 };

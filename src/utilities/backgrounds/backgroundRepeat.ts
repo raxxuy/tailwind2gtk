@@ -1,25 +1,16 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const repeats: Record<string, string> = {
-  repeat: "repeat",
-  "repeat-x": "repeat-x",
-  "repeat-y": "repeat-y",
-  round: "round",
-  space: "space",
-  "no-repeat": "no-repeat",
-};
-
-export const resolveBackgroundRepeat = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const named = utility.match(
+export const resolveBackgroundRepeat = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(
     /^bg-(repeat|no-repeat|repeat-x|repeat-y|round|space)$/,
   );
-  if (named && named[1] in repeats)
-    return [
-      { selector: "", properties: { "background-repeat": repeats[named[1]] } },
-    ];
+  if (!match) return null;
 
-  return null;
+  return {
+    properties: {
+      "background-repeat": match[1],
+    },
+  };
 };

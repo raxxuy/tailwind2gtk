@@ -1,42 +1,38 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import { resolveSidedProperty } from "@/resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const resolveSkewValue = (value: string, negative: boolean): string => {
-  const num = Number(value);
-  if (!Number.isNaN(num)) return `${negative ? -num : num}deg`;
+const SKEW_PROPERTY_MAP = {
+  skew: ["--tw-skew-x", "--tw-skew-y"],
+  "skew-x": ["--tw-skew-x"],
+  "skew-y": ["--tw-skew-y"],
+} as const satisfies Record<string, string[]>;
 
-  if (value.startsWith("(") && value.endsWith(")"))
-    return `var(${value.slice(1, -1)})`;
+export const resolveSkew = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const properties = resolveSidedProperty({
+    utility,
+    sideMap: SKEW_PROPERTY_MAP,
+    resolveValue: (v) =>
+      resolveNumber(v, {
+        fraction: false,
+        px: false,
+        spacing: false,
+        unit: "deg",
+      }),
+    allowNegative: true,
+    formatProperty: (prop, value) =>
+      prop === "--tw-skew-x" ? `skewX(${value})` : `skewY(${value})`,
+  });
 
-  if (value.startsWith("[") && value.endsWith("]"))
-    return value.slice(1, -1).replace(/_/g, " ");
-
-  return value;
-};
-
-export const resolveSkew = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^(-?)skew(?:-(x|y))?-(.+)$/);
-  if (!match) return null;
-
-  const [, negative, axis, raw] = match;
-  const resolved = resolveSkewValue(raw, !!negative);
-
-  if (axis === "x")
-    return [{ selector: "", properties: { "--skew-x": `skewX(${resolved})` } }];
-
-  if (axis === "y")
-    return [{ selector: "", properties: { "--skew-y": `skewY(${resolved})` } }];
-
-  // no axis — set both
-  return [
-    {
-      selector: "",
-      properties: {
-        "--skew-x": `skewX(${resolved})`,
-        "--skew-y": `skewY(${resolved})`,
-      },
-    },
-  ];
+  return properties
+    ? {
+        properties: {
+          ...properties,
+          transform:
+            "var(--tw-translate-x,) var(--tw-translate-y,) var(--tw-scale-x,) var(--tw-scale-y,) var(--tw-rotate,) var(--tw-skew-x,) var(--tw-skew-y,)",
+        },
+      }
+    : null;
 };

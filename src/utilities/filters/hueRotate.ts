@@ -1,41 +1,33 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveHueRotate = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^(-?)hue-rotate-(.+)$/);
+const resolveHueRotateValue = (utility: string): string | null => {
+  const match = utility.match(/^(-?)hue-rotate-(.*)$/);
   if (!match) return null;
 
   const [, negative, value] = match;
-  const num = Number(value);
 
-  if (!Number.isNaN(num))
-    return [
-      {
-        selector: "",
-        properties: {
-          filter: negative
-            ? `hue-rotate(calc(${num}deg * -1))`
-            : `hue-rotate(${num}deg)`,
-        },
-      },
-    ];
+  const resolved = resolveNumber(`${negative}${value}`, {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "deg",
+  });
 
-  const customVar = utility.match(/^hue-rotate-\((--[^)]+)\)$/);
-  if (customVar)
-    return [
-      {
-        selector: "",
-        properties: { filter: `hue-rotate(var(${customVar[1]}))` },
-      },
-    ];
+  return `hue-rotate(${resolved})`;
+};
 
-  const arbitrary = utility.match(/^hue-rotate-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      { selector: "", properties: { filter: `hue-rotate(${arbitrary[1]})` } },
-    ];
+export const resolveHueRotate = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveHueRotateValue(utility);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      "--tw-hue-rotate": value,
+      filter:
+        "var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)",
+    },
+  };
 };

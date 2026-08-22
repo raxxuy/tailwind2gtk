@@ -1,16 +1,25 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveTransitionBehavior = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "transition-normal")
-    return [{ selector: "", properties: { "transition-behavior": "normal" } }];
+const BEHAVIOR_MAP: Record<string, string> = {
+  normal: "normal",
+  discrete: "allow-discrete",
+} as const;
 
-  if (utility === "transition-discrete")
-    return [
-      { selector: "", properties: { "transition-behavior": "allow-discrete" } },
-    ];
+export const resolveTransitionBehavior = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^transition-(.*)$/);
+  if (!match) return null;
+
+  const [, value] = match;
+
+  if (value in BEHAVIOR_MAP) {
+    return {
+      properties: {
+        "transition-behavior": BEHAVIOR_MAP[value],
+      },
+    };
+  }
 
   return null;
 };

@@ -1,16 +1,16 @@
-import { resolveValue } from "../../helpers/resolveValue";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types/core";
 
-export const resolveMinHeight = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
+export const resolveMinHeight = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
   const match = utility.match(/^min-h-(.+)$/);
   if (!match) return null;
 
-  const [, value] = match;
-  const resolved = resolveValue(value);
+  const resolved = resolveNumber(match[1], { fraction: false });
   if (!resolved) return null;
 
-  return [{ selector: "", properties: { "min-height": resolved } }];
+  return {
+    properties: { "min-height": resolved },
+  };
 };

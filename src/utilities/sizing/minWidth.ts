@@ -1,25 +1,31 @@
-import { resolveValue } from "../../helpers/resolveValue";
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { ResolvedConfig } from "@/types";
+import type { StyleRule, UtilityResolverProps } from "@/types/core";
 
-export const resolveMinWidth = (
+const resolveMinWidthValue = (
   utility: string,
   config: ResolvedConfig,
-): StyleRule[] | null => {
+): string | null => {
   const match = utility.match(/^min-w-(.+)$/);
   if (!match) return null;
 
   const [, value] = match;
 
-  if (value in config.containerSizes)
-    return [
-      {
-        selector: "",
-        properties: { "min-width": `var(--container-${value})` },
-      },
-    ];
+  if (value in config.container) return `var(--container-${value})`;
 
-  const resolved = resolveValue(value);
-  if (!resolved) return null;
+  return resolveNumber(value, { fraction: false });
+};
 
-  return [{ selector: "", properties: { "min-width": resolved } }];
+export const resolveMinWidth = ({
+  utility,
+  config,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveMinWidthValue(utility, config);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "min-width": value,
+    },
+  };
 };

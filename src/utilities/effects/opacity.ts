@@ -1,20 +1,27 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveOpacity = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const number = utility.match(/^opacity-(\d+)$/);
-  if (number)
-    return [{ selector: "", properties: { opacity: `${number[1]}%` } }];
+const resolveOpacityValue = (utility: string): string | null => {
+  const match = utility.match(/^opacity-(.*)$/);
+  if (!match) return null;
 
-  const customVar = utility.match(/^opacity-\((--[^)]+)\)$/);
-  if (customVar)
-    return [{ selector: "", properties: { opacity: `var(${customVar[1]})` } }];
+  return resolveNumber(match[1], {
+    fraction: false,
+    px: false,
+    spacing: false,
+    unit: "%",
+  });
+};
 
-  const arbitrary = utility.match(/^opacity-\[(.+)\]$/);
-  if (arbitrary)
-    return [{ selector: "", properties: { opacity: arbitrary[1] } }];
+export const resolveOpacity = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveOpacityValue(utility);
+  if (!value) return null;
 
-  return null;
+  return {
+    properties: {
+      opacity: value,
+    },
+  };
 };

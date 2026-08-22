@@ -1,82 +1,48 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import { resolveSidedProperty } from "@/resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const resolveTranslateValue = (
-  raw: string,
-  negative: boolean,
-): string | null => {
-  const sign = negative ? "-" : "";
+const TRANSLATE_PROPERTY_MAP = {
+  translate: ["--tw-translate-x", "--tw-translate-y"],
+  "translate-x": ["--tw-translate-x"],
+  "translate-y": ["--tw-translate-y"],
+} as const satisfies Record<string, string[]>;
 
-  if (raw === "px") return `${sign}1px`;
-
-  if (raw.startsWith("[") && raw.endsWith("]"))
-    return `${sign}${raw.slice(1, -1).replace(/_/g, " ")}`;
-
-  if (raw.startsWith("(") && raw.endsWith(")"))
-    return negative
-      ? `calc(-1 * var(${raw.slice(1, -1)}))`
-      : `var(${raw.slice(1, -1)})`;
-
-  const num = Number(raw);
-  if (!Number.isNaN(num))
-    return `calc(var(--spacing) * ${negative ? -num : num})`;
-
-  return null;
-};
-
-export const resolveTranslate = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "translate-none")
-    return [
-      {
-        selector: "",
-        properties: {
-          "--translate-x": "translateX(0)",
-          "--translate-y": "translateY(0)",
-          "--translate-z": "translateZ(0)",
-        },
-      },
-    ];
-
-  const match = utility.match(/^(-?)translate(?:-(x|y|z))?-(.+)$/);
-  if (!match) return null;
-
-  const [, neg, axis, raw] = match;
-  const resolved = resolveTranslateValue(raw, !!neg);
-  if (!resolved) return null;
-
-  if (axis === "x")
-    return [
-      {
-        selector: "",
-        properties: { "--translate-x": `translateX(${resolved})` },
-      },
-    ];
-
-  if (axis === "y")
-    return [
-      {
-        selector: "",
-        properties: { "--translate-y": `translateY(${resolved})` },
-      },
-    ];
-
-  if (axis === "z")
-    return [
-      {
-        selector: "",
-        properties: { "--translate-z": `translateZ(${resolved})` },
-      },
-    ];
-
-  return [
-    {
-      selector: "",
+export const resolveTranslate = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  if (utility === "translate-none") {
+    return {
       properties: {
-        "--translate-x": `translateX(${resolved})`,
-        "--translate-y": `translateY(${resolved})`,
+        "--tw-translate-x": "",
+        "--tw-translate-y": "",
+        transform:
+          "var(--tw-translate-x,) var(--tw-translate-y,) var(--tw-scale-x,) var(--tw-scale-y,) var(--tw-rotate,) var(--tw-skew-x,) var(--tw-skew-y,)",
       },
-    },
-  ];
+    };
+  }
+
+  const properties = resolveSidedProperty({
+    utility,
+    sideMap: TRANSLATE_PROPERTY_MAP,
+    resolveValue: (v) =>
+      resolveNumber(v, {
+        fraction: false,
+      }),
+    allowNegative: true,
+    formatProperty: (prop, value) =>
+      prop === "--tw-translate-x"
+        ? `translateX(${value})`
+        : `translateY(${value})`,
+  });
+
+  return properties
+    ? {
+        properties: {
+          ...properties,
+          transform:
+            "var(--tw-translate-x,) var(--tw-translate-y,) var(--tw-scale-x,) var(--tw-scale-y,) var(--tw-rotate,) var(--tw-skew-x,) var(--tw-skew-y,)",
+        },
+      }
+    : null;
 };

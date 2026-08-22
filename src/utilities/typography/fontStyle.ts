@@ -1,13 +1,19 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-export const resolveFontStyle = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "italic")
-    return [{ selector: "", properties: { "font-style": "italic" } }];
-  if (utility === "not-italic")
-    return [{ selector: "", properties: { "font-style": "normal" } }];
+export const resolveFontStyle = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  if (utility === "italic") {
+    return {
+      properties: { "font-style": "italic" },
+    };
+  }
+
+  if (utility === "not-italic") {
+    return {
+      properties: { "font-style": "normal" },
+    };
+  }
 
   return null;
 };

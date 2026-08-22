@@ -1,6 +1,7 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { getTailwindVariable } from "@/compiler/runtime/variables";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const variants: Record<string, string> = {
+const VARIANT_NUMERIC_MAP = {
   "normal-nums": "normal",
   ordinal: "ordinal",
   "slashed-zero": "slashed-zero",
@@ -12,17 +13,33 @@ const variants: Record<string, string> = {
   "stacked-fractions": "stacked-fractions",
 };
 
-export const resolveFontVariantNumeric = (
+const resolveFontVariantNumericValue = (
   utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility in variants)
-    return [
-      {
-        selector: "",
-        properties: { "font-variant-numeric": variants[utility] },
-      },
-    ];
+): [string, string] | null => {
+  const value = VARIANT_NUMERIC_MAP[utility];
+  if (!value) return null;
 
-  return null;
+  const variable = getTailwindVariable(utility);
+  if (variable) {
+    return [
+      "var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)",
+      variable,
+    ];
+  }
+
+  return [value, null];
+};
+
+export const resolveFontVariantNumeric = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveFontVariantNumericValue(utility);
+  if (!value) return null;
+
+  return {
+    properties: {
+      "font-variant-numeric": value[0],
+      ...(value[1] ? { [`${value[1]}`]: utility } : {}),
+    },
+  };
 };

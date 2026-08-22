@@ -1,47 +1,50 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveToken } from "@/resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const DEFAULT_TIMING = "var(--default-transition-timing-function)";
-const DEFAULT_DURATION = "var(--default-transition-duration)";
-
-const withDefaults = (property: string): Record<string, string> => ({
-  "transition-property": property,
-  "transition-timing-function": DEFAULT_TIMING,
-  "transition-duration": DEFAULT_DURATION,
-});
-
-const properties: Record<string, string> = {
-  transition:
-    "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events",
-  "transition-all": "all",
-  "transition-colors":
+const PROPERTY_MAP: Record<string, string> = {
+  all: "all",
+  colors:
     "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
-  "transition-opacity": "opacity",
-  "transition-shadow": "box-shadow",
-  "transition-transform": "transform, translate, scale, rotate",
+  opacity: "opacity",
+  shadow: "box-shadow",
+  transform: "transform, translate, scale, rotate",
+  none: "none",
+} as const;
+
+const resolveTransitionPropertyValue = (utility: string): string | null => {
+  if (utility === "transition") {
+    return "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events";
+  }
+
+  const match = utility.match(/^transition-(.*)$/);
+  if (!match) return null;
+
+  return resolveToken({
+    value: match[1],
+    tokenMap: PROPERTY_MAP,
+    formatVar: (v) => PROPERTY_MAP[v],
+  });
 };
 
-export const resolveTransitionProperty = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  if (utility === "transition-none")
-    return [{ selector: "", properties: { "transition-property": "none" } }];
+export const resolveTransitionProperty = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const value = resolveTransitionPropertyValue(utility);
+  if (!value) return null;
 
-  if (utility in properties)
-    return [{ selector: "", properties: withDefaults(properties[utility]) }];
-
-  const customVar = utility.match(/^transition-\((--[^)]+)\)$/);
-  if (customVar)
-    return [{ selector: "", properties: withDefaults(`var(${customVar[1]})`) }];
-
-  const arbitrary = utility.match(/^transition-\[(.+)\]$/);
-  if (arbitrary)
-    return [
-      {
-        selector: "",
-        properties: withDefaults(arbitrary[1].replace(/_/g, " ")),
+  if (value === "none") {
+    return {
+      properties: {
+        "transition-property": value,
       },
-    ];
+    };
+  }
 
-  return null;
+  return {
+    properties: {
+      "transition-property": value,
+      "transition-timing-function": "var(--default-transition-timing-function)",
+      "transition-duration": "var(--default-transition-duration)",
+    },
+  };
 };

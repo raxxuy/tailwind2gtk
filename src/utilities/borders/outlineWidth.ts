@@ -1,30 +1,29 @@
-import type { StyleRule, ResolvedConfig } from "../../types";
+import { resolveNumber } from "@/resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "@/types";
 
-const resolveOutlineValue = (value: string | undefined): string | null => {
+const resolveWidthValue = (value: string): string | null => {
   if (!value) return "1px";
-
-  const num = Number(value);
-
-  if (!Number.isNaN(num)) return `${num}px`;
-
-  if (value.startsWith("(length:") && value.endsWith(")"))
-    return `var(${value.slice(8, -1)})`;
-
-  if (value.startsWith("[") && value.endsWith("]"))
-    return value.slice(1, -1).replace(/_/g, " ");
-
-  return null;
+  return resolveNumber(value, {
+    px: false,
+    spacing: false,
+    fraction: false,
+    extra: "length",
+  });
 };
 
-export const resolveOutlineWidth = (
-  utility: string,
-  _config: ResolvedConfig,
-): StyleRule[] | null => {
-  const match = utility.match(/^outline(?:-(.+))?$/);
+export const resolveOutlineWidth = ({
+  utility,
+}: UtilityResolverProps): StyleRule | null => {
+  const match = utility.match(/^outline-(.+)$/);
   if (!match) return null;
 
-  const resolved = resolveOutlineValue(match[1]);
+  const resolved = resolveWidthValue(match[1]);
   if (!resolved) return null;
 
-  return [{ selector: "", properties: { "outline-width": resolved } }];
+  return {
+    properties: {
+      "outline-style": "var(--tw-outline-style)",
+      "outline-width": resolved,
+    },
+  };
 };
