@@ -13,6 +13,7 @@ export const resolveOutlineOffset = ({
     fraction: false,
     spacing: false,
     px: false,
+    unit: "px",
   });
   if (!resolved) return null;
 

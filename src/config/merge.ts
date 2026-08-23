@@ -54,7 +54,7 @@ export const mergeThemeVariables = (
   vars: CSSVariable[],
   base: ResolvedConfig,
 ): ResolvedConfig => {
-  const merged = structuredClone(base);
+  const merged = JSON.parse(JSON.stringify(base));
 
   for (const { name, value } of vars) {
     const classified = classifyVariable(name);

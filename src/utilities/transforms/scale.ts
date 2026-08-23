@@ -30,11 +30,13 @@ export const resolveScale = ({
         fraction: false,
         px: false,
         spacing: false,
-        unit: "%",
+        unit: " / 100",
       }),
     allowNegative: true,
     formatProperty: (prop, value) =>
-      prop === "--tw-scale-x" ? `scaleX(${value})` : `scaleY(${value})`,
+      prop === "--tw-scale-x"
+        ? `scaleX(calc(${value}))`
+        : `scaleY(calc(${value}))`,
   });
 
   return properties

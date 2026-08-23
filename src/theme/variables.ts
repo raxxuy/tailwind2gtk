@@ -28,10 +28,10 @@ export const generateVariables = (config: ResolvedConfig): string[] => {
         variables.push(`--${key}-${name}: ${value};`);
       }
     }
+  }
 
-    for (const [name, value] of Object.entries(defaultVariables)) {
-      variables.push(`--default-${name}: ${value};`);
-    }
+  for (const [name, value] of Object.entries(defaultVariables)) {
+    variables.push(`--default-${name}: ${value};`);
   }
 
   return variables;

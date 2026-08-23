@@ -8,6 +8,7 @@ const resolveWidthValue = (value: string): string | null => {
     spacing: false,
     fraction: false,
     extra: "length",
+    unit: "px",
   });
 };
 
