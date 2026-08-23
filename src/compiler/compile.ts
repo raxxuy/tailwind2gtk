@@ -1,6 +1,5 @@
 import type { StyleRule } from "../types";
 import type { ResolvedConfig } from "../types/config";
-import { compileApply } from "./apply";
 import { parseClass } from "./parser";
 import { generateRule } from "./rule";
 import { serializeRule } from "./serialize";
@@ -30,11 +29,6 @@ export const compile = (
 ): Record<string, string> =>
   Object.fromEntries(
     classes
-      .map((cls) => [
-        cls,
-        cls in config.extra.apply
-          ? compileApply(cls, config)
-          : compileCSS(cls, config),
-      ])
+      .map((cls) => [cls, compileCSS(cls, config)])
       .filter(([, css]) => css),
   );

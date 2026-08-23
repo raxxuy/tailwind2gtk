@@ -19,9 +19,9 @@ describe("css", () => {
         @apply border border-white text-white capitalize bg-zinc-800 py-2 px-4;
       }`;
     const rules = extractApplyRules(css);
-    expect(rules).toEqual([
-      {
-        selector: "btn",
+    expect(rules).toEqual({
+      ".btn": {
+        children: {},
         classes: [
           "border",
           "border-white",
@@ -32,6 +32,6 @@ describe("css", () => {
           "px-4",
         ],
       },
-    ]);
+    });
   });
 });

@@ -13,10 +13,7 @@ export const resolveConfig = (css: string): ResolvedConfig => {
   const keyframes = extractKeyframes(css);
   const merged = mergeThemeVariables(vars, defaults);
 
-  for (const { selector, classes } of applyRules) {
-    merged.extra.apply[selector] = classes;
-  }
-
+  merged.extra.apply = { ...merged.extra.apply, ...applyRules };
   merged.extra.keyframes = { ...merged.extra.keyframes, ...keyframes };
 
   return merged;

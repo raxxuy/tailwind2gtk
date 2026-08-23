@@ -49,8 +49,8 @@ export interface Keyframe {
 }
 
 export interface ApplyRule {
+  children: Record<string, ApplyRule>;
   classes: string[];
-  selector: string;
 }
 
 export interface KeyframeDeclaration {

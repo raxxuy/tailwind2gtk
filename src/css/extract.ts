@@ -40,8 +40,70 @@ export const extractKeyframes = (css: string): Record<string, KeyframeStep[]> =>
     ),
   );
 
-export const extractApplyRules = (css: string): ApplyRule[] =>
-  [...css.matchAll(APPLY_RULE_RE)].map(([, selector, applyList]) => ({
-    selector: selector.trim().slice(1),
-    classes: applyList.trim().split(/\s+/),
-  }));
+const segmentSelector = (selector: string): string[] => {
+  const tokens = selector.trim().split(/\s+/);
+  const path: string[] = [];
+  let pendingCombinator: string | null = null;
+
+  tokens.forEach((token, idx) => {
+    if (token === ">" || token === "+" || token === "~") {
+      pendingCombinator = token;
+      return;
+    }
+
+    const pseudoSplit = token.match(/^([^:]*)((?::[^:]+)+)?$/);
+    const [, base, pseudo] = pseudoSplit ?? [null, token, undefined];
+
+    if (idx === 0) {
+      path.push(base.replace(/^\./, ""));
+    } else if (pendingCombinator) {
+      path.push(`& ${pendingCombinator} ${base}`);
+      pendingCombinator = null;
+    } else {
+      path.push(base);
+    }
+
+    if (pseudo) path.push(`&${pseudo}`);
+  });
+
+  return path;
+};
+
+const insertApplyRule = (
+  root: Record<string, ApplyRule>,
+  path: string[],
+  classes: string[],
+): void => {
+  let node: Record<string, ApplyRule> = root;
+  let current: ApplyRule | undefined;
+
+  for (const key of path) {
+    current = node[key] ?? { classes: [], children: {} };
+    node[key] = current;
+    node = current.children;
+  }
+
+  if (current) current.classes.push(...classes);
+};
+
+const stripComments = (css: string): string =>
+  css.replace(/\/\*[\s\S]*?\*\//g, "");
+
+export const extractApplyRules = (
+  rawCss: string,
+): Record<string, ApplyRule> => {
+  const css = stripComments(rawCss);
+  const root: Record<string, ApplyRule> = {};
+
+  for (const [, rawSelector, applyList] of css.matchAll(APPLY_RULE_RE)) {
+    const selector = rawSelector.trim();
+    const classes = applyList.trim().split(/\s+/);
+
+    for (const singleSelector of selector.split(",")) {
+      const path = segmentSelector(singleSelector.trim());
+      insertApplyRule(root, path, classes);
+    }
+  }
+
+  return root;
+};

@@ -1,6 +1,7 @@
 import { compile } from "../compiler/compile";
 import { defaults } from "../config/defaults";
 import { resolveConfig } from "../config/resolve";
+import { generateApply } from "../theme/apply";
 import { generateKeyframes } from "../theme/keyframes";
 import { generateRoot } from "../theme/root";
 import type { CacheOptions } from "../types/config";
@@ -43,6 +44,7 @@ export const updateCache = async (
         const css = [
           generateRoot(config),
           generateKeyframes(config),
+          generateApply(config),
           ...Object.values(cache),
         ].join("\n");
 

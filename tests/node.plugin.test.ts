@@ -26,6 +26,7 @@ const defaultPlugin = nodePlugin({
   jsonPath: JSON_PATH,
   cssPath: CSS_PATH,
   themePath: THEME_PATH,
+  extendPath: EXTEND_PATH,
 });
 
 describe("generate css", () => {

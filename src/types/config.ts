@@ -1,4 +1,4 @@
-import type { KeyframeStep } from "./css";
+import type { ApplyRule, KeyframeStep } from "./css";
 
 export interface CompoundValue {
   value: string;
@@ -13,7 +13,7 @@ export interface ResolvedConfig {
   "drop-shadow": Record<string, string>;
   ease: Record<string, string>;
   extra: {
-    apply: Record<string, string[]>;
+    apply: Record<string, ApplyRule>;
     keyframes: Record<string, KeyframeStep[]>;
   };
   font: Record<string, string | CompoundValue>;
