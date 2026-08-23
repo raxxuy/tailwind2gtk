@@ -5,7 +5,6 @@ const VAR_DECL_RE = /(--[\w-]+)\s*:\s*([^;]+);/g;
 const KEYFRAMES_RE =
   /@keyframes\s+([\w-]+)\s*\{((?:[^{}]*\{[^{}]*\})*[^{}]*)\}/g;
 const KEYFRAME_STEP_RE = /([^{}]+)\{([^{}]*)\}/g;
-const APPLY_RULE_RE = /([^{}]+)\{\s*@apply\s+([^;]+);\s*\}/g;
 
 const getThemeBlocks = (css: string): string[] =>
   [...css.matchAll(THEME_BLOCK_RE)].map((m) => m[1]);
@@ -40,70 +39,81 @@ export const extractKeyframes = (css: string): Record<string, KeyframeStep[]> =>
     ),
   );
 
-const segmentSelector = (selector: string): string[] => {
-  const tokens = selector.trim().split(/\s+/);
-  const path: string[] = [];
-  let pendingCombinator: string | null = null;
-
-  tokens.forEach((token, idx) => {
-    if (token === ">" || token === "+" || token === "~") {
-      pendingCombinator = token;
-      return;
-    }
-
-    const pseudoSplit = token.match(/^([^:]*)((?::[^:]+)+)?$/);
-    const [, base, pseudo] = pseudoSplit ?? [null, token, undefined];
-
-    if (idx === 0) {
-      path.push(base.replace(/^\./, ""));
-    } else if (pendingCombinator) {
-      path.push(`& ${pendingCombinator} ${base}`);
-      pendingCombinator = null;
-    } else {
-      path.push(base);
-    }
-
-    if (pseudo) path.push(`&${pseudo}`);
-  });
-
-  return path;
-};
-
-const insertApplyRule = (
-  root: Record<string, ApplyRule>,
-  path: string[],
-  classes: string[],
-): void => {
-  let node: Record<string, ApplyRule> = root;
-  let current: ApplyRule | undefined;
-
-  for (const key of path) {
-    current = node[key] ?? { classes: [], children: {} };
-    node[key] = current;
-    node = current.children;
-  }
-
-  if (current) current.classes.push(...classes);
-};
-
 const stripComments = (css: string): string =>
   css.replace(/\/\*[\s\S]*?\*\//g, "");
+
+const normalizeChildKey = (raw: string): string => {
+  const trimmed = raw.trim();
+  if (trimmed.startsWith("&")) return trimmed;
+  if (
+    trimmed.startsWith(">") ||
+    trimmed.startsWith("+") ||
+    trimmed.startsWith("~")
+  ) {
+    return `& ${trimmed}`;
+  }
+  if (trimmed.startsWith(":")) return `&${trimmed}`;
+  return trimmed;
+};
 
 export const extractApplyRules = (
   rawCss: string,
 ): Record<string, ApplyRule> => {
   const css = stripComments(rawCss);
-  const root: Record<string, ApplyRule> = {};
+  let i = 0;
 
-  for (const [, rawSelector, applyList] of css.matchAll(APPLY_RULE_RE)) {
-    const selector = rawSelector.trim();
-    const classes = applyList.trim().split(/\s+/);
+  const parseBlock = (node: ApplyRule, isRoot: boolean) => {
+    while (i < css.length) {
+      while (i < css.length && /\s/.test(css[i])) i++;
+      if (css[i] === "}") {
+        i++;
+        return;
+      }
+      if (i >= css.length) return;
 
-    for (const singleSelector of selector.split(",")) {
-      const path = segmentSelector(singleSelector.trim());
-      insertApplyRule(root, path, classes);
+      const rest = css.slice(i);
+
+      const applyMatch = rest.match(/^@apply\s+([^;]+);/);
+      if (applyMatch) {
+        node.classes.push(...applyMatch[1].trim().split(/\s+/));
+        i += applyMatch[0].length;
+        continue;
+      }
+
+      const atRuleMatch = rest.match(/^@[\w-]+[^{;]*[{;]/);
+      if (atRuleMatch && !applyMatch) {
+        if (atRuleMatch[0].endsWith("{")) {
+          i += atRuleMatch[0].length;
+          let depth = 1;
+          while (i < css.length && depth > 0) {
+            if (css[i] === "{") depth++;
+            if (css[i] === "}") depth--;
+            i++;
+          }
+        } else {
+          i += atRuleMatch[0].length;
+        }
+        continue;
+      }
+
+      const selectorMatch = rest.match(/^([^{}]+)\{/);
+      if (selectorMatch) {
+        const rawSelector = selectorMatch[1].trim();
+        i += selectorMatch[0].length;
+        const key = isRoot
+          ? rawSelector.replace(/^\./, "")
+          : normalizeChildKey(rawSelector);
+        const child = node.children[key] ?? { classes: [], children: {} };
+        node.children[key] = child;
+        parseBlock(child, false);
+        continue;
+      }
+
+      i++;
     }
-  }
+  };
 
-  return root;
+  const root: ApplyRule = { classes: [], children: {} };
+  parseBlock(root, true);
+  return root.children;
 };
