@@ -1,5 +1,5 @@
 import type { CompoundValue, ResolvedConfig } from "../types/config";
-import { defaultVariables } from "./defaults";
+import { defaultThemeVariables, defaultVariables } from "./defaults";
 
 export const generateVariables = (config: ResolvedConfig): string[] => {
   const variables = [];
@@ -32,6 +32,10 @@ export const generateVariables = (config: ResolvedConfig): string[] => {
 
   for (const [name, value] of Object.entries(defaultVariables)) {
     variables.push(`--default-${name}: ${value};`);
+  }
+
+  for (const [name, value] of Object.entries(defaultThemeVariables)) {
+    variables.push(`--tw-${name}: ${value};`);
   }
 
   return variables;
