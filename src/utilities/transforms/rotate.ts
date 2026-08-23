@@ -1,5 +1,5 @@
-import { resolveNumber } from "@/resolvers/number";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const resolveRotateValue = (utility: string): string | null => {
   if (utility === "rotate-none") return "none";

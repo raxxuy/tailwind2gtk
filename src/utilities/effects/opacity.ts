@@ -1,5 +1,5 @@
-import { resolveNumber } from "@/resolvers/number";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const resolveOpacityValue = (utility: string): string | null => {
   const match = utility.match(/^opacity-(.*)$/);

@@ -1,11 +1,11 @@
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
-const TRANSFORM_MAP = {
+const TRANSFORM_MAP: Record<string, string> = {
   "normal-case": "none",
   uppercase: "uppercase",
   lowercase: "lowercase",
   capitalize: "capitalize",
-};
+} as const;
 
 export const resolveTextTransform = ({
   utility,

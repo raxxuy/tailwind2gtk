@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { parseClass } from "@/compiler/parser";
-import { generateRule } from "@/compiler/rule";
-import { defaults } from "@/config/defaults";
+import { parseClass } from "../src/compiler/parser";
+import { generateRule } from "../src/compiler/rule";
+import { defaults } from "../src/config/defaults";
 
 describe("generateRule", () => {
   it("generates a simple rule", () => {

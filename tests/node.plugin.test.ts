@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { nodePlugin } from "@/plugins/node";
+import { nodePlugin } from "../src/plugins/node";
 
 const JSON_PATH = "tests/fixtures/utilities.json";
 const CSS_PATH = "tests/fixtures/utilities.css";

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { defaults } from "@//config/defaults";
-import { resolveTransitionProperty } from "@/utilities/transitions-animations";
+import { defaults } from "../../../src/config/defaults";
+import { resolveTransitionProperty } from "../../../src/utilities/transitions-animations";
 
 describe("generate transition property utilities", () => {
   it("should generate transition property utilities", () => {

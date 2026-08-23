@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { defaults } from "@/config/defaults";
-import { resolveBorderRadius } from "@/utilities/borders";
+import { defaults } from "../../../src/config/defaults";
+import { resolveBorderRadius } from "../../../src/utilities/borders";
 
 describe("generate radius utilities", () => {
   it("should generate radius utilities", () => {

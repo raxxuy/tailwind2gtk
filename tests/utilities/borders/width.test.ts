@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { defaults } from "@/config/defaults";
-import { resolveBorderWidth } from "@/utilities/borders";
+import { defaults } from "../../../src/config/defaults";
+import { resolveBorderWidth } from "../../../src/utilities/borders";
 
 describe("generate border width utilities", () => {
   it("should generate border width utilities", () => {

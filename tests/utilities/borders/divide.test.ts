@@ -1,14 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { defaults } from "@/config/defaults";
-import { resolveDivide } from "@/utilities/borders";
+import { defaults } from "../../../src/config/defaults";
+import { resolveDivide } from "../../../src/utilities/borders";
 
 describe("generate divide utilities", () => {
   it("should generate divide utilities", () => {
     const classes = ["divide-y-reverse", "divide-y-2", "divide-x-4"];
-    expect(
-      classes.map((c) => resolveDivide({ utility: c, config: defaults })),
-    ).toMatchInlineSnapshot(`
+    expect(classes.map((c) => resolveDivide({ utility: c, config: defaults })))
+      .toMatchInlineSnapshot(`
       [
         {
           "children": [
@@ -61,9 +60,8 @@ describe("generate divide utilities", () => {
       "divide-y-(length:--test-t-width)",
       "divide-x-[0.33rem]",
     ];
-    expect(
-      classes.map((c) => resolveDivide({ utility: c, config: defaults })),
-    ).toMatchInlineSnapshot(`
+    expect(classes.map((c) => resolveDivide({ utility: c, config: defaults })))
+      .toMatchInlineSnapshot(`
       [
         {
           "children": [
@@ -121,9 +119,8 @@ describe("generate divide utilities", () => {
       "divide-y-(--test)",
       "divide-x-(--test)",
     ];
-    expect(
-      classes.map((c) => resolveDivide({ utility: c, config: defaults })),
-    ).toMatchInlineSnapshot(`
+    expect(classes.map((c) => resolveDivide({ utility: c, config: defaults })))
+      .toMatchInlineSnapshot(`
       [
         null,
         null,

@@ -1,5 +1,5 @@
-import { resolveColor } from "@/resolvers/color";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveColor } from "../../resolvers/color";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 export const resolveTextColor = ({
   utility,

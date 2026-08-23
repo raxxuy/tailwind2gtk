@@ -1,5 +1,5 @@
-import { resolveToken } from "@/resolvers/token";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveToken } from "../../resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const resolveFilterValue = (utility: string): string | null => {
   if (utility === "filter-none") return "none";

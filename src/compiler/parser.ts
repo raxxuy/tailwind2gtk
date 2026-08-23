@@ -152,7 +152,9 @@ export const parseClass = (rawClass: string): ParsedClass => {
   const utility = tokens.at(-1) ?? "";
 
   const variantSegments = tokens.slice(0, -1);
-  const variants = variantSegments.map(classifyVariantSegment);
+  const variants = variantSegments
+    .map(classifyVariantSegment)
+    .filter((variant) => !!variant);
 
   return {
     raw: rawClass,

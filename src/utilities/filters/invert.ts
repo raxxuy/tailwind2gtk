@@ -1,5 +1,5 @@
-import { resolveNumber } from "@/resolvers/number";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const resolveInvertValue = (utility: string): string | null => {
   if (utility === "invert") return "invert(100%)";

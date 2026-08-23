@@ -1,5 +1,5 @@
-import { wrapChild } from "@/compiler/rule";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { wrapChild } from "../../compiler/rule";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 export const resolveBorderStyle = ({
   utility,

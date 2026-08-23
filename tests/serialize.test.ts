@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { parseClass } from "@/compiler/parser";
-import { generateRule } from "@/compiler/rule";
-import { serializeRule } from "@/compiler/serialize";
-import { defaults } from "@/config/defaults";
-import type { StyleRule } from "@/types";
+import { parseClass } from "../src/compiler/parser";
+import { generateRule } from "../src/compiler/rule";
+import { serializeRule } from "../src/compiler/serialize";
+import { defaults } from "../src/config/defaults";
+import type { StyleRule } from "../src/types";
 
 describe("serializeRule", () => {
   it("should properly serialize a rule", () => {

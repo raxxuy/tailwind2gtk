@@ -1,11 +1,16 @@
-import { resolveNumber } from "@/resolvers/number";
-import { resolveToken } from "@/resolvers/token";
-import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import { resolveToken } from "../../resolvers/token";
+import type {
+  CompoundValue,
+  ResolvedConfig,
+  StyleRule,
+  UtilityResolverProps,
+} from "../../types";
 
 const resolveFontSizeValue = (
   utility: string,
   config: ResolvedConfig,
-): [string, string] | null => {
+): [string, string | null] | null => {
   const match = utility.match(/^text-([^/]+)(?:\/(.+))?$/);
   if (!match) return null;
 
@@ -22,7 +27,8 @@ const resolveFontSizeValue = (
 
   const lh = explicitLh
     ? resolveNumber(explicitLh, { px: false, fraction: false })
-    : value in config.text && config.text[value]["line-height"]
+    : value in config.text &&
+        (config.text[value] as CompoundValue)["line-height"]
       ? `var(--tw-leading, var(--text-${value}--line-height))`
       : null;
 

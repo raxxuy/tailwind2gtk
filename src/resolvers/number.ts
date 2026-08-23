@@ -19,7 +19,7 @@ const DEFAULT_OPTIONS: Required<ResolveNumberOptions> = {
   spacing: true,
   varRef: true,
   extra: "",
-  unit: undefined,
+  unit: "",
 };
 
 export const resolveNumber = (

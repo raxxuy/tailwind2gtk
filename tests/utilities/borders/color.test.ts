@@ -2,8 +2,11 @@ import { it } from "node:test";
 
 import { describe, expect } from "vitest";
 
-import { defaults } from "@/config/defaults";
-import { resolveBorderColor, resolveDivideColor } from "@/utilities/borders";
+import { defaults } from "../../../src/config/defaults";
+import {
+  resolveBorderColor,
+  resolveDivideColor,
+} from "../../../src/utilities/borders";
 
 describe("generate border color utilities", () => {
   it("should generate border color utilities", () => {

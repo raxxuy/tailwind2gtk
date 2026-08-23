@@ -1,7 +1,7 @@
-import { generateKeyframes } from "@/theme/keyframes";
 import { compile } from "../compiler/compile";
 import { defaults } from "../config/defaults";
 import { resolveConfig } from "../config/resolve";
+import { generateKeyframes } from "../theme/keyframes";
 import { generateRoot } from "../theme/root";
 import type { CacheOptions } from "../types/config";
 import { drainQueue, enqueue, isWriting, setWriting } from "./queue";
@@ -49,7 +49,7 @@ export const updateCache = async (
         await options.writeFile(jsonPath, JSON.stringify(cache, null, 2));
         await options.writeFile(cssPath, css);
 
-        options.onCacheUpdate(cache, config);
+        options.onCacheUpdate?.(cache, config);
       }
 
       pending = drainQueue();

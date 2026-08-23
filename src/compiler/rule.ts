@@ -39,7 +39,11 @@ export const generateRule = (
   // Nest the resolved utility under the parsed variants
   const nested = parsed.variants.reduceRight<StyleRule>((child, v) => {
     if (isMediaVariant(v)) {
-      return { selector: v.query, properties: {}, children: [child] };
+      return {
+        selector: v.query ?? undefined,
+        properties: {},
+        children: [child],
+      };
     }
 
     if (isPseudoVariant(v)) {
@@ -52,7 +56,7 @@ export const generateRule = (
 
     if (isArbitraryVariant(v)) {
       return {
-        selector: parseArbitrary(v.value),
+        selector: parseArbitrary(v.value) ?? undefined,
         properties: {},
         children: [child],
       };

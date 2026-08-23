@@ -1,6 +1,6 @@
-import { resolveNumber } from "@/resolvers/number";
-import type { ResolvedConfig } from "@/types";
-import type { StyleRule, UtilityResolverProps } from "@/types/core";
+import { resolveNumber } from "../../resolvers/number";
+import type { ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "../../types/core";
 
 const resolveMinWidthValue = (
   utility: string,

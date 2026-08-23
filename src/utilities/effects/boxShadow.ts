@@ -2,10 +2,14 @@ import {
   injectColorVar,
   parseAlphaSuffix,
   resolveColor,
-} from "@/resolvers/color";
-import { resolveNumber } from "@/resolvers/number";
-import { resolveToken } from "@/resolvers/token";
-import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
+} from "../../resolvers/color";
+import { resolveNumber } from "../../resolvers/number";
+import { resolveToken } from "../../resolvers/token";
+import type {
+  ResolvedConfig,
+  StyleRule,
+  UtilityResolverProps,
+} from "../../types";
 
 const BOX_SHADOW_VALUE =
   "var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)";

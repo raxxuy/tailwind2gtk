@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { defaults } from "@/config/defaults";
-import { resolveDropShadow, resolveDropShadowColor } from "@/utilities/filters";
+import { defaults } from "../../../src/config/defaults";
+import {
+  resolveDropShadow,
+  resolveDropShadowColor,
+} from "../../../src/utilities/filters";
 
 describe("generate drop shadow utilities", () => {
   it("should generate drop shadow utilities", () => {
@@ -101,7 +104,7 @@ describe("generate drop shadow utilities", () => {
       "drop-shadow-red-500/20",
       "drop-shadow-(color:--test)",
       "drop-shadow-(--test)/20",
-      "drop-shadow-test"
+      "drop-shadow-test",
     ] as const;
 
     expect(

@@ -1,7 +1,7 @@
-import { resolveSidedProperty } from "@/resolvers/sided";
-import { resolveToken } from "@/resolvers/token";
-import type { ResolvedConfig } from "@/types";
-import type { StyleRule, UtilityResolverProps } from "@/types/core";
+import { resolveSidedProperty } from "../../resolvers/sided";
+import { resolveToken } from "../../resolvers/token";
+import type { ResolvedConfig } from "../../types";
+import type { StyleRule, UtilityResolverProps } from "../../types/core";
 
 const SIDES_PROPERTY_MAP: Record<string, string[]> = {
   rounded: ["border-radius"],

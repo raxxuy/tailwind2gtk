@@ -1,7 +1,7 @@
-import { wrapChild } from "@/compiler/rule";
-import { resolveColor } from "@/resolvers/color";
-import { resolveSidedProperty } from "@/resolvers/sided";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { wrapChild } from "../../compiler/rule";
+import { resolveColor } from "../../resolvers/color";
+import { resolveSidedProperty } from "../../resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const COLOR_PROPERTY_MAP: Record<string, string[]> = {
   border: ["border-color"],

@@ -2,9 +2,13 @@ import {
   injectColorVar,
   parseAlphaSuffix,
   resolveColor,
-} from "@/resolvers/color";
-import { resolveToken } from "@/resolvers/token";
-import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
+} from "../../resolvers/color";
+import { resolveToken } from "../../resolvers/token";
+import type {
+  ResolvedConfig,
+  StyleRule,
+  UtilityResolverProps,
+} from "../../types";
 
 const resolveTextShadowValue = (
   utility: string,

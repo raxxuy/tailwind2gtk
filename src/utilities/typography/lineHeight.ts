@@ -1,5 +1,9 @@
-import { resolveNumber } from "@/resolvers/number";
-import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import type {
+  ResolvedConfig,
+  StyleRule,
+  UtilityResolverProps,
+} from "../../types";
 
 const resolveLineHeightValue = (
   utility: string,

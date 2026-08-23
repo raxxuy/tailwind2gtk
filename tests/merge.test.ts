@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { defaults } from "@/config/defaults";
-import { mergeThemeVariables } from "@/config/merge";
-import { extractThemeVariables } from "@/css/extract";
+import { defaults } from "../src/config/defaults";
+import { mergeThemeVariables } from "../src/config/merge";
+import { extractThemeVariables } from "../src/css/extract";
 
 describe("merge theme variables", () => {
   it("merges theme variables", () => {

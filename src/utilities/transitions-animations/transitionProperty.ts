@@ -1,5 +1,5 @@
-import { resolveToken } from "@/resolvers/token";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveToken } from "../../resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const PROPERTY_MAP: Record<string, string> = {
   all: "all",

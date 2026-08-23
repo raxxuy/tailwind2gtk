@@ -1,5 +1,5 @@
-import { resolveNumber } from "@/resolvers/number";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const resolveWidthValue = (value: string): string | null => {
   if (!value) return "1px";

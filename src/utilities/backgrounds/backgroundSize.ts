@@ -1,5 +1,5 @@
-import { resolveToken } from "@/resolvers/token";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveToken } from "../../resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const resolveBackgroundSizeValue = (utility: string): string | null => {
   if (utility === "bg-auto") return "auto";

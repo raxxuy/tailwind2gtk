@@ -1,6 +1,6 @@
-import { resolveNumber } from "@/resolvers/number";
-import { resolveSidedProperty } from "@/resolvers/sided";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import { resolveSidedProperty } from "../../resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const SKEW_PROPERTY_MAP = {
   skew: ["--tw-skew-x", "--tw-skew-y"],

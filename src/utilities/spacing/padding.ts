@@ -1,6 +1,6 @@
-import { resolveNumber } from "@/resolvers/number";
-import { resolveSidedProperty } from "@/resolvers/sided";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import { resolveSidedProperty } from "../../resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const PADDING_PROPERTY_MAP: Record<string, string[]> = {
   p: ["padding"],

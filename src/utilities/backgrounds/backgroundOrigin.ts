@@ -1,4 +1,4 @@
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const ORIGIN_MAP: Record<string, string> = {
   border: "border-box",

@@ -12,7 +12,10 @@ export const generateVariables = (config: ResolvedConfig): string[] => {
       continue;
     }
 
-    const values = config[key] as Record<string, string | CompoundValue>;
+    const values = config[key as keyof typeof config] as Record<
+      string,
+      string | CompoundValue
+    >;
 
     for (const [name, value] of Object.entries(values)) {
       if (typeof value === "object") {

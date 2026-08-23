@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { defaults } from "@/config/defaults";
-import { resolveFontSize } from "@/utilities/typography";
+import { defaults } from "../../../src/config/defaults";
+import { resolveFontSize } from "../../../src/utilities/typography";
 
 describe("generate font size utilities", () => {
   it("generates a variable font size utility", () => {

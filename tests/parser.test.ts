@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseClass } from "@/compiler/parser";
+import { parseClass } from "../src/compiler/parser";
 
 describe("parseClass", () => {
   it("should parse a class with nth-[2n] pseudo-class", () => {

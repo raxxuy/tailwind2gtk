@@ -1,4 +1,4 @@
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 export const resolveFontStyle = ({
   utility,

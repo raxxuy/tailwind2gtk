@@ -1,4 +1,4 @@
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const BEHAVIOR_MAP: Record<string, string> = {
   normal: "normal",

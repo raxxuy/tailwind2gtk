@@ -1,8 +1,8 @@
-import { wrapChild } from "@/compiler/rule";
-import { getTailwindVariable } from "@/compiler/runtime/variables";
-import { resolveNumber } from "@/resolvers/number";
-import { resolveSidedProperty } from "@/resolvers/sided";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { wrapChild } from "../../compiler/rule";
+import { getTailwindVariable } from "../../compiler/runtime/variables";
+import { resolveNumber } from "../../resolvers/number";
+import { resolveSidedProperty } from "../../resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const WIDTH_PROPERTY_MAP: Record<string, string[]> = {
   border: ["border-width"],
@@ -31,6 +31,7 @@ const resolveWidthValue = (value: string): string | null => {
     spacing: false,
     fraction: false,
     extra: "length",
+    unit: "px",
   });
 };
 

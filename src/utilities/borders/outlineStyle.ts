@@ -1,4 +1,4 @@
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const STYLE_SET = new Set(["solid", "dashed", "dotted", "double", "none"]);
 

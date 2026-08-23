@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { extractApplyRules, extractThemeVariables } from "@/css/extract";
+import { extractApplyRules, extractThemeVariables } from "../src/css/extract";
 
 describe("css", () => {
   it("should extract theme variables from css", () => {

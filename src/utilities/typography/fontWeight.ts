@@ -1,5 +1,9 @@
-import { resolveToken } from "@/resolvers/token";
-import type { ResolvedConfig, StyleRule, UtilityResolverProps } from "@/types";
+import { resolveToken } from "../../resolvers/token";
+import type {
+  ResolvedConfig,
+  StyleRule,
+  UtilityResolverProps,
+} from "../../types";
 
 const resolveFontWeightValue = (
   utility: string,

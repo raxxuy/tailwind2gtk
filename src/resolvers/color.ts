@@ -7,11 +7,11 @@ const COLOR_FUNC_PATTERN =
 const HEX_PATTERN = /^#[0-9a-f]{3,8}$/i;
 const COLOR_FN_RE = /rgba?\([^)]+\)/g;
 
-const statics = {
+const statics: Record<string, string> = {
   inherit: "inherit",
   current: "currentColor",
   transparent: "transparent",
-};
+} as const;
 
 export const parseAlphaSuffix = (
   utility: string,

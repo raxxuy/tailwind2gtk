@@ -1,6 +1,6 @@
-import { resolveNumber } from "@/resolvers/number";
-import { resolveSidedProperty } from "@/resolvers/sided";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveNumber } from "../../resolvers/number";
+import { resolveSidedProperty } from "../../resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const TRANSLATE_PROPERTY_MAP = {
   translate: ["--tw-translate-x", "--tw-translate-y"],

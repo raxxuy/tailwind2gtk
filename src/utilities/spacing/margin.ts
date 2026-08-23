@@ -1,8 +1,8 @@
-import { wrapChild } from "@/compiler/rule";
-import { getTailwindVariable } from "@/compiler/runtime/variables";
-import { resolveNumber } from "@/resolvers/number";
-import { resolveSidedProperty } from "@/resolvers/sided";
-import type { StyleRule, UtilityResolverProps } from "@/types/core";
+import { wrapChild } from "../../compiler/rule";
+import { getTailwindVariable } from "../../compiler/runtime/variables";
+import { resolveNumber } from "../../resolvers/number";
+import { resolveSidedProperty } from "../../resolvers/sided";
+import type { StyleRule, UtilityResolverProps } from "../../types/core";
 
 const MARGIN_PROPERTY_MAP: Record<string, string[]> = {
   m: ["margin"],

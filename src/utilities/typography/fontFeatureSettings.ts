@@ -1,5 +1,5 @@
-import { resolveToken } from "@/resolvers/token";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { resolveToken } from "../../resolvers/token";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
 const resolveFontFeatureSettingsValue = (utility: string): string | null => {
   const match = utility.match(/^font-features-(.*)$/);

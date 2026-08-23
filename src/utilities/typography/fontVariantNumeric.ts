@@ -1,7 +1,7 @@
-import { getTailwindVariable } from "@/compiler/runtime/variables";
-import type { StyleRule, UtilityResolverProps } from "@/types";
+import { getTailwindVariable } from "../../compiler/runtime/variables";
+import type { StyleRule, UtilityResolverProps } from "../../types";
 
-const VARIANT_NUMERIC_MAP = {
+const VARIANT_NUMERIC_MAP: Record<string, string> = {
   "normal-nums": "normal",
   ordinal: "ordinal",
   "slashed-zero": "slashed-zero",
@@ -11,11 +11,11 @@ const VARIANT_NUMERIC_MAP = {
   "tabular-nums": "tabular-nums",
   "diagonal-fractions": "diagonal-fractions",
   "stacked-fractions": "stacked-fractions",
-};
+} as const;
 
 const resolveFontVariantNumericValue = (
   utility: string,
-): [string, string] | null => {
+): [string, string | null] | null => {
   const value = VARIANT_NUMERIC_MAP[utility];
   if (!value) return null;
 

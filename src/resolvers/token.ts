@@ -1,4 +1,4 @@
-import type { CompoundValue } from "@/types";
+import type { CompoundValue } from "../types";
 import { parseArbitrary } from "./arbitrary";
 
 interface TokenResolverProps<T = string> {
