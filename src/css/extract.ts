@@ -1,13 +1,33 @@
 import type { ApplyRule, CSSVariable, KeyframeStep } from "../types/css";
 
-const THEME_BLOCK_RE = /@theme\s*\{([^}]*)\}/g;
 const VAR_DECL_RE = /(--[\w-]+)\s*:\s*([^;]+);/g;
 const KEYFRAMES_RE =
   /@keyframes\s+([\w-]+)\s*\{((?:[^{}]*\{[^{}]*\})*[^{}]*)\}/g;
 const KEYFRAME_STEP_RE = /([^{}]+)\{([^{}]*)\}/g;
 
-const getThemeBlocks = (css: string): string[] =>
-  [...css.matchAll(THEME_BLOCK_RE)].map((m) => m[1]);
+const getThemeBlocks = (css: string): string[] => {
+  const blocks: string[] = [];
+  const re = /@theme\s*\{/g;
+  let match: RegExpExecArray | null;
+
+  while (true) {
+    match = re.exec(css);
+    if (!match) break;
+
+    const start = match.index + match[0].length;
+    let depth = 1;
+    let i = start;
+    while (i < css.length && depth > 0) {
+      if (css[i] === "{") depth++;
+      if (css[i] === "}") depth--;
+      i++;
+    }
+    blocks.push(css.slice(start, i - 1));
+    re.lastIndex = i;
+  }
+
+  return blocks;
+};
 
 export const extractThemeVariables = (css: string): CSSVariable[] =>
   getThemeBlocks(css).flatMap((body) =>
