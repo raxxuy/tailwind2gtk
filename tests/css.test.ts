@@ -20,7 +20,7 @@ describe("css", () => {
       }`;
     const rules = extractApplyRules(css);
     expect(rules).toEqual({
-      ".btn": {
+      btn: {
         children: {},
         classes: [
           "border",

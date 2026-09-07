@@ -15,7 +15,7 @@ const resolveWidthValue = (value: string): string | null => {
 export const resolveOutlineWidth = ({
   utility,
 }: UtilityResolverProps): StyleRule | null => {
-  const match = utility.match(/^outline-(.+)$/);
+  const match = utility.match(/^outline(?:-(.+))?$/);
   if (!match) return null;
 
   const resolved = resolveWidthValue(match[1]);
