@@ -20,20 +20,6 @@ export const resolveSidedProperty = <T, P extends string = string>({
   if (!allowNegative && utility.startsWith("-")) return null;
 
   const prefixes = Object.keys(sideMap).sort((a, b) => b.length - a.length);
-  const dashPrefix = prefixes.find((p) => rest.startsWith(`${p}-`));
-
-  if (dashPrefix) {
-    const rawValue = rest.slice(dashPrefix.length + 1);
-    const resolved = resolveValue(`${negative ? "-" : ""}${rawValue}`);
-    if (!resolved) return null;
-
-    return Object.fromEntries(
-      sideMap[dashPrefix].map((p) => [
-        p,
-        formatProperty ? formatProperty(p, resolved) : resolved,
-      ]),
-    );
-  }
 
   if (allowBare && prefixes.includes(rest)) {
     const resolved = resolveValue("");
@@ -41,6 +27,20 @@ export const resolveSidedProperty = <T, P extends string = string>({
 
     return Object.fromEntries(
       sideMap[rest].map((p) => [
+        p,
+        formatProperty ? formatProperty(p, resolved) : resolved,
+      ]),
+    );
+  }
+
+  const dashPrefix = prefixes.find((p) => rest.startsWith(`${p}-`));
+  if (dashPrefix) {
+    const rawValue = rest.slice(dashPrefix.length + 1);
+    const resolved = resolveValue(`${negative ? "-" : ""}${rawValue}`);
+    if (!resolved) return null;
+
+    return Object.fromEntries(
+      sideMap[dashPrefix].map((p) => [
         p,
         formatProperty ? formatProperty(p, resolved) : resolved,
       ]),

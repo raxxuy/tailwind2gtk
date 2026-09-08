@@ -5,7 +5,7 @@ import { resolveBorderWidth } from "../../../src/utilities/borders";
 
 describe("generate border width utilities", () => {
   it("should generate border width utilities", () => {
-    const classes = ["border", "border-t-2", "border-x-4"];
+    const classes = ["border", "border-r", "border-t-2", "border-x-4"];
     expect(
       classes.map((c) => resolveBorderWidth({ utility: c, config: defaults })),
     ).toMatchInlineSnapshot(`
@@ -14,6 +14,12 @@ describe("generate border width utilities", () => {
           "properties": {
             "border-style": "var(--tw-border-style)",
             "border-width": "1px",
+          },
+        },
+        {
+          "properties": {
+            "border-right-style": "var(--tw-border-style)",
+            "border-right-width": "1px",
           },
         },
         {
