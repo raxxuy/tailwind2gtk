@@ -6,3 +6,4 @@ package-lock.json
 .zed
 output.css
 tailwind.test
+.DS_STORE
