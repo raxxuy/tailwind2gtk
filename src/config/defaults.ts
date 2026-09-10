@@ -476,4 +476,4 @@ export const defaults: ResolvedConfig = {
       ],
     },
   },
-};
+} as const;

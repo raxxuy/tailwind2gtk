@@ -1,8 +1,9 @@
 import type { CompoundValue, ResolvedConfig } from "../types/config";
+import { isCompoundValue } from "../types/config";
 import { defaultThemeVariables, defaultVariables } from "./defaults";
 
 export const generateVariables = (config: ResolvedConfig): string[] => {
-  const variables = [];
+  const variables: string[] = [];
 
   for (const key in config) {
     if (key === "extra") continue;
@@ -18,7 +19,7 @@ export const generateVariables = (config: ResolvedConfig): string[] => {
     >;
 
     for (const [name, value] of Object.entries(values)) {
-      if (typeof value === "object") {
+      if (isCompoundValue(value)) {
         const { value: baseValue, ...modifiers } = value;
         variables.push(`--${key}-${name}: ${baseValue};`);
         for (const [modifier, val] of Object.entries(modifiers)) {

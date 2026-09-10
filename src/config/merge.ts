@@ -1,5 +1,6 @@
 import { classifyVariable } from "../css/classify";
 import type { CompoundValue, ResolvedConfig } from "../types/config";
+import { isCompoundValue } from "../types/config";
 import type {
   ClassifiedVariable,
   CSSVariable,
@@ -14,10 +15,10 @@ const ensureCompoundEntry = (
   const bucket = config[key];
   const existing = bucket[token];
 
-  if (typeof existing === "object") return existing;
+  if (isCompoundValue(existing)) return existing;
 
   const entry: CompoundValue = {
-    value: typeof existing === "string" ? existing : "",
+    value: existing,
   };
 
   bucket[token] = entry;
